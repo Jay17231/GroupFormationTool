@@ -1,7 +1,12 @@
 package csci5408.catme.sql;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * @author Aman Vishnani (aman.vishnani@dal.ca)
+ */
 public class QueryBuilder implements IQueryBuilder {
 
     private String sql;
@@ -27,7 +32,12 @@ public class QueryBuilder implements IQueryBuilder {
     }
 
     @Override
-    public void setParameter(String key, Date value) {
+    public void setParameter(String key, LocalDateTime value) {
+        this.setParameterDefault(key, value);
+    }
+
+    @Override
+    public void setParameter(String key, LocalDate value) {
         this.setParameterDefault(key, value);
     }
 
@@ -53,21 +63,63 @@ public class QueryBuilder implements IQueryBuilder {
     }
 
     @Override
+    public void setParameter(String key, Boolean value) {
+        this.setParameterDefault(key, value);
+    }
+
+    @Override
+    public void setParameter(String key, Long value) {
+        this.setParameterDefault(key, value);
+    }
+
+    @Override
     public String query() {
         String sql = this.sql;
         for (Map.Entry<String, Object> obj :
                 this.paramMap.entrySet()) {
             String key = ":" + obj.getKey();
             Object val = obj.getValue();
-            if(val instanceof Integer) {
-                sql = sql.replaceAll(key, String.valueOf(val));
-            } else if(val instanceof Float) {
-                sql = sql.replaceAll(key, String.valueOf(val));
-            } else if(val instanceof String) {
+            if(val instanceof String) {
                 sql = sql.replaceAll(key, this.sanitize(String.valueOf(val), !likeSet.contains(key)));
+            } else if(
+                val instanceof Integer || val instanceof LocalDate ||
+                val instanceof Float || val instanceof LocalDateTime ||
+                val instanceof Double || val instanceof Long ||
+                val instanceof Boolean || val == null
+            ) {
+                sql = sql.replaceAll(key, this.getObjString(val));
+            } else if(val instanceof List || val instanceof Set) {
+                if(((Collection) val).size() == 0) {
+                    throw new RuntimeException("List size of zero");
+                }
+                List<String> arr = new ArrayList<String>();
+                for (Object o : (Collection) val) {
+                    arr.add(this.getObjString(o));
+                }
+                sql = sql.replaceAll(key, String.join(", ", arr));
             }
         }
         return sql;
+    }
+
+    private String getObjString(Object object) {
+        if(
+                object instanceof Integer ||
+                object instanceof Float ||
+                object instanceof Double ||
+                object instanceof Long ||
+                object instanceof Boolean
+        ) {
+            return String.valueOf(object);
+        } else if (object instanceof LocalDate) {
+            return "'" + String.valueOf(object) + "'";
+        } else if(object instanceof LocalDateTime) {
+            String val1 = String.join(" ", object.toString().split("T"));
+            return "'" + String.valueOf(val1) + "'";
+        } else if (object instanceof String || object instanceof Character){
+            return this.sanitize(String.valueOf(object), true);
+        }
+        return String.valueOf(object);
     }
 
     private String sanitize(String data, Boolean escapePercentage) {
