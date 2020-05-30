@@ -1,4 +1,6 @@
-package csci5408.catme.sql;
+package csci5408.catme.sql.impl;
+
+import csci5408.catme.sql.IQueryBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -92,7 +94,7 @@ public class QueryBuilder implements IQueryBuilder {
                 if(((Collection) val).size() == 0) {
                     throw new RuntimeException("List size of zero");
                 }
-                List<String> arr = new ArrayList<String>();
+                List<String> arr = new ArrayList<>();
                 for (Object o : (Collection) val) {
                     arr.add(this.getObjString(o));
                 }
@@ -112,10 +114,10 @@ public class QueryBuilder implements IQueryBuilder {
         ) {
             return String.valueOf(object);
         } else if (object instanceof LocalDate) {
-            return "'" + String.valueOf(object) + "'";
+            return "'" + object + "'";
         } else if(object instanceof LocalDateTime) {
             String val1 = String.join(" ", object.toString().split("T"));
-            return "'" + String.valueOf(val1) + "'";
+            return "'" + val1 + "'";
         } else if (object instanceof String || object instanceof Character){
             return this.sanitize(String.valueOf(object), true);
         }
