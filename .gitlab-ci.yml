@@ -34,7 +34,7 @@ refs:
 - branches
 
 deploy-test:
-stage:deploy
+stage: deploy
 tags:
 - dalfcs_gitlab_docker_cli
 image: ruby:2.6
