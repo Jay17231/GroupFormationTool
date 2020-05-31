@@ -21,7 +21,7 @@ image: gradle-alpine
 script: ./gradlew --build-cache assemble
 only:
 refs:
--branches
+- branches
 
 test:
 stage: test
