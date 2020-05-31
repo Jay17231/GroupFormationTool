@@ -1,6 +1,6 @@
 image: gradle-alpine
 
-variables: 
+variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
     GIT_STRATEGY: clone
 
@@ -15,10 +15,10 @@ stages:
 
 build:
     stage: build
-    tags: 
+    tags:
         - grad
     image: gradle-alpine
-    script: 
+    script:
     - chmod +x ./gradlew
     - ./gradlew --build-cache assemble
     only:
@@ -27,7 +27,7 @@ build:
 
 test:
     stage: test
-    tags: 
+    tags:
         - grad
     image: gradle-alpine
     script: ./gradlew check
@@ -38,7 +38,7 @@ test:
 deploy-test:
     stage: deploy
     tags:
-        - dalfcs_gitlab_docker_cli
+        - dalfcs_gitlab_docker_ci
     image: ruby:2.6
     script:
         - apt-get update -qy
