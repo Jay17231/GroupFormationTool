@@ -18,7 +18,9 @@ build:
     tags: 
         - grad
     image: gradle-alpine
-    script: ./gradlew --build-cache assemble
+    script: 
+    - chmod +x ./gradlew
+    - ./gradlew --build-cache assemble
     only:
         refs:
             - branches
