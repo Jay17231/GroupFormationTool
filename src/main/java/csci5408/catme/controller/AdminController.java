@@ -24,9 +24,9 @@ public class AdminController {
       return "logout.html"; 
   }
 	
-	@GetMapping("/courses")
+	@GetMapping("/viewcourse")
     public String courses() {
-      return "courses"; 
+      return "admin_courses"; 
   }
 	
 	
