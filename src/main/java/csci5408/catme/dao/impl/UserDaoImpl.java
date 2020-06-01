@@ -3,6 +3,7 @@ package csci5408.catme.dao.impl;
 import csci5408.catme.dao.UserDao;
 import csci5408.catme.domain.User;
 import csci5408.catme.sql.MySQLDataSource;
+import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -26,7 +27,31 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User save(User user) {
-        return null;
+        Connection con = dataSource.getConnection();
+        ResultSet rs;
+        assert con != null;
+
+        try {
+            Statement s = con.createStatement();
+            QueryBuilder builder = new QueryBuilder(
+                    "INSERT INTO user (id, first_name, last_name, email_id, password, student_id, is_admin) " +
+                            "values(default, :firstName, :lastName, :emailId, :password, :studentId, :isAdmin)");
+            builder.setParameter("firstName", user.getFirstName());
+            builder.setParameter("lastName", user.getLastName());
+            builder.setParameter("emailId", user.getEmailId());
+            builder.setParameter("password", user.getPassword());
+            builder.setParameter("studentId", user.getStudentId());
+            builder.setParameter("isAdmin", user.isAdmin());
+
+            s.execute(builder.query());
+            return findByEmail(user.getEmailId());
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.close(con);
+        }
     }
 
     @Override
@@ -55,15 +80,7 @@ public class UserDaoImpl implements UserDao {
             if(s.execute("select id, first_name, last_name, email_id, password, student_id, is_admin from user")) {
                 rs = s.getResultSet();
                 while (rs.next()) {
-                    User u = new User(
-                            rs.getLong("id"),
-                            rs.getString("first_name"),
-                            rs.getString("last_name"),
-                            rs.getString("student_id"),
-                            rs.getBoolean("is_admin"),
-                            rs.getString("email_id")
-                            );
-                    u.setPassword(rs.getString("password"));
+                    User u =getUser(rs);
                     users.add(u);
                 }
             }
@@ -71,8 +88,47 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
-            dataSource.recycle(con);
+            dataSource.close(con);
         }
         return users;
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        Connection con = dataSource.getConnection();
+        ResultSet rs;
+        assert con != null;
+        try {
+            Statement s = con.createStatement();
+            QueryBuilder builder = new QueryBuilder(
+                    "select id, first_name, last_name, email_id, password, student_id, is_admin " +
+                    "from user where email_id = :emailId");
+            builder.setParameter("emailId", email);
+            if(s.execute(builder.query())) {
+                rs = s.getResultSet();
+                if (rs.next()) {
+                    return getUser(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.close(con);
+        }
+        return null;
+    }
+
+    private User getUser(ResultSet rs) throws SQLException {
+        User u = new User(
+                rs.getLong("id"),
+                rs.getString("first_name"),
+                rs.getString("last_name"),
+                rs.getString("student_id"),
+                rs.getBoolean("is_admin"),
+                rs.getString("email_id")
+        );
+        u.setPassword(rs.getString("password"));
+        return u;
     }
 }

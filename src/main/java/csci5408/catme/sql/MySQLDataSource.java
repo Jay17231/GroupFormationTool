@@ -13,7 +13,7 @@ import java.util.Set;
 @Component
 public class MySQLDataSource {
 
-    Integer numberOfConnections = 10;
+    Integer numberOfConnections = 1;
     Set<Connection> pool = new HashSet<>();
 
     final ConnectionManager manager;
@@ -39,16 +39,13 @@ public class MySQLDataSource {
         Connection con = null;
         try {
             synchronized (this) {
-                while (pool.size() == 0 || con == null || con.isClosed()) {
+                while (con == null || con.isClosed()) {
                     if(pool.size() == 0) {
                         initializePool();
                     }
                     con = pool.iterator().next();
-                    if(con.isClosed()) {
-                        pool.remove(con);
-                    }
+                    pool.remove(con);
                 }
-                pool.remove(con);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,5 +64,13 @@ public class MySQLDataSource {
         }
         pool.add(con);
         return true;
+    }
+
+    public void close(Connection connection) {
+        try {
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

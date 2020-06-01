@@ -19,12 +19,12 @@ public class MySQLDataSourceTest {
         MySQLDataSource ds = new MySQLDataSource(manager);
         assertNotNull(ds);
         Connection c = ds.getConnection();
-        assertEquals(9, ds.poolSize());
+        assertEquals(0, ds.poolSize());
         assertTrue(ds.recycle(c));
-        assertEquals(10, ds.poolSize());
+        assertEquals(1, ds.poolSize());
         c = ds.getConnection();
         c.close();
         assertFalse(ds.recycle(c));
-        assertEquals(9, ds.poolSize());
+        assertEquals(0, ds.poolSize());
     }
 }
