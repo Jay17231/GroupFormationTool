@@ -1,8 +1,11 @@
 package csci5408.catme.controller;
 
 import csci5408.catme.dao.UserDao;
+import csci5408.catme.service.AuthenticationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Aman Vishnani (aman.vishnani@dal.ca)
@@ -10,16 +13,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class ApplicationController {
 
-    private final UserDao userDao;
+    private final AuthenticationService authenticationService;
 
-    public ApplicationController(UserDao userDao) {
+    public ApplicationController(AuthenticationService authenticationService) {
 
-        this.userDao = userDao;
+        this.authenticationService = authenticationService;
     }
 
     @GetMapping
-    public String greetings() {
-        userDao.findAll();
+    public String greetings(HttpServletResponse response) {
+        authenticationService.login("jon@doe.com", "test", response);
         return "index";
     }
 }
