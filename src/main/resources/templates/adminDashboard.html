@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+</head>
+<body>
+          
+<div th:replace="header :: adminheader"></div>   
+
+  
+<div class="container">
+<div class="row">
+<div><button type="button" class="btn btn-outline-primary" >Create Course</button></div>
+</div>
+  <div class="card" style="width:400px">
+  <div class="card-body">
+    <h4 class="card-title">Course Name</h4>
+    <p class="card-text">Discription</p>
+    <a href="/viewcourse" class="btn btn-primary">View</a>
+  </div>
+</div>
+</div>
+
+</body>
+</html>
