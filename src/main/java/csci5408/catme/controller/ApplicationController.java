@@ -11,6 +11,7 @@ public class ApplicationController {
 
     @GetMapping
     public String greetings() {
-        return "index";
+        return "login";
     }
+    
 }
