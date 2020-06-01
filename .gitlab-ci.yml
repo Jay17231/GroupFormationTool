@@ -1,0 +1,49 @@
+image: gradle-alpine
+
+variables:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    GIT_STRATEGY: clone
+
+before_script:
+    - chmod +x ./gradlew
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+
+stages:
+    - build
+    - test
+    - deploy
+
+build:
+    stage: build
+    tags:
+        - grad
+    image: gradle-alpine
+    script:
+    - chmod +x ./gradlew
+    - ./gradlew --build-cache assemble
+    only:
+        refs:
+            - branches
+
+test:
+    stage: test
+    tags:
+        - grad
+    image: gradle-alpine
+    script: ./gradlew check
+    only:
+        refs:
+            - branches
+
+deploy-test:
+    stage: deploy
+    tags:
+        - dalfcs_gitlab_docker_ci
+    image: ruby:2.6
+    script:
+        - apt-get update -qy
+        - apt-get install -y ruby-dev
+        - gem install dpl
+        - dpl --provider=heroku --app=$HEROKU_PROD_NAME --api-key=$HEROKU_DEV_API
+    only:
+        - release-prod
