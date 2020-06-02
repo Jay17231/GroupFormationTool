@@ -21,8 +21,8 @@ public class ApplicationController {
     }
 
     @GetMapping
-    public String greetings(HttpServletResponse response) {
-        authenticationService.login("jon@doe.com", "test", response);
-        return "index";
+    public String greetings() {
+        return "login";
     }
+    
 }
