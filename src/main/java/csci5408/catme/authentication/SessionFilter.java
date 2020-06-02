@@ -27,21 +27,23 @@ public class SessionFilter extends GenericFilter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         Cookie[] cookies = ((HttpServletRequest)request).getCookies();
-        for (Cookie cookie : cookies) {
-            String cookieName = cookie.getName();
-            if(cookieName.equals(AUTH_COOKIE_NAME)) {
-                UserSummary userSummary = sessionStore.getSession(cookie.getValue());
-                if(userSummary != null) {
-                    SecurityContextHolder
-                            .getContext()
-                            .setAuthentication(
-                                    new UsernamePasswordAuthenticationToken(
-                                            userSummary, "", new ArrayList<>()
-                                    )
-                            );
+        if(cookies != null) {
+            for (Cookie cookie : cookies) {
+                String cookieName = cookie.getName();
+                if(cookieName.equals(AUTH_COOKIE_NAME)) {
+                    UserSummary userSummary = sessionStore.getSession(cookie.getValue());
+                    if(userSummary != null) {
+                        SecurityContextHolder
+                                .getContext()
+                                .setAuthentication(
+                                        new UsernamePasswordAuthenticationToken(
+                                                userSummary, "", new ArrayList<>()
+                                        )
+                                );
+                    }
                 }
-                chain.doFilter(request, response);
             }
         }
+        chain.doFilter(request, response);
     }
 }
