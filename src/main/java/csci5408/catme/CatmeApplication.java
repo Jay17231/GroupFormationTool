@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import javax.sql.DataSource;
 
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class})
+@SpringBootApplication
 public class CatmeApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
