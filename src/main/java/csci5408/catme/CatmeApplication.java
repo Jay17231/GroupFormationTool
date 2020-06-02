@@ -13,9 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CatmeApplication implements CommandLineRunner {
 
-    @Autowired
-    AuthenticationService authenticationService;
-
     public CatmeApplication() {
     }
 
@@ -25,12 +22,6 @@ public class CatmeApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        UserSummary summary = new UserSummary();
-        summary.setEmailId("A@B.c");
-        summary.setFirstName("A");
-        summary.setLastName("B");
-        summary.setStudentId("B00");
-        summary.setAdmin(false);
-        authenticationService.signUp(summary, "Test");
+
     }
 }
