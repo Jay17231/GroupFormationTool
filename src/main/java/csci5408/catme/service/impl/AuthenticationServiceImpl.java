@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 String cookieString = ISessionStore.setSession((UserSummary)auth.getPrincipal());
                 response.addCookie(new Cookie(AUTH_COOKIE_NAME, cookieString));
             }
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             System.out.println("Code probably called from CommandLineRunner");
         }
 
@@ -85,13 +86,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public boolean isAuthenticated() {
         SecurityContext sc = SecurityContextHolder.getContext();
-        return sc.getAuthentication().isAuthenticated();
+        Authentication authentication = sc.getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        return authentication.isAuthenticated();
     }
 
     @Override
     public void changePassword(UserSummary user, String password) {
         String encodedPassword = bCryptPasswordEncoder.encode(password);
         User u = userDao.findByEmail(user.getEmailId());
+        if(u == null) {
+            throw new UsernameNotFoundException(user.getEmailId() + " Not found");
+        }
         u.setPassword(encodedPassword);
         userDao.update(u);
     }
