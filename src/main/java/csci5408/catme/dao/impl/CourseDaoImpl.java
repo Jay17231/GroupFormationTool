@@ -5,7 +5,7 @@ import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.sql.MySQLDataSource;
 import csci5408.catme.sql.impl.QueryBuilder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Component
 public class CourseDaoImpl implements CourseDao {
 
     final MySQLDataSource dataSource;

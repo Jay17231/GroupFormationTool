@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,61 +26,84 @@ import csci5408.catme.service.UserService;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-	final AuthenticationManager authenticationManager;
+    final
+    AuthenticationManager authenticationManager;
 
-	final ISessionStore ISessionStore;
+    final
+    ISessionStore ISessionStore;
 
-	final UserService userService;
+    final
+    UserService userService;
 
-	final BCryptPasswordEncoder bCryptPasswordEncoder;
+    final
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	final UserDao userDao;
+    final
+    UserDao userDao;
 
-	public AuthenticationServiceImpl(AuthenticationManager authenticationManager, ISessionStore ISessionStore,
-			UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder, UserDao userDao) {
-		this.authenticationManager = authenticationManager;
-		this.ISessionStore = ISessionStore;
-		this.userService = userService;
-		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-		this.userDao = userDao;
-	}
+    public AuthenticationServiceImpl(
+            AuthenticationManager authenticationManager,
+            ISessionStore ISessionStore, UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder, UserDao userDao) {
+        this.authenticationManager = authenticationManager;
+        this.ISessionStore = ISessionStore;
+        this.userService = userService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.userDao = userDao;
+    }
 
-	@Override
-	public boolean login(String email, String password, HttpServletResponse response) {
-		UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(email, password);
-		Authentication auth = authenticationManager.authenticate(authReq);
 
-		SecurityContext sc = SecurityContextHolder.getContext();
-		sc.setAuthentication(auth);
+    @Override
+    public boolean login(String email, String password, HttpServletResponse response) {
+        UsernamePasswordAuthenticationToken authReq
+                = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication auth = authenticationManager.authenticate(authReq);
 
-		try {
-			if (this.isAuthenticated()) {
-				String cookieString = ISessionStore.setSession((UserSummary) auth.getPrincipal());
-				response.addCookie(new Cookie(AUTH_COOKIE_NAME, cookieString));
-			}
-		} catch (IllegalStateException e) {
-			System.out.println("Code probably called from CommandLineRunner");
-		}
+        SecurityContext sc = SecurityContextHolder.getContext();
+        sc.setAuthentication(auth);
 
-		return sc.getAuthentication().isAuthenticated();
-	}
+        try {
+            if(this.isAuthenticated()) {
+                String cookieString = ISessionStore.setSession((UserSummary)auth.getPrincipal());
+                response.addCookie(new Cookie(AUTH_COOKIE_NAME, cookieString));
+            }
+        } catch (Exception e) {
+            System.out.println("Code probably called from CommandLineRunner");
+        }
 
-	@Override
-	public UserSummary signUp(UserSummary user, String password) {
-		UserSummary existingUser = userService.getUserByEmailId(user.getEmailId());
-		if (existingUser != null) {
-			// User Exists
-			throw new RuntimeException("User Already Exists");
-		}
-		String encodedPassword = bCryptPasswordEncoder.encode(password);
-		return userService.createUser(user, encodedPassword);
-	}
+        return sc.getAuthentication().isAuthenticated();
+    }
 
-	@Override
-	public boolean isAuthenticated() {
-		SecurityContext sc = SecurityContextHolder.getContext();
-		return sc.getAuthentication().isAuthenticated();
-	}
+    @Override
+    public UserSummary signUp(UserSummary user, String password) {
+        UserSummary existingUser = userService.getUserByEmailId(user.getEmailId());
+        if(existingUser != null) {
+            // User Exists
+            throw new RuntimeException("User Already Exists");
+        }
+        String encodedPassword = bCryptPasswordEncoder.encode(password);
+        return userService.createUser(user, encodedPassword);
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        SecurityContext sc = SecurityContextHolder.getContext();
+        Authentication authentication = sc.getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        return authentication.isAuthenticated();
+    }
+
+    @Override
+    public void changePassword(UserSummary user, String password) {
+        String encodedPassword = bCryptPasswordEncoder.encode(password);
+        User u = userDao.findByEmail(user.getEmailId());
+        if(u == null) {
+            throw new UsernameNotFoundException(user.getEmailId() + " Not found");
+        }
+        u.setPassword(encodedPassword);
+        userDao.update(u);
+    }
 
 	@Override
 	public String resetPassword(int passlength) {
@@ -103,13 +127,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 		newPassword = new String(passwordArr);
 		return newPassword;
-	}
-
-	@Override
-	public void changePassword(UserSummary user, String password) {
-		String encodedPassword = bCryptPasswordEncoder.encode(password);
-		User u = userDao.findByEmail(user.getEmailId());
-		u.setPassword(encodedPassword);
-		userDao.update(u);
 	}
 }
