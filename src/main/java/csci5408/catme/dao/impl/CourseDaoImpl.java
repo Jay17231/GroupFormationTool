@@ -4,6 +4,7 @@ package csci5408.catme.dao.impl;
 import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.sql.MySQLDataSource;
+import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -75,6 +76,40 @@ public class CourseDaoImpl implements CourseDao {
 
     @Override
     public List<Course> findCoursesByUserId(Long id) {
-        return null;
+        Connection con = dataSource.getConnection();
+        ResultSet rs;
+        assert con != null;
+        List<Course> courses = new ArrayList<>();
+        try {
+            Statement s = con.createStatement();
+
+            String sql = "select c.id, c.name\n" +
+                    "from course c\n" +
+                    "INNER JOIN enrollment e on e.course_id = c.id\n" +
+                    "INNER JOIN user u on u.id = e.user_id\n" +
+                    "where u.id = :id \n";
+            QueryBuilder builder = new QueryBuilder(sql);
+            builder.setParameter("id", id);
+
+
+            if(s.execute(builder.query())) {
+                rs = s.getResultSet();
+                while (rs.next()) {
+                    Course u = new Course(
+                            rs.getLong("id"),
+                            rs.getString("name")
+
+                    );
+
+                    courses.add(u);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.recycle(con);
+        }
+        return courses;
     }
 }
