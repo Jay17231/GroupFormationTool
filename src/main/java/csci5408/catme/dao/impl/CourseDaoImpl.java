@@ -67,7 +67,33 @@ public class CourseDaoImpl implements CourseDao {
 
     @Override
     public boolean delete(Course course) {
-        return false;
+        Connection con = dataSource.getConnection();
+        ResultSet rs;
+        assert con != null;
+
+        try {
+            Statement s = con.createStatement();
+            QueryBuilder builder = new QueryBuilder(
+                    "Delete from course" +
+                            "where id= :id " );
+            builder.setParameter("name",course.getId());
+
+
+            s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+            rs=s.getGeneratedKeys();
+            course.setId(rs.getLong(1));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.close(con);
+        }
+
+
+        return course;
+
+
     }
 
     @Override
