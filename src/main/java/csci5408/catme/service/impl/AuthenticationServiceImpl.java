@@ -98,7 +98,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     
     public boolean isAdmin(String email, String password)
     {
-    	if(email.equals("krupa1711@gmail.com") && password.equals("admin")) {
+    	User u = userDao.findByEmail(email);
+    	if(u.isAdmin()) {
     	return true;
     	}
     	else {
