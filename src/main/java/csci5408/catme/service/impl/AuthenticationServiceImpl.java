@@ -82,7 +82,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public String generatePassword(int passlength) {
+	public String resetPassword(int passlength) {
 
 		String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		String lowerCase = "abcdefghijklmnopqrstuvwxyz";

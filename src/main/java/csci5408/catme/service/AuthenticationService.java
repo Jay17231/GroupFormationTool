@@ -12,7 +12,7 @@ public interface AuthenticationService {
 
 	boolean isAuthenticated();
 
-	String generatePassword(int passlength);
+	String resetPassword(int passlength);
 
 	void changePassword(UserSummary user, String password);
 }

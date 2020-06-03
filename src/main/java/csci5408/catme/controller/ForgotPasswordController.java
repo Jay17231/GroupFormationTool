@@ -31,7 +31,7 @@ public class ForgotPasswordController {
 		if (user.getUserByEmailId(useremail) == null) {
 			return mView.addObject("name", "User does not exist. Please try a different email address");
 		}
-		String newPass = auth.generatePassword(8);
+		String newPass = auth.resetPassword(8);
 
 		String nameString = user.getUserByEmailId(useremail).getFirstName();
 
