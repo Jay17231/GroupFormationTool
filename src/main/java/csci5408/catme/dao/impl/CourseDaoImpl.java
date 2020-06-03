@@ -91,7 +91,7 @@ public class CourseDaoImpl implements CourseDao {
         }
 
 
-        return course;
+        return true;
 
 
     }
