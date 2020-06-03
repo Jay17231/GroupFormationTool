@@ -17,6 +17,7 @@ import csci5408.catme.sql.IQueryBuilder;
  */
 public class QueryBuilder implements IQueryBuilder {
 
+
 	private String sql;
 
 	private Map<String, Object> paramMap;
@@ -91,7 +92,8 @@ public class QueryBuilder implements IQueryBuilder {
 			} else if (val instanceof Integer || val instanceof LocalDate || val instanceof Float
 					|| val instanceof LocalDateTime || val instanceof Double || val instanceof Long
 					|| val instanceof Boolean || val == null) {
-				sql = sql.replaceAll(key, this.getObjString(val));
+
+				sql = sql.replace(key, this.getObjString(val));
 			} else if (val instanceof List || val instanceof Set) {
 				if (((Collection) val).size() == 0) {
 					throw new RuntimeException("List size of zero");
@@ -100,7 +102,8 @@ public class QueryBuilder implements IQueryBuilder {
 				for (Object o : (Collection) val) {
 					arr.add(this.getObjString(o));
 				}
-				sql = sql.replaceAll(key, String.join(", ", arr));
+				sql = sql.replace(key, String.join(", ", arr));
+
 			}
 		}
 		return sql;
@@ -137,4 +140,5 @@ public class QueryBuilder implements IQueryBuilder {
 		}
 		this.paramMap.put(key, value);
 	}
+
 }

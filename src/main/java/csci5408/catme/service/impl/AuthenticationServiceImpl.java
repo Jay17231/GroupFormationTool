@@ -2,6 +2,10 @@ package csci5408.catme.service.impl;
 
 import static csci5408.catme.authentication.AuthConfig.AUTH_COOKIE_NAME;
 
+
+import java.util.Random;
+
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
@@ -80,12 +84,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
+
+	public String resetPassword(int passlength) {
+
+		String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		String lowerCase = "abcdefghijklmnopqrstuvwxyz";
+		String specialCharacters = "!@#$";
+		String numbers = "1234567890";
+		String combinedChars = upperCase + lowerCase + specialCharacters + numbers;
+		Random random = new Random();
+		String newPassword = "";
+		char[] passwordArr = new char[passlength];
+
+		passwordArr[0] = lowerCase.charAt(random.nextInt(lowerCase.length()));
+		passwordArr[1] = upperCase.charAt(random.nextInt(upperCase.length()));
+		passwordArr[2] = specialCharacters.charAt(random.nextInt(specialCharacters.length()));
+		passwordArr[3] = numbers.charAt(random.nextInt(numbers.length()));
+
+		for (int i = 4; i < passlength; i++) {
+			passwordArr[i] = combinedChars.charAt(random.nextInt(combinedChars.length()));
+		}
+		newPassword = new String(passwordArr);
+		return newPassword;
+	}
+
+	@Override
 	public void changePassword(UserSummary user, String password) {
 		String encodedPassword = bCryptPasswordEncoder.encode(password);
 		User u = userDao.findByEmail(user.getEmailId());
 		u.setPassword(encodedPassword);
 		userDao.update(u);
 	}
+
 
 	public boolean isAdmin(String email, String password) {
 		User u = userDao.findByEmail(email);
@@ -95,4 +125,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			return false;
 		}
 	}
+
 }
