@@ -7,11 +7,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CatmeApplication implements CommandLineRunner {
 
+    public CatmeApplication() {
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(CatmeApplication.class, args);
     }
 
     @Override
     public void run(String... args) {
+
     }
 }

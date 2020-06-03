@@ -34,8 +34,9 @@ public class UserDaoImpl implements UserDao {
         try {
             Statement s = con.createStatement();
             QueryBuilder builder = new QueryBuilder(
-                    "INSERT INTO user (id, first_name, last_name, email_id, password, student_id, is_admin) " +
-                            "values(default, :firstName, :lastName, :emailId, :password, :studentId, :isAdmin)");
+                    "INSERT INTO user " +
+                        "(id, first_name, last_name, email_id, password, student_id, is_admin) " +
+                        "values (default, :firstName, :lastName, :emailId, :password, :studentId, :isAdmin)");
             builder.setParameter("firstName", user.getFirstName());
             builder.setParameter("lastName", user.getLastName());
             builder.setParameter("emailId", user.getEmailId());
@@ -56,7 +57,29 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User update(User user) {
-        return null;
+        Connection con = dataSource.getConnection();
+        ResultSet rs;
+        assert con != null;
+        try {
+            QueryBuilder builder = new QueryBuilder(
+                    "REPLACE INTO user " +
+                            "(id, first_name, last_name, email_id, password, student_id, is_admin) " +
+                            "values (default, :firstName, :lastName, :emailId, :password, :studentId, :isAdmin)");
+            builder.setParameter("firstName", user.getFirstName());
+            builder.setParameter("lastName", user.getLastName());
+            builder.setParameter("emailId", user.getEmailId());
+            builder.setParameter("password", user.getPassword());
+            builder.setParameter("studentId", user.getStudentId());
+            builder.setParameter("isAdmin", user.isAdmin());
+            Statement s = con.createStatement();
+            s.execute(builder.query());
+            return findByEmail(user.getEmailId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.close(con);
+        }
     }
 
     @Override

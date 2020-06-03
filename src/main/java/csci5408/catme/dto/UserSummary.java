@@ -3,6 +3,8 @@ package csci5408.catme.dto;
 
 import csci5408.catme.domain.User;
 
+import java.util.Objects;
+
 /**
  * @author Aman Vishnani (aman.vishnani@dal.ca)
  */
@@ -27,6 +29,11 @@ public class UserSummary {
         userSummary.setLastName(user.getLastName());
         userSummary.setStudentId(user.getStudentId());
         return userSummary;
+    }
+
+    public static User to(UserSummary summary) {
+        return new User(summary.getId(), summary.getFirstName(), summary.getLastName(),
+                summary.getStudentId(), summary.getAdmin(), summary.getEmailId());
     }
 
     public Long getId() {
@@ -75,5 +82,23 @@ public class UserSummary {
 
     public void setEmailId(String emailId) {
         this.emailId = emailId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserSummary)) return false;
+        UserSummary that = (UserSummary) o;
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getFirstName(), that.getFirstName()) &&
+                Objects.equals(getLastName(), that.getLastName()) &&
+                Objects.equals(getStudentId(), that.getStudentId()) &&
+                Objects.equals(getAdmin(), that.getAdmin()) &&
+                Objects.equals(getEmailId(), that.getEmailId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getFirstName(), getLastName(), getStudentId(), getAdmin(), getEmailId());
     }
 }
