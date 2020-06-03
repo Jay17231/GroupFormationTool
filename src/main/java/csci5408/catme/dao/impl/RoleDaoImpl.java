@@ -1,8 +1,7 @@
 package csci5408.catme.dao.impl;
 
-
-import csci5408.catme.dao.CourseDao;
-import csci5408.catme.domain.Course;
+import csci5408.catme.dao.RoleDao;
+import csci5408.catme.domain.Role;
 import csci5408.catme.sql.MySQLDataSource;
 import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Component;
@@ -16,53 +15,74 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class CourseDaoImpl implements CourseDao {
+public class RoleDaoImpl implements RoleDao {
 
     final MySQLDataSource dataSource;
 
-
-    public CourseDaoImpl(MySQLDataSource dataSource) {
+    public RoleDaoImpl(MySQLDataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     @Override
-    public Course save(Course course) {
+    public Role save(Role role) {
         return null;
     }
 
     @Override
-    public Course update(Course course) {
+    public Role update(Role role) {
         return null;
     }
 
     @Override
-    public Optional<Course> findById(String s) {
+    public Optional<Role> findById(Long id) {
+        Connection con = dataSource.getConnection();
+        ResultSet rs;
+        assert con != null;
+        try {
+            Statement s = con.createStatement();
+            QueryBuilder builder = new QueryBuilder("select id, name from roles where id= :id");
+            builder.setParameter("id", id);
+            if(s.execute(builder.query())) {
+                rs = s.getResultSet();
+                if (rs.next()) {
+                    Role role = new Role(
+                            rs.getLong("id"),
+                            rs.getString("name")
+                    );
+                    return Optional.of(role);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.recycle(con);
+        }
         return Optional.empty();
     }
 
     @Override
-    public boolean delete(Course course) {
+    public boolean delete(Role role) {
         return false;
     }
 
     @Override
-    public List<Course> findAll() {
+    public List<Role> findAll() {
         Connection con = dataSource.getConnection();
         ResultSet rs;
         assert con != null;
-        List<Course> courses = new ArrayList<>();
+        List<Role> roles = new ArrayList<>();
         try {
             Statement s = con.createStatement();
-            if(s.execute("select id, name from course")) {
+            if(s.execute("select id, name from roles")) {
                 rs = s.getResultSet();
                 while (rs.next()) {
-                    Course u = new Course(
+                    Role role = new Role(
                             rs.getLong("id"),
                             rs.getString("name")
-
                     );
 
-                    courses.add(u);
+                    roles.add(role);
                 }
             }
         } catch (SQLException e) {
@@ -71,45 +91,6 @@ public class CourseDaoImpl implements CourseDao {
         } finally {
             dataSource.recycle(con);
         }
-        return courses;
-    }
-
-    @Override
-    public List<Course> findCoursesByUserId(Long id) {
-        Connection con = dataSource.getConnection();
-        ResultSet rs;
-        assert con != null;
-        List<Course> courses = new ArrayList<>();
-        try {
-            Statement s = con.createStatement();
-
-            String sql = "select c.id, c.name\n" +
-                    "from course c\n" +
-                    "INNER JOIN enrollment e on e.course_id = c.id\n" +
-                    "INNER JOIN user u on u.id = e.user_id\n" +
-                    "where u.id = :id \n";
-            QueryBuilder builder = new QueryBuilder(sql);
-            builder.setParameter("id", id);
-
-
-            if(s.execute(builder.query())) {
-                rs = s.getResultSet();
-                while (rs.next()) {
-                    Course u = new Course(
-                            rs.getLong("id"),
-                            rs.getString("name")
-
-                    );
-
-                    courses.add(u);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            dataSource.recycle(con);
-        }
-        return courses;
+        return roles;
     }
 }
