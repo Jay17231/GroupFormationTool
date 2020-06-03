@@ -8,4 +8,7 @@ import java.util.List;
 public interface CourseDao extends Dao<Course, String> {
     List<Course> findCoursesByUserId(Long id);
 
+
+
+
 }

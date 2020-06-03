@@ -25,9 +25,34 @@ public class CourseDaoImpl implements CourseDao {
         this.dataSource = dataSource;
     }
 
+
+
     @Override
     public Course save(Course course) {
-        return null;
+        Connection con = dataSource.getConnection();
+        ResultSet rs;
+        assert con != null;
+
+        try {
+            Statement s = con.createStatement();
+            QueryBuilder builder = new QueryBuilder(
+                    "INSERT INTO course" +
+                            "(id, name) " +
+                            "values (default,:name)");
+            builder.setParameter("name",course.getCourseName());
+
+
+            s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+            rs=s.getGeneratedKeys();
+            course.setId(rs.getLong(1));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.close(con);
+        }
+        return course;
     }
 
     @Override
@@ -112,4 +137,8 @@ public class CourseDaoImpl implements CourseDao {
         }
         return courses;
     }
+
+
+
+
 }
