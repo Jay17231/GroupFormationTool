@@ -18,7 +18,7 @@
                 <strong>Error:</strong>
                 <span th:text="${message}"></span>
             </div>
-
+			
             <!--display users list-->
             <table class="table table-striped" th:if="${status}">
                 <thead>
@@ -26,15 +26,40 @@
                     <th scope="col">#</th>
                     <th scope="col">ID</th>
                     <th scope="col">Name</th>
+                    <th scope="col">Name</th>
                     <th scope="col">Email</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="user, i : ${users}">
+                <tr th:each="user, i : ${added}">
                     <th scope="row" th:text="${i.index + 1}"></th>
-                    <td th:text="${user.id}"></td>
-                    <td th:text="${user.name}"></td>
-                    <td th:text="${user.email}"></td>
+                    <td th:text="${user[0]}"></td>
+                    <td th:text="${user[1]}"></td>
+                    <td th:text="${user[2]}"></td>
+                    <td th:text="${user[3]}"></td>
+                </tr>
+                </tbody>
+            </table>
+            
+            <h3>Entries Discarded:</h3>
+            <table class="table table-striped" th:if="${status}">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user, i : ${discarded}">
+                    <th scope="row" th:text="${i.index + 1}"></th>
+                    <td th:text="${user[0]}"></td>
+                    <td th:text="${user[1]}"></td>
+                    <td th:text="${user[2]}"></td>
+                    <td th:text="${user[3]}"></td>
+                    <td th:text="${user[4]}"></td>
                 </tr>
                 </tbody>
             </table>

@@ -1,82 +1,89 @@
 package csci5408.catme.domain;
 
+import com.opencsv.bean.CsvBindByName;
+
 public class User {
-    private Long id;
 
-    private String firstName;
+	private Long id;
 
-    private String lastName;
+	@CsvBindByName(column = "studentId")
+	private String studentId;
 
-    private String studentId;
+	@CsvBindByName(column = "firstName")
+	private String firstName;
 
-    private Boolean admin;
+	@CsvBindByName(column = "lastName")
+	private String lastName;
 
-    private String emailId;
+	private Boolean admin;
 
-    private String password;
+	@CsvBindByName(column = "emailId")
+	private String emailId;
 
-    public User(Long id, String firstName, String lastName, String studentId, Boolean admin, String emailId) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.studentId = studentId;
-        this.admin = admin;
-        this.emailId = emailId;
-    }
+	private String password;
 
-    public Long getId() {
-        return id;
-    }
+	public User(Long id, String firstName, String lastName, String studentId, Boolean admin, String emailId) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.studentId = studentId;
+		this.admin = admin;
+		this.emailId = emailId;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public String getStudentId() {
-        return studentId;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
-    }
+	public String getStudentId() {
+		return studentId;
+	}
 
-    public Boolean isAdmin() {
-        return admin;
-    }
+	public void setStudentId(String studentId) {
+		this.studentId = studentId;
+	}
 
-    public void setAdmin(Boolean admin) {
-        this.admin = admin;
-    }
+	public Boolean isAdmin() {
+		return admin;
+	}
 
-    public String getEmailId() {
-        return emailId;
-    }
+	public void setAdmin(Boolean admin) {
+		this.admin = admin;
+	}
 
-    public void setEmailId(String emailId) {
-        this.emailId = emailId;
-    }
+	public String getEmailId() {
+		return emailId;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 }
