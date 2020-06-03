@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CatmeApplication implements CommandLineRunner {
 
+
     public CatmeApplication() {
     }
 
