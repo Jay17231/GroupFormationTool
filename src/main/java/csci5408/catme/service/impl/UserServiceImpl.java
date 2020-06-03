@@ -4,7 +4,6 @@ import csci5408.catme.dao.UserDao;
 import csci5408.catme.domain.User;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -37,6 +36,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserSummary createUser(UserSummary summary, String password) {
         User u = UserSummary.to(summary);
+        u.setPassword(password);
         u = userDao.save(u);
         return UserSummary.from(u);
     }

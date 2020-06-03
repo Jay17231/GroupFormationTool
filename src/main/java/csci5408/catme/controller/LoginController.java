@@ -3,9 +3,8 @@
  */
 package csci5408.catme.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import csci5408.catme.dto.UserSummary;
+import csci5408.catme.service.impl.AuthenticationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,9 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import csci5408.catme.domain.User;
-import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.impl.AuthenticationServiceImpl;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author krupa
@@ -37,11 +35,9 @@ public class LoginController {
 	
 	@PostMapping("/signup")
     public String signupPost(@ModelAttribute UserSummary signup, HttpServletRequest request) {
-//		signup.setStudentId("B00000001");
-//		signup.setAdmin(true);
 		userSummary = authenticationService.signUp(signup, request.getParameter("password").toString());
-      return "login"; //extension depends on view resolver.
-  }
+      	return "login"; //extension depends on view resolver.
+  	}
 	
 	@GetMapping("/forgotpassword")
     public String forgotpassword() {
