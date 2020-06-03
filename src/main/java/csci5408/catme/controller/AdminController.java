@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AdminController {
 	
-	@GetMapping("/adminhome")
+	@GetMapping("/adminDashboard")
     public String signup() {
       return "adminDashboard"; 
   }

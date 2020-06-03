@@ -2,7 +2,9 @@ package csci5408.catme.service.impl;
 
 import static csci5408.catme.authentication.AuthConfig.AUTH_COOKIE_NAME;
 
+
 import java.util.Random;
+
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -82,6 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
+
 	public String resetPassword(int passlength) {
 
 		String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -112,4 +115,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		u.setPassword(encodedPassword);
 		userDao.update(u);
 	}
+
+
+	public boolean isAdmin(String email, String password) {
+		User u = userDao.findByEmail(email);
+		if (u.isAdmin()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }
