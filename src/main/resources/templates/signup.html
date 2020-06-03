@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Sign up</title>
     <link rel="stylesheet" type="text/css" href="/css/login.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -12,13 +13,12 @@
     <form class="form-signin" action="#" th:action="@{/signup}" th:object="${signup}" method="post">       
       <h2 class="form-signin-heading">Please login</h2>
       
-      <input type="text" class="form-control" name="fname" placeholder="First Name" required="" autofocus=""/> <br>
-      <input type="text" class="form-control" name="lname" placeholder="Last Name" required=""/> <br>
-      <input type="text" class="form-control" name="email" placeholder="Email Address" required=""  /><br>
-      <input type="password" class="form-control" name="password" placeholder="Password" required=""/>
-      <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" required=""/>      
+      <input type="text" class="form-control" th:field="*{firstName}"  placeholder="First Name" required="" autofocus=""/> <br>
+      <input type="text" class="form-control" th:field="*{lastName}"  placeholder="Last Name" required=""/> <br>
+      <input type="text" class="form-control" th:field="*{emailId}"  placeholder="Email Address" required=""  /><br>
+      <input type="password" class="form-control" name="password" placeholder="Password" required=""/>      
       
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button> <br>  
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Signup</button> <br>  
       <a href = "/login"><P> Already have account? Login Here!</p> </a>
     </form>
     

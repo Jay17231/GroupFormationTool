@@ -82,7 +82,7 @@ public class QueryBuilder implements IQueryBuilder {
             String key = ":" + obj.getKey();
             Object val = obj.getValue();
             if(val instanceof String) {
-                sql = sql.replaceAll(key, this.sanitize(String.valueOf(val), !likeSet.contains(key)));
+                sql = sql.replace(key, this.sanitize(String.valueOf(val), !likeSet.contains(key)));
             } else if(
                 val instanceof Integer || val instanceof LocalDate ||
                 val instanceof Float || val instanceof LocalDateTime ||

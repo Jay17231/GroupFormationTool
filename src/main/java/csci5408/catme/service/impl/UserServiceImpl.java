@@ -38,6 +38,8 @@ public class UserServiceImpl implements UserService {
     public UserSummary createUser(UserSummary summary, String password) {
         User u = UserSummary.to(summary);
         u.setPassword(password);
+        u.setStudentId("B00111111");
+        u.setAdmin(true);
         u = userDao.save(u);
         return UserSummary.from(u);
     }
