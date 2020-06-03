@@ -10,16 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
-import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -123,6 +119,16 @@ public class AuthenticationServiceImplTest {
         when(sessionStore.setSession(summary)).thenReturn("ABC");
         assertTrue(authenticationService.login(summary.getEmailId(), "abc", response));
         assertTrue(authenticationService.isAuthenticated());
+    }
+
+    @Test
+    public void generatePassword() {
+
+        int passlength = 8;
+        String newPassword = authenticationService.resetPassword(passlength);
+        assertNotNull(newPassword);
+        assertEquals(passlength, newPassword.length());
+
     }
 
 }
