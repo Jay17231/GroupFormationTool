@@ -69,7 +69,7 @@ public class AuthenticationServiceImplTest {
 	public void generatePassword() {
 
 		int passlength = 8;
-		String newPassword = authenticationService.generatePassword(passlength);
+		String newPassword = authenticationService.resetPassword(passlength);
 		assertNotNull(newPassword);
 		assertEquals(passlength, newPassword.length());
 
