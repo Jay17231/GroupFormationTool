@@ -8,32 +8,32 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.EmailNotifications;
+import csci5408.catme.service.EmailService;
 
 @Service
-public class EmailNotifServiceImpl implements EmailNotifications{
-	
+public class EmailServiceImpl implements EmailService {
+
 	private JavaMailSender javaMailSender;
-	
+
 	@Value("${spring.mail.username}")
 	private String fromEmail;
-	
+
 	@Autowired
-	public EmailNotifServiceImpl(JavaMailSender javaMailSender) throws MailException {
+	public EmailServiceImpl(JavaMailSender javaMailSender) throws MailException {
 		this.javaMailSender = javaMailSender;
 	}
 
 	@Override
 	public boolean sendMail(UserSummary summary, String subject, String body) {
-		
+
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(summary.getEmailId());
 		mailMessage.setFrom(fromEmail);
 		mailMessage.setSubject(subject);
 		mailMessage.setText(body);
-		
+
 		javaMailSender.send(mailMessage);
-		
+
 		return false;
 	}
 }
