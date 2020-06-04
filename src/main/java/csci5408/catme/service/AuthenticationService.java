@@ -12,6 +12,8 @@ public interface AuthenticationService {
 
 	boolean isAuthenticated();
 
+	boolean isAdmin(String email, String password);
+
 	String resetPassword(int passlength);
 
 	void changePassword(UserSummary user, String password);

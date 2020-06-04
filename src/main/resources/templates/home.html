@@ -1,13 +1,23 @@
+
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    
 </head>
 <body>
-<h1>Home</h1>
-<h2>
-This is home for student, instructor or TA.
-</h2>
+  <div class="wrapper">
+   	<div class="container">
+   	<h1>Welcome to the Dashboard</h1>
+   		<h2><span th:text="${Role}"></span> <span th:text="${name}"></span></h2>
+   		<div th:if=${status} class="text-center">
+   			<a class="btn btn-large btn-primary">Upload Student CSV</a>
+   			<a class="btn btn-large btn-info">Assign TA</a>
+   		</div>
+   	</div>
+  </div>
 </body>
 </html>

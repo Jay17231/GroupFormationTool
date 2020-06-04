@@ -78,26 +78,26 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 	public String findRole(Long userId) {
 		String roleString = "";
 
-		Connection con = dataSource.getConnection();
-		ResultSet rs;
-		assert con != null;
+		Connection connection = dataSource.getConnection();
+		ResultSet resultSet = null;
+		assert connection != null;
 
 		try {
-			Statement s = con.createStatement();
+			Statement s = connection.createStatement();
 			QueryBuilder builder = new QueryBuilder(
 					"select name from roles where id = (select role_id from enrollment where user_id = :user_id);");
 			builder.setParameter("user_id", userId);
 			if (s.execute(builder.query())) {
-				rs = s.getResultSet();
-				if (rs != null) {
-					roleString = rs.getString("name");
+				resultSet = s.getResultSet();
+				if (resultSet.next()) {
+					roleString = resultSet.getString("name");
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		} finally {
-			dataSource.close(con);
+			dataSource.close(connection);
 		}
 
 		return roleString;
