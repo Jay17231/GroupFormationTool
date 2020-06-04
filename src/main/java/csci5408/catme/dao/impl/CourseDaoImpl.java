@@ -30,11 +30,12 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public Course save(Course course) {
         Connection con = dataSource.getConnection();
-        ResultSet rs;
+        ResultSet rs = null;
+        Statement s = null;
         assert con != null;
 
         try {
-            Statement s = con.createStatement();
+            s = con.createStatement();
             QueryBuilder builder = new QueryBuilder(
                     "INSERT INTO course" +
                             "(id, name) " +
@@ -50,6 +51,8 @@ public class CourseDaoImpl implements CourseDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(rs);
+            dataSource.close(s);
             dataSource.close(con);
         }
         return course;
@@ -68,11 +71,12 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public boolean delete(Course course) {
         Connection con = dataSource.getConnection();
-        ResultSet rs;
+        ResultSet rs = null;
+        Statement s = null;
         assert con != null;
 
         try {
-            Statement s = con.createStatement();
+            s = con.createStatement();
             QueryBuilder builder = new QueryBuilder(
                     "Delete from course" +
                             "where id= :id " );
@@ -87,6 +91,8 @@ public class CourseDaoImpl implements CourseDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(rs);
+            dataSource.close(s);
             dataSource.close(con);
         }
 
@@ -100,7 +106,7 @@ public class CourseDaoImpl implements CourseDao {
     public List<Course> findAll() {
         Connection con = dataSource.getConnection();
         Statement s = null;
-        ResultSet rs;
+        ResultSet rs = null;
         assert con != null;
         List<Course> courses = new ArrayList<>();
         try {
@@ -121,6 +127,7 @@ public class CourseDaoImpl implements CourseDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(rs);
             dataSource.close(s);
             dataSource.close(con);
         }
@@ -130,7 +137,7 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public List<Course> findCoursesByUserId(Long id) {
         Connection con = dataSource.getConnection();
-        ResultSet rs;
+        ResultSet rs = null;
         Statement s = null;
         assert con != null;
         List<Course> courses = new ArrayList<>();
@@ -162,6 +169,7 @@ public class CourseDaoImpl implements CourseDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(rs);
             dataSource.close(s);
             dataSource.close(con);
         }

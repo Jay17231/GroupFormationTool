@@ -3,10 +3,7 @@ package csci5408.catme.sql;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * @author Aman Vishnani (aman.vishnani@dal.ca)
@@ -42,6 +39,14 @@ public class ConnectionManager {
     public void close(Connection c) {
         try {
             c.close();
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    public void close(ResultSet resultSet) {
+        try {
+            resultSet.close();
         } catch (Exception ignored) {
 
         }

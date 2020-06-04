@@ -2,7 +2,7 @@ package csci5408.catme.dao.impl;
 
 import csci5408.catme.dao.RoleDao;
 import csci5408.catme.domain.Role;
-import csci5408.catme.sql.MySQLDataSource;
+import csci5408.catme.sql.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Component;
 
@@ -17,9 +17,9 @@ import java.util.Optional;
 @Component
 public class RoleDaoImpl implements RoleDao {
 
-    final MySQLDataSource dataSource;
+    final ConnectionManager dataSource;
 
-    public RoleDaoImpl(MySQLDataSource dataSource) {
+    public RoleDaoImpl(ConnectionManager dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -36,10 +36,11 @@ public class RoleDaoImpl implements RoleDao {
     @Override
     public Optional<Role> findById(Long id) {
         Connection con = dataSource.getConnection();
-        ResultSet rs;
+        ResultSet rs = null;
+        Statement s = null;
         assert con != null;
         try {
-            Statement s = con.createStatement();
+            s = con.createStatement();
             QueryBuilder builder = new QueryBuilder("select id, name from roles where id= :id");
             builder.setParameter("id", id);
             if(s.execute(builder.query())) {
@@ -56,7 +57,9 @@ public class RoleDaoImpl implements RoleDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
-            dataSource.recycle(con);
+            dataSource.close(rs);
+            dataSource.close(s);
+            dataSource.close(con);
         }
         return Optional.empty();
     }
@@ -69,11 +72,12 @@ public class RoleDaoImpl implements RoleDao {
     @Override
     public List<Role> findAll() {
         Connection con = dataSource.getConnection();
-        ResultSet rs;
+        ResultSet rs = null;
+        Statement s = null;
         assert con != null;
         List<Role> roles = new ArrayList<>();
         try {
-            Statement s = con.createStatement();
+            s = con.createStatement();
             if(s.execute("select id, name from roles")) {
                 rs = s.getResultSet();
                 while (rs.next()) {
@@ -89,7 +93,9 @@ public class RoleDaoImpl implements RoleDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
-            dataSource.recycle(con);
+            dataSource.close(rs);
+            dataSource.close(s);
+            dataSource.close(con);
         }
         return roles;
     }

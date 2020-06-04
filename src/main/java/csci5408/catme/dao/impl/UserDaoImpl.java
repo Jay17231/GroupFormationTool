@@ -27,7 +27,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User save(User user) {
         Connection con = dataSource.getConnection();
-        ResultSet rs;
+        ResultSet rs = null;
         Statement s = null;
         assert con != null;
 
@@ -51,6 +51,7 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(rs);
             dataSource.close(s);
             dataSource.close(con);
         }
@@ -59,7 +60,6 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User update(User user) {
         Connection con = dataSource.getConnection();
-        ResultSet rs;
         Statement s = null;
         assert con != null;
         try {
@@ -98,7 +98,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> findAll() {
         Connection con = dataSource.getConnection();
-        ResultSet rs;
+        ResultSet rs = null;
         assert con != null;
         Statement s = null;
         List<User> users = new ArrayList<>();
@@ -115,6 +115,7 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(rs);
             dataSource.close(s);
             dataSource.close(con);
         }
@@ -124,7 +125,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User findByEmail(String email) {
         Connection con = dataSource.getConnection();
-        ResultSet rs;
+        ResultSet rs = null;
         Statement s = null;
         assert con != null;
         try {
@@ -143,6 +144,7 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(rs);
             dataSource.close(s);
             dataSource.close(con);
         }
