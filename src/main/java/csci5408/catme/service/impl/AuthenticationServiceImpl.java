@@ -1,26 +1,25 @@
 package csci5408.catme.service.impl;
 
-import static csci5408.catme.authentication.AuthConfig.AUTH_COOKIE_NAME;
-
-import java.util.Random;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import csci5408.catme.authentication.ISessionStore;
 import csci5408.catme.dao.UserDao;
 import csci5408.catme.domain.User;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.AuthenticationService;
 import csci5408.catme.service.UserService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Random;
+
+import static csci5408.catme.authentication.AuthConfig.AUTH_COOKIE_NAME;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -113,6 +112,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public void changePassword(UserSummary user, String password) {
 		String encodedPassword = bCryptPasswordEncoder.encode(password);
 		User u = userDao.findByEmail(user.getEmailId());
+		if(u == null) {
+			throw new UsernameNotFoundException(user.getEmailId());
+		}
 		u.setPassword(encodedPassword);
 		userDao.update(u);
 	}
