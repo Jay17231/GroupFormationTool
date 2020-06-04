@@ -56,10 +56,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				String cookieString = ISessionStore.setSession((UserSummary) auth.getPrincipal());
 				response.addCookie(new Cookie(AUTH_COOKIE_NAME, cookieString));
 			}
-		} catch (RuntimeException ex) {
-			return false;
-		} catch (Exception e) {
+		}  catch (NullPointerException ex) {
 			System.out.println("Code probably called from CommandLineRunner");
+		} catch (Exception ex) {
+			return false;
 		}
 
 		return sc.getAuthentication().isAuthenticated();
