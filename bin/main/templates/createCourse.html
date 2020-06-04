@@ -9,9 +9,11 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div th:replace="header :: adminheader"></div>   
+
 
 <div class="container">
-  <h2>Vertical (basic) form</h2>
+  <h2>Create Course</h2>
   <form action="#" th:action="@{/createCourse}" th:object="${createCourse}" method="post">
     
     <div class="form-group">

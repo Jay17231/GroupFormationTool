@@ -38,12 +38,16 @@ public class CourseDaoImpl implements CourseDao {
 					"INSERT INTO course" +
 							"(id, name) " +
 							"values (default,:name)");
-			builder.setParameter("name", course.getCourseName());
+			builder.setParameter("name", course.getName());
 
 
 			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+			
 			rs = s.getGeneratedKeys();
-			course.setId(rs.getLong(1));
+			if (rs.next()) {
+				course.setId(rs.getLong(1));
+			}
+			
 
 		} catch (SQLException e) {
 			e.printStackTrace();

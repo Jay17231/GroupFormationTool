@@ -24,11 +24,11 @@ public class Course implements Serializable {
         this.id = id;
     }
 
-    public String getCourseName() {
+    public String getName() {
         return name;
     }
 
-    public void setCourseName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
