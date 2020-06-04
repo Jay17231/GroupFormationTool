@@ -3,8 +3,6 @@ package csci5408.catme.authentication;
 import csci5408.catme.dao.UserDao;
 import csci5408.catme.domain.User;
 import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.AuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,7 +33,7 @@ public class CatmeAuthenticationProvider implements AuthenticationProvider {
         if(bCryptPasswordEncoder.matches(password, u.getPassword())) {
             return UserSummary.from(u);
         }
-        return null;
+        throw new RuntimeException("Wrong Username or Password Exception");
     }
 
     @Override

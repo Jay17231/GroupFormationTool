@@ -39,7 +39,7 @@ public class LoginController {
 	}
 
 	@GetMapping("/signup")
-	public String signup(Model model) {
+	public String signUp(Model model) {
 		model.addAttribute("signup", new UserSummary());
 		return "signup"; // extension depends on view resolver.
 	}
@@ -47,7 +47,7 @@ public class LoginController {
 	@PostMapping("/signup")
 	public String signupPost(@ModelAttribute UserSummary signup, HttpServletRequest request) {
 		UserSummary userSummary = authenticationService.signUp(signup, request.getParameter("password").toString());
-		return "login"; // extension depends on view resolver.
+		return "redirect:login"; // extension depends on view resolver.
 	}
 
 	@GetMapping("/forgotpassword")
@@ -57,45 +57,48 @@ public class LoginController {
 
 	@GetMapping("/login")
 	public String login() {
+		if (authenticationService.isAuthenticated()) {
+			return "redirect:";
+		}
 		return "login.html"; // extension depends on view resolver.
 	}
 
 	@PostMapping("/login")
-	public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
+	public ModelAndView loginPost(HttpServletRequest request, HttpServletResponse response) {
 
 		Course userCourse;
 		ModelAndView mView = new ModelAndView();
+		boolean authState = authenticationService.login(request.getParameter("email"), request.getParameter("password"),
+				response);
 
-		if (authenticationService.login(request.getParameter("email"), request.getParameter("password"), response)) {
+		if (!authState) {
+			return new ModelAndView("redirect:login");
+		}
 
-			if (authenticationService.isAdmin(request.getParameter("email"), request.getParameter("password"))) {
-				mView = new ModelAndView("adminDashboard");
-				return mView;
-			} else {
-				mView = new ModelAndView("home");
-				String emailString = request.getParameter("email");
-				UserSummary userSummary = userService.getUserByEmailId(emailString);
-				Long userId = userSummary.getId();
-				userCourse = courseDao.findCoursesByUserId(userId).get(0);
-
-				String courseName = userCourse.getCourseName();
-				String name = userSummary.getFirstName() + " " + userSummary.getLastName();
-				String role = enrollService.getRole(userSummary);
-
-				mView.addObject("course", courseName);
-				mView.addObject("courseid", userCourse.getId());
-				mView.addObject("status", false);
-				if (role.compareTo("Instructor") == 0) {
-					mView.addObject("status", true);
-				}
-
-				mView.addObject("Role", role);
-				mView.addObject("name", name);
-				return mView;
-			}
+		if (authenticationService.isAdmin(request.getParameter("email"), request.getParameter("password"))) {
+			mView = new ModelAndView("adminDashboard");
+			return mView;
 		} else {
-			mView = new ModelAndView("login");
-			return mView; // extension depends on view resolver.
+			mView = new ModelAndView("home");
+			String emailString = request.getParameter("email");
+			UserSummary userSummary = userService.getUserByEmailId(emailString);
+			Long userId = userSummary.getId();
+			userCourse = courseDao.findCoursesByUserId(userId).get(0);
+
+			String courseName = userCourse.getCourseName();
+			String name = userSummary.getFirstName() + " " + userSummary.getLastName();
+			String role = enrollService.getRole(userSummary);
+
+			mView.addObject("course", courseName);
+			mView.addObject("courseid", userCourse.getId());
+			mView.addObject("status", false);
+			if (role.compareTo("Instructor") == 0) {
+				mView.addObject("status", true);
+			}
+
+			mView.addObject("Role", role);
+			mView.addObject("name", name);
+			return mView;
 		}
 
 	}

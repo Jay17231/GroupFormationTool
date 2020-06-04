@@ -46,16 +46,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public boolean login(String email, String password, HttpServletResponse response) {
 		UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(email, password);
-		Authentication auth = authenticationManager.authenticate(authReq);
 
 		SecurityContext sc = SecurityContextHolder.getContext();
-		sc.setAuthentication(auth);
 
 		try {
+			Authentication auth = authenticationManager.authenticate(authReq);
+			sc.setAuthentication(auth);
 			if (this.isAuthenticated()) {
 				String cookieString = ISessionStore.setSession((UserSummary) auth.getPrincipal());
 				response.addCookie(new Cookie(AUTH_COOKIE_NAME, cookieString));
 			}
+		} catch (RuntimeException ex) {
+			return false;
 		} catch (Exception e) {
 			System.out.println("Code probably called from CommandLineRunner");
 		}
@@ -78,7 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public boolean isAuthenticated() {
 		SecurityContext sc = SecurityContextHolder.getContext();
 		Authentication authentication = sc.getAuthentication();
-		if (authentication == null) {
+		if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
 			return false;
 		}
 		return authentication.isAuthenticated();
