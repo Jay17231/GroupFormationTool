@@ -125,6 +125,7 @@ public class UploadCSVController {
 		enrollment.setCourseId(courseid);
 		enrollment.setUserId(newUser.getId());
 		enrollment.setRoleId(roleId);
+		enrollment.setCourseId(courseid);
 
 		enrollmentDao.save(enrollment); // Enrolling into course
 
