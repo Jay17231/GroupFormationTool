@@ -64,8 +64,36 @@ public class CourseDaoImpl implements CourseDao {
     }
 
     @Override
-    public Optional<Course> findById(String s) {
-        return Optional.empty();
+    public Optional<Course> findById(Long id) {
+        Connection con = dataSource.getConnection();
+        ResultSet rs = null;
+        Statement s = null;
+        assert con != null;
+        Course course = null;
+        try {
+            s = con.createStatement();
+            QueryBuilder builder = new QueryBuilder(
+                    "SELECT id, name from course" +
+                            " WHERE id = :id ");
+            builder.setParameter("id", id);
+
+
+            s.execute(builder.query());
+            rs=s.getResultSet();
+            if (rs.next()) {
+                course = new Course(rs.getLong("id"), rs.getString("name"));
+                return Optional.of(course);
+            } else  {
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.close(rs);
+            dataSource.close(s);
+            dataSource.close(con);
+        }
     }
 
     @Override

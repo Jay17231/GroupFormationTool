@@ -20,7 +20,7 @@ public class ApplicationController {
     @GetMapping
     public String greetings() {
         if(authenticationService.isAuthenticated()) {
-            return "home";
+            return "courses";
         }
         return "redirect:login";
 

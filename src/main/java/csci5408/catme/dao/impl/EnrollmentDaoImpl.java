@@ -1,19 +1,18 @@
 package csci5408.catme.dao.impl;
 
+import csci5408.catme.dao.EnrollmentDao;
+import csci5408.catme.domain.Enrollment;
+import csci5408.catme.domain.Role;
+import csci5408.catme.sql.ConnectionManager;
+import csci5408.catme.sql.impl.QueryBuilder;
+import org.springframework.stereotype.Component;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.stereotype.Component;
-
-import csci5408.catme.dao.EnrollmentDao;
-import csci5408.catme.domain.Enrollment;
-import csci5408.catme.domain.Role;
-import csci5408.catme.sql.ConnectionManager;
-import csci5408.catme.sql.impl.QueryBuilder;
 
 @Component
 public class EnrollmentDaoImpl implements EnrollmentDao {
@@ -79,8 +78,8 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 	}
 
 	@Override
-	public Role findRole(Long userId) {
-		Role roleString = new Role();
+	public Role findRole(Long userId, Long courseId) {
+		Role role = new Role();
 
 		Connection connection = dataSource.getConnection();
 		ResultSet resultSet = null;
@@ -89,15 +88,21 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 
 		try {
 			s = connection.createStatement();
-			QueryBuilder builder = new QueryBuilder(
-					"select * from roles where id = (select role_id from enrollment where user_id = :user_id);");
+			String sql = "select r.id, r.name \n" +
+					"from roles r\n" +
+					"inner join enrollment e on r.id = e.role_id\n" +
+					"where e.course_id = :course_id and e.user_id = :user_id";
+			QueryBuilder builder = new QueryBuilder(sql);
+
 			builder.setParameter("user_id", userId);
+			builder.setParameter("course_id", courseId);
 			if (s.execute(builder.query())) {
 				resultSet = s.getResultSet();
 				if (resultSet.next()) {
-					roleString.setId(resultSet.getLong("id"));
-					roleString.setName(resultSet.getString("name"));
+					role.setId(resultSet.getLong("id"));
+					role.setName(resultSet.getString("name"));
 				}
+				return role;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -108,7 +113,7 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 			dataSource.close(connection);
 		}
 
-		return roleString;
+		return null;
 	}
 
 	@Override

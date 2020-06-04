@@ -1,12 +1,12 @@
 package csci5408.catme.service;
 
-import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
-
 import csci5408.catme.domain.Role;
+import csci5408.catme.dto.CourseRole;
 import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface EnrollmentService {
 	boolean enrollStudent(CourseSummary c, UserSummary u);
@@ -15,6 +15,10 @@ public interface EnrollmentService {
 
 	boolean enrollStudents(CourseSummary c, MultipartFile file);
 
-	Role getRole(UserSummary user);
+	Role getRole(UserSummary user, CourseSummary summary);
+
+	List<CourseRole> getUserCoursesAndRoles(UserSummary userSummary);
+
+	List<CourseSummary> getEnrolledCourses(UserSummary userSummary);
 
 }

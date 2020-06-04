@@ -2,6 +2,9 @@ package csci5408.catme.dto;
 
 import csci5408.catme.domain.Course;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CourseSummary {
     private Long id;
 
@@ -38,6 +41,14 @@ public class CourseSummary {
 
     public static CourseSummary from(Course course) {
         return new CourseSummary(course.getId(), course.getCourseName());
+    }
+
+    public static List<CourseSummary> from(List<Course> courses) {
+        ArrayList<CourseSummary> summaries = new ArrayList<>();
+        for(Course course: courses) {
+            summaries.add(CourseSummary.from(course));
+        }
+        return summaries;
     }
 
     public static Course to(CourseSummary course) {

@@ -2,11 +2,13 @@ package csci5408.catme.controller;
 
 import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
+import csci5408.catme.dto.CourseRole;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.AuthenticationService;
 import csci5408.catme.service.EnrollmentService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -37,7 +39,7 @@ public class CourseController {
 			return mView;
 		} else {
 			Long userId = userSummary.getId();
-			List<Course> userCourses = courseDao.findCoursesByUserId(userId);
+			List<CourseRole> userCourses = enrollmentService.getUserCoursesAndRoles(userSummary);
 			List<Course> globalCourses = courseDao.findAll();
 			mView = new ModelAndView("courses");
 			mView.addObject("userCourses", userCourses);
@@ -82,5 +84,12 @@ public class CourseController {
 //			}
 
 		}
+	}
+
+	@GetMapping("/courses/{courseId}")
+	public ModelAndView coursePage(@PathVariable Long courseId) {
+		ModelAndView modelAndView = new ModelAndView("course-page");
+		modelAndView.addObject("courseOp", courseDao.findById(courseId));
+		return modelAndView;
 	}
 }
