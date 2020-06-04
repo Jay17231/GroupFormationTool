@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
+import csci5408.catme.domain.Role;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.AuthenticationService;
 import csci5408.catme.service.EnrollmentService;
@@ -72,7 +73,7 @@ public class LoginController {
 				response);
 
 		if (!authState) {
-			return new ModelAndView("redirect:login");
+			return new ModelAndView("login");
 		}
 
 		if (authenticationService.isAdmin(request.getParameter("email"), request.getParameter("password"))) {
@@ -87,8 +88,18 @@ public class LoginController {
 
 			String courseName = userCourse.getCourseName();
 			String name = userSummary.getFirstName() + " " + userSummary.getLastName();
+			Role userRole = enrollService.getRole(userSummary);
 			String role = enrollService.getRole(userSummary).getName();
 			Long roleId = enrollService.getRole(userSummary).getId();
+
+			if (userRole == null) {
+				mView.addObject("guest", true);
+				return new ModelAndView("courses");
+			}
+			if (role.compareToIgnoreCase("Student") == 0) {
+				mView.addObject("student", true);
+				return new ModelAndView("courses");
+			}
 
 			mView.addObject("course", courseName);
 			mView.addObject("courseid", userCourse.getId());

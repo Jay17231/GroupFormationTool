@@ -56,7 +56,7 @@ public class AssignTAController {
 		}
 		model.addAttribute("message", "Role Changed to TA Successfully!");
 		model.addAttribute("status", madeta);
-		model.addAttribute("name", userSummary.getFirstName() + userSummary.getLastName());
+		model.addAttribute("name", userSummary.getFirstName() + " " + userSummary.getLastName());
 		model.addAttribute("studentId", userSummary.getStudentId());
 		model.addAttribute("email", emailid);
 

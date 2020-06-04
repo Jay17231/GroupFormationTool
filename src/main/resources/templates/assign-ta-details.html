@@ -26,7 +26,13 @@
 				</form>
    		</div>
    		<div th:if=${status}>
-   			<h3 th:text="${message}" class="text-success text-center"></h3>
+   			<h3 th:text="${message}" class="text-success text-center mb-3"></h3>
+   			<div class="text-center">
+   				<h3 class="mb-3">TA Details: </h3>
+	   			<p><b>Banner ID:</b> <span th:text="${studentId}"></span> </p>
+	   			<p><b>Name:</b> <span th:text="${name}"></span> </p>
+	   			<p><b>Email:</b> <span th:text="${email}"></span> </p>
+   			</div>
    		</div>
    	</div>
   </div>
