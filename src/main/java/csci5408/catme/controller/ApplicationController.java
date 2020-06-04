@@ -20,7 +20,10 @@ public class ApplicationController {
     @GetMapping
     public String greetings() {
         if(authenticationService.isAuthenticated()) {
-            return "courses";
+            if(authenticationService.getLoggedInUser().getAdmin()) {
+                // @TODO: Goto ADMIN PAGE
+            }
+            return "redirect:courses";
         }
         return "redirect:login";
 
