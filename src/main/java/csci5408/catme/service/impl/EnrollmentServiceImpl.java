@@ -1,10 +1,8 @@
 package csci5408.catme.service.impl;
 
-import csci5408.catme.dao.CourseDao;
-import csci5408.catme.dao.EnrollmentDao;
-import csci5408.catme.dao.RoleDao;
-import csci5408.catme.dao.UserDao;
+import csci5408.catme.dao.*;
 import csci5408.catme.domain.Course;
+import csci5408.catme.domain.Operation;
 import csci5408.catme.domain.Role;
 import csci5408.catme.domain.User;
 import csci5408.catme.dto.CourseRole;
@@ -28,11 +26,15 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
 	final RoleDao roleDao;
 
-	public EnrollmentServiceImpl(UserDao dao, CourseDao courseDao, EnrollmentDao enrollmentDao, RoleDao roleDao) {
+	final OperationDao operationDao;
+
+	public EnrollmentServiceImpl(UserDao dao, CourseDao courseDao, EnrollmentDao enrollmentDao, RoleDao roleDao,
+								 OperationDao operationDao) {
 		this.userDao = dao;
 		this.courseDao = courseDao;
 		this.enrollmentDao = enrollmentDao;
 		this.roleDao = roleDao;
+		this.operationDao = operationDao;
 	}
 
 	@Override
@@ -70,13 +72,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		List<CourseRole> courseRoles = new ArrayList<>();
 		for (CourseSummary summary:
 			 summaries) {
-			Role role = enrollmentDao.findRole(userSummary.getId(), summary.getId());
-			CourseRole cr = new CourseRole();
-			cr.setCourseId(summary.getId());
-			cr.setRoleId(role.getId());
-			cr.setCourseName(summary.getCourseName());
-			cr.setRoleName(role.getName());
-			courseRoles.add(cr);
+			courseRoles.add(getCourseRole(userSummary, summary, false));
 		}
 		return courseRoles;
 	}
@@ -85,5 +81,20 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	public List<CourseSummary> getEnrolledCourses(UserSummary userSummary) {
 		List<Course> enrolledCourses =  courseDao.findCoursesByUserId(userSummary.getId());
 		return CourseSummary.from(enrolledCourses);
+	}
+
+	@Override
+	public CourseRole getCourseRole(UserSummary userSummary, CourseSummary summary, boolean fetchPermissions) {
+		Role role = enrollmentDao.findRole(userSummary.getId(), summary.getId());
+		CourseRole cr = new CourseRole();
+		cr.setCourseId(summary.getId());
+		cr.setRoleId(role.getId());
+		cr.setCourseName(summary.getCourseName());
+		cr.setRoleName(role.getName());
+		if(fetchPermissions) {
+			List<Operation> op = operationDao.findAllByRoleId(role.getId());
+			cr.setPermissions(op);
+		}
+		return cr;
 	}
 }

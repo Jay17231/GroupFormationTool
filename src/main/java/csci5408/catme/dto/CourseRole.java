@@ -1,10 +1,15 @@
 package csci5408.catme.dto;
 
+import csci5408.catme.domain.Operation;
+
+import java.util.List;
+
 public class CourseRole {
     private Long courseId;
     private String courseName;
     private Long roleId;
     private String roleName;
+    private List<Operation> permissions;
 
     public Long getCourseId() {
         return courseId;
@@ -36,5 +41,13 @@ public class CourseRole {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public List<Operation> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Operation> permissions) {
+        this.permissions = permissions;
     }
 }

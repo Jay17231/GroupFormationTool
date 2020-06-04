@@ -92,4 +92,38 @@ public class OperationDaoImpl implements OperationDao {
         }
         return operations;
     }
+
+    @Override
+    public List<Operation> findAllByRoleId(Long id) {
+        String sql = "select o.id, o.operation \n" +
+                "from operations o \n" +
+                "inner join role_operation ro on o.id = ro.operation_id\n" +
+                "where role_id= :role_id ";
+        QueryBuilder queryBuilder = new QueryBuilder(sql);
+        queryBuilder.setParameter("role_id", id);
+        Connection con = dataSource.getConnection();
+        ResultSet rs = null;
+        Statement s = null;
+        assert con != null;
+        List<Operation> operations = new ArrayList<>();
+        try {
+            s = con.createStatement();
+            if(s.execute(queryBuilder.query())) {
+                rs = s.getResultSet();
+                while (rs.next()) {
+                    Operation operation = Operation.valueOf(rs.getString("operation"));
+                    operations.add(operation);
+                }
+                return operations;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.close(rs);
+            dataSource.close(s);
+            dataSource.close(con);
+        }
+        return operations;
+    }
 }

@@ -23,6 +23,7 @@
         <div th:if="${courseOp.isPresent()}">
             <h1>Welcome to the Course Page!</h1>
             <h2 th:text="${courseOp.get().courseName}"></h2>
+            <span th:text="${'you are the course ' + (role.roleName != null ? role.roleName : 'Guest')}"></span>
 
         </div>
 </div>

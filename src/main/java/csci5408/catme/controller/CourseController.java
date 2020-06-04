@@ -3,6 +3,7 @@ package csci5408.catme.controller;
 import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.dto.CourseRole;
+import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.AuthenticationService;
 import csci5408.catme.service.EnrollmentService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class CourseController {
@@ -88,8 +90,20 @@ public class CourseController {
 
 	@GetMapping("/courses/{courseId}")
 	public ModelAndView coursePage(@PathVariable Long courseId) {
+		if(!authenticationService.isAuthenticated()) {
+			return new ModelAndView("redirect:/login");
+		}
 		ModelAndView modelAndView = new ModelAndView("course-page");
-		modelAndView.addObject("courseOp", courseDao.findById(courseId));
+		Optional<Course> c = courseDao.findById(courseId);
+		CourseRole courseRole = null;
+		if(c.isPresent()) {
+			courseRole = enrollmentService.getCourseRole(
+					authenticationService.getLoggedInUser(),
+					CourseSummary.from(c.get()),
+					true);
+		}
+		modelAndView.addObject("role", courseRole);
+		modelAndView.addObject("courseOp", c);
 		return modelAndView;
 	}
 }

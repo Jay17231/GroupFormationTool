@@ -3,6 +3,7 @@ package csci5408.catme.controller;
 import csci5408.catme.service.AuthenticationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author Aman Vishnani (aman.vishnani@dal.ca)
@@ -18,14 +19,14 @@ public class ApplicationController {
     }
 
     @GetMapping
-    public String greetings() {
+    public ModelAndView greetings() {
         if(authenticationService.isAuthenticated()) {
             if(authenticationService.getLoggedInUser().getAdmin()) {
-                // @TODO: Goto ADMIN PAGE
+                return new ModelAndView("adminDashboard");
             }
-            return "redirect:courses";
+            return new ModelAndView("redirect:courses");
         }
-        return "redirect:login";
+        return new ModelAndView("redirect:login");
 
     }
     

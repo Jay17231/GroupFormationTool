@@ -21,4 +21,6 @@ public interface EnrollmentService {
 
 	List<CourseSummary> getEnrolledCourses(UserSummary userSummary);
 
+	CourseRole getCourseRole(UserSummary userSummary, CourseSummary summary, boolean fetchPermissions);
+
 }
