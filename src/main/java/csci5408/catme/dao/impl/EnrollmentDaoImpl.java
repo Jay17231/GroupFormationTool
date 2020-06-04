@@ -60,9 +60,9 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 	@Override
 	public Enrollment update(Enrollment enrollment) {
 		String sql = "UPDATE enrollment " +
-				"set role_id= :roleId " +
-				"set user_id= :userId " +
-				"set course_id= :courseId " +
+				"set role_id= :roleId ," +
+				" user_id= :userId ," +
+				" course_id= :courseId " +
 				"where id= :id ";
 		Connection con = dataSource.getConnection();
 		ResultSet rs = null;
@@ -76,7 +76,7 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 			builder.setParameter("userId", enrollment.getUserId());
 			builder.setParameter("roleId", enrollment.getRoleId());
 			builder.setParameter("id", enrollment.getId());
-			s.executeUpdate(builder.query());
+			s.execute(builder.query());
 
 			return enrollment;
 		} catch (SQLException e) {
@@ -106,7 +106,6 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 
 	@Override
 	public Role findRole(Long userId, Long courseId) {
-		Role role = new Role();
 
 		Connection connection = dataSource.getConnection();
 		ResultSet resultSet = null;
@@ -114,6 +113,7 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 		assert connection != null;
 
 		try {
+			Role role = new Role();
 			s = connection.createStatement();
 			String sql = "select r.id, r.name \n" +
 					"from roles r\n" +
@@ -128,8 +128,8 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 				if (resultSet.next()) {
 					role.setId(resultSet.getLong("id"));
 					role.setName(resultSet.getString("name"));
+					return role;
 				}
-				return role;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -184,8 +184,8 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 			s = connection.createStatement();
 			QueryBuilder builder = new QueryBuilder(sql);
 
-			builder.setParameter("user_id", userId);
-			builder.setParameter("course_id", courseId);
+			builder.setParameter("userId", userId);
+			builder.setParameter("courseId", courseId);
 			if (s.execute(builder.query())) {
 				resultSet = s.getResultSet();
 				if (resultSet.next()) {

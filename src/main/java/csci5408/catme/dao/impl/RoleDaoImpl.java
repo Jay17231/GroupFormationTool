@@ -1,5 +1,11 @@
 package csci5408.catme.dao.impl;
 
+import csci5408.catme.dao.RoleDao;
+import csci5408.catme.domain.Role;
+import csci5408.catme.sql.ConnectionManager;
+import csci5408.catme.sql.impl.QueryBuilder;
+import org.springframework.stereotype.Component;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,13 +13,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.stereotype.Component;
-
-import csci5408.catme.dao.RoleDao;
-import csci5408.catme.domain.Role;
-import csci5408.catme.sql.ConnectionManager;
-import csci5408.catme.sql.impl.QueryBuilder;
 
 @Component
 public class RoleDaoImpl implements RoleDao {
@@ -97,7 +96,7 @@ public class RoleDaoImpl implements RoleDao {
 
 	@Override
 	public Long getRoleIdByName(String roleName) {
-		String sql = "select id, name from roles where name = ':roleName'";
+		String sql = "select id, name from roles where name = :roleName";
 		Connection con = dataSource.getConnection();
 		ResultSet rs = null;
 		Statement s = null;
@@ -106,7 +105,7 @@ public class RoleDaoImpl implements RoleDao {
 		queryBuilder.setParameter("roleName", roleName);
 		try {
 			s = con.createStatement();
-			if (s.execute(sql)) {
+			if (s.execute(queryBuilder.query())) {
 				rs = s.getResultSet();
 				if (rs.next()) {
 					return rs.getLong("id");

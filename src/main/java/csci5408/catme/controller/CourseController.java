@@ -1,13 +1,5 @@
 package csci5408.catme.controller;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.ModelAndView;
-
 import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.domain.Operation;
@@ -16,6 +8,13 @@ import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.AuthenticationService;
 import csci5408.catme.service.EnrollmentService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class CourseController {
@@ -103,15 +102,19 @@ public class CourseController {
 			courseRole = enrollmentService.getCourseRole(authenticationService.getLoggedInUser(),
 					CourseSummary.from(c.get()), true);
 		}
-		boolean addStudents = false;
+		boolean addStudents = false, addTa = false;
 		for (Operation operation : courseRole.getPermissions()) {
 			if (operation.toString().equals("ADD_STUDENTS")) {
 				addStudents = true;
+			}
+			if (operation.toString().equals("ADD_TA")) {
+				addTa = true;
 			}
 		}
 		modelAndView.addObject("role", courseRole);
 		modelAndView.addObject("courseOp", c);
 		modelAndView.addObject("addStudents", addStudents);
+		modelAndView.addObject("addTa", addTa);
 		return modelAndView;
 	}
 }

@@ -107,6 +107,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	@Override
 	public CourseRole getCourseRole(UserSummary userSummary, CourseSummary summary, boolean fetchPermissions) {
 		Role role = enrollmentDao.findRole(userSummary.getId(), summary.getId());
+		if(role == null) {
+			role = new Role();
+		}
 		CourseRole cr = new CourseRole();
 		cr.setCourseId(summary.getId());
 		cr.setRoleId(role.getId());
