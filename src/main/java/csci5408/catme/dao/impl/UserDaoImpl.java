@@ -2,7 +2,7 @@ package csci5408.catme.dao.impl;
 
 import csci5408.catme.dao.UserDao;
 import csci5408.catme.domain.User;
-import csci5408.catme.sql.MySQLDataSource;
+import csci5408.catme.sql.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Component;
 
@@ -18,9 +18,9 @@ import java.util.Optional;
 @Component
 public class UserDaoImpl implements UserDao {
 
-    final MySQLDataSource dataSource;
+    final ConnectionManager dataSource;
 
-    public UserDaoImpl(MySQLDataSource dataSource) {
+    public UserDaoImpl(ConnectionManager dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -28,10 +28,11 @@ public class UserDaoImpl implements UserDao {
     public User save(User user) {
         Connection con = dataSource.getConnection();
         ResultSet rs;
+        Statement s = null;
         assert con != null;
 
         try {
-            Statement s = con.createStatement();
+            s = con.createStatement();
             QueryBuilder builder = new QueryBuilder(
                     "INSERT INTO user " +
                         "(id, first_name, last_name, email_id, password, student_id, is_admin) " +
@@ -50,6 +51,7 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(s);
             dataSource.close(con);
         }
     }
@@ -58,6 +60,7 @@ public class UserDaoImpl implements UserDao {
     public User update(User user) {
         Connection con = dataSource.getConnection();
         ResultSet rs;
+        Statement s = null;
         assert con != null;
         try {
             QueryBuilder builder = new QueryBuilder(
@@ -70,13 +73,14 @@ public class UserDaoImpl implements UserDao {
             builder.setParameter("password", user.getPassword());
             builder.setParameter("studentId", user.getStudentId());
             builder.setParameter("isAdmin", user.isAdmin());
-            Statement s = con.createStatement();
+            s = con.createStatement();
             s.execute(builder.query());
             return findByEmail(user.getEmailId());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(s);
             dataSource.close(con);
         }
     }
@@ -96,9 +100,10 @@ public class UserDaoImpl implements UserDao {
         Connection con = dataSource.getConnection();
         ResultSet rs;
         assert con != null;
+        Statement s = null;
         List<User> users = new ArrayList<>();
         try {
-            Statement s = con.createStatement();
+            s = con.createStatement();
             if(s.execute("select id, first_name, last_name, email_id, password, student_id, is_admin from user")) {
                 rs = s.getResultSet();
                 while (rs.next()) {
@@ -110,6 +115,7 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(s);
             dataSource.close(con);
         }
         return users;
@@ -119,9 +125,10 @@ public class UserDaoImpl implements UserDao {
     public User findByEmail(String email) {
         Connection con = dataSource.getConnection();
         ResultSet rs;
+        Statement s = null;
         assert con != null;
         try {
-            Statement s = con.createStatement();
+            s = con.createStatement();
             QueryBuilder builder = new QueryBuilder(
                     "select id, first_name, last_name, email_id, password, student_id, is_admin " +
                     "from user where email_id = :emailId");
@@ -136,6 +143,7 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
+            dataSource.close(s);
             dataSource.close(con);
         }
         return null;
