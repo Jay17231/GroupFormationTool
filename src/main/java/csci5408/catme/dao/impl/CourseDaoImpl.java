@@ -3,7 +3,7 @@ package csci5408.catme.dao.impl;
 
 import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
-import csci5408.catme.sql.MySQLDataSource;
+import csci5408.catme.sql.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +18,10 @@ import java.util.Optional;
 @Service
 public class CourseDaoImpl implements CourseDao {
 
-    final MySQLDataSource dataSource;
+    final ConnectionManager dataSource;
 
 
-    public CourseDaoImpl(MySQLDataSource dataSource) {
+    public CourseDaoImpl(ConnectionManager dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -48,11 +48,12 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public List<Course> findAll() {
         Connection con = dataSource.getConnection();
+        Statement s = null;
         ResultSet rs;
         assert con != null;
         List<Course> courses = new ArrayList<>();
         try {
-            Statement s = con.createStatement();
+            s = con.createStatement();
             if(s.execute("select id, name from course")) {
                 rs = s.getResultSet();
                 while (rs.next()) {
@@ -69,7 +70,8 @@ public class CourseDaoImpl implements CourseDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
-            dataSource.recycle(con);
+            dataSource.close(s);
+            dataSource.close(con);
         }
         return courses;
     }
@@ -78,10 +80,11 @@ public class CourseDaoImpl implements CourseDao {
     public List<Course> findCoursesByUserId(Long id) {
         Connection con = dataSource.getConnection();
         ResultSet rs;
+        Statement s = null;
         assert con != null;
         List<Course> courses = new ArrayList<>();
         try {
-            Statement s = con.createStatement();
+            s = con.createStatement();
 
             String sql = "select c.id, c.name\n" +
                     "from course c\n" +
@@ -108,7 +111,8 @@ public class CourseDaoImpl implements CourseDao {
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {
-            dataSource.recycle(con);
+            dataSource.close(s);
+            dataSource.close(con);
         }
         return courses;
     }

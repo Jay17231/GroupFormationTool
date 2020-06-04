@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author Aman Vishnani (aman.vishnani@dal.ca)
@@ -28,6 +29,21 @@ public class ConnectionManager {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public void close(Statement s) {
+        try {
+            s.close();
+        } catch (Exception ignored) {
+
+        }
+    }
+    public void close(Connection c) {
+        try {
+            c.close();
+        } catch (Exception ignored) {
+
         }
     }
 
