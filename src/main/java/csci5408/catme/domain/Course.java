@@ -1,36 +1,34 @@
 package csci5408.catme.domain;
 
 public class Course {
-    private Long id;
+	private int id;
 
-    private String name;
+	private String name;
 
-    public Course(Long id,String name){
-        this.id=id;
-        this.name=name;
+	public Course(int i, String name) {
+		this.id = i;
+		this.name = name;
 
-    }
-    public Long getId() {
-        return id;
-    }
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public String getCourseName() {
-        return name;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public void setCourseName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public String toString() {
-        return "Course{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "Course{" + "id=" + id + ", name='" + name + '\'' + '}';
+	}
 }

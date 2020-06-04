@@ -1,12 +1,5 @@
 package csci5408.catme.dao.impl;
 
-
-import csci5408.catme.dao.CourseDao;
-import csci5408.catme.domain.Course;
-import csci5408.catme.sql.ConnectionManager;
-import csci5408.catme.sql.impl.QueryBuilder;
-import org.springframework.stereotype.Component;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,168 +8,183 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
+import csci5408.catme.dao.CourseDao;
+import csci5408.catme.domain.Course;
+import csci5408.catme.sql.ConnectionManager;
+import csci5408.catme.sql.impl.QueryBuilder;
+
 @Component
 public class CourseDaoImpl implements CourseDao {
 
-    final ConnectionManager dataSource;
+	final ConnectionManager dataSource;
 
+	public CourseDaoImpl(ConnectionManager dataSource) {
+		this.dataSource = dataSource;
+	}
 
-    public CourseDaoImpl(ConnectionManager dataSource) {
-        this.dataSource = dataSource;
-    }
+	@Override
+	public Course save(Course course) {
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
 
+		try {
+			s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder("INSERT INTO course" + "(id, name) " + "values (default,:name)");
+			builder.setParameter("name", course.getName());
 
+			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+			rs = s.getGeneratedKeys();
+			course.setId(rs.getInt(1));
 
-    @Override
-    public Course save(Course course) {
-        Connection con = dataSource.getConnection();
-        ResultSet rs = null;
-        Statement s = null;
-        assert con != null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(rs);
+			dataSource.close(s);
+			dataSource.close(con);
+		}
+		return course;
+	}
 
-        try {
-            s = con.createStatement();
-            QueryBuilder builder = new QueryBuilder(
-                    "INSERT INTO course" +
-                            "(id, name) " +
-                            "values (default,:name)");
-            builder.setParameter("name",course.getCourseName());
+	@Override
+	public Course update(Course course) {
+		return null;
+	}
 
+	@Override
+	public Optional<Course> findById(String s) {
 
-            s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
-            rs=s.getGeneratedKeys();
-            course.setId(rs.getLong(1));
+		return Optional.empty();
+	}
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            dataSource.close(rs);
-            dataSource.close(s);
-            dataSource.close(con);
-        }
-        return course;
-    }
+	@Override
+	public boolean delete(Course course) {
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
 
-    @Override
-    public Course update(Course course) {
-        return null;
-    }
+		try {
+			s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder("Delete from course" + "where id= :id ");
+			builder.setParameter("name", course.getId());
 
-    @Override
-    public Optional<Course> findById(String s) {
-        return Optional.empty();
-    }
+			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+			rs = s.getGeneratedKeys();
+			course.setId(rs.getInt(1));
 
-    @Override
-    public boolean delete(Course course) {
-        Connection con = dataSource.getConnection();
-        ResultSet rs = null;
-        Statement s = null;
-        assert con != null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(rs);
+			dataSource.close(s);
+			dataSource.close(con);
+		}
 
-        try {
-            s = con.createStatement();
-            QueryBuilder builder = new QueryBuilder(
-                    "Delete from course" +
-                            "where id= :id " );
-            builder.setParameter("name",course.getId());
+		return true;
 
+	}
 
-            s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
-            rs=s.getGeneratedKeys();
-            course.setId(rs.getLong(1));
+	@Override
+	public List<Course> findAll() {
+		Connection con = dataSource.getConnection();
+		Statement s = null;
+		ResultSet rs = null;
+		assert con != null;
+		List<Course> courses = new ArrayList<>();
+		try {
+			s = con.createStatement();
+			if (s.execute("select id, name from course")) {
+				rs = s.getResultSet();
+				while (rs.next()) {
+					Course u = new Course(rs.getInt("id"), rs.getString("name")
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            dataSource.close(rs);
-            dataSource.close(s);
-            dataSource.close(con);
-        }
+					);
 
+					courses.add(u);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(rs);
+			dataSource.close(s);
+			dataSource.close(con);
+		}
+		return courses;
+	}
 
-        return true;
+	@Override
+	public List<Course> findCoursesByUserId(Long id) {
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+		List<Course> courses = new ArrayList<>();
+		try {
+			s = con.createStatement();
 
+			String sql = "select c.id, c.name\n" + "from course c\n" + "INNER JOIN enrollment e on e.course_id = c.id\n"
+					+ "INNER JOIN user u on u.id = e.user_id\n" + "where u.id = :id \n";
+			QueryBuilder builder = new QueryBuilder(sql);
+			builder.setParameter("id", id);
 
-    }
+			if (s.execute(builder.query())) {
+				rs = s.getResultSet();
+				while (rs.next()) {
+					Course u = new Course(rs.getInt("id"), rs.getString("name")
 
-    @Override
-    public List<Course> findAll() {
-        Connection con = dataSource.getConnection();
-        Statement s = null;
-        ResultSet rs = null;
-        assert con != null;
-        List<Course> courses = new ArrayList<>();
-        try {
-            s = con.createStatement();
-            if(s.execute("select id, name from course")) {
-                rs = s.getResultSet();
-                while (rs.next()) {
-                    Course u = new Course(
-                            rs.getLong("id"),
-                            rs.getString("name")
+					);
 
-                    );
+					courses.add(u);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(rs);
+			dataSource.close(s);
+			dataSource.close(con);
+		}
+		return courses;
+	}
 
-                    courses.add(u);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            dataSource.close(rs);
-            dataSource.close(s);
-            dataSource.close(con);
-        }
-        return courses;
-    }
+	@Override
+	public Course findCoursesById(int id) {
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+		Course u = null;
+		try {
+			s = con.createStatement();
 
-    @Override
-    public List<Course> findCoursesByUserId(Long id) {
-        Connection con = dataSource.getConnection();
-        ResultSet rs = null;
-        Statement s = null;
-        assert con != null;
-        List<Course> courses = new ArrayList<>();
-        try {
-            s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder("select * from course where id = :id ");
+			builder.setParameter("id", id);
 
-            String sql = "select c.id, c.name\n" +
-                    "from course c\n" +
-                    "INNER JOIN enrollment e on e.course_id = c.id\n" +
-                    "INNER JOIN user u on u.id = e.user_id\n" +
-                    "where u.id = :id \n";
-            QueryBuilder builder = new QueryBuilder(sql);
-            builder.setParameter("id", id);
+			s.execute(builder.query());
+			rs = s.getResultSet();
+			if (rs.next()) {
+				u = new Course(rs.getInt("id"), rs.getString("name"));
+			}
 
-
-            if(s.execute(builder.query())) {
-                rs = s.getResultSet();
-                while (rs.next()) {
-                    Course u = new Course(
-                            rs.getLong("id"),
-                            rs.getString("name")
-
-                    );
-
-                    courses.add(u);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            dataSource.close(rs);
-            dataSource.close(s);
-            dataSource.close(con);
-        }
-        return courses;
-    }
-
-
-
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(rs);
+			dataSource.close(s);
+			dataSource.close(con);
+		}
+		return u;
+	}
 
 }

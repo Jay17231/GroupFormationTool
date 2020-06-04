@@ -76,7 +76,7 @@ public class LoginController {
 		}
 
 		if (authenticationService.isAdmin(request.getParameter("email"), request.getParameter("password"))) {
-			mView = new ModelAndView("adminDashboard");
+			mView = new ModelAndView("redirect:adminDashboard");
 			return mView;
 		} else {
 			mView = new ModelAndView("home");
@@ -85,7 +85,7 @@ public class LoginController {
 			Long userId = userSummary.getId();
 			userCourse = courseDao.findCoursesByUserId(userId).get(0);
 
-			String courseName = userCourse.getCourseName();
+			String courseName = userCourse.getName();
 			String name = userSummary.getFirstName() + " " + userSummary.getLastName();
 			String role = enrollService.getRole(userSummary);
 

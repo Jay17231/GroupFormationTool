@@ -39,7 +39,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 			// @TODO: Create User Jay
 		}
 		assert c != null;
-		assert c.getId() != null;
+		assert c.getId() != 0;
 		return false;
 	}
 
