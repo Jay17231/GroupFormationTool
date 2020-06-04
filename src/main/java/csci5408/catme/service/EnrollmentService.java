@@ -16,4 +16,5 @@ public interface EnrollmentService {
 	boolean enrollStudents(CourseSummary c, MultipartFile file);
 
 	Role getRole(UserSummary user);
+
 }

@@ -110,4 +110,31 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 
 		return roleString;
 	}
+
+	@Override
+	public boolean makeTA(Long userId) {
+		Boolean madeTA = false;
+		Long roleId = (long) 403;
+		Connection connection = dataSource.getConnection();
+		Statement s = null;
+		assert connection != null;
+
+		try {
+			s = connection.createStatement();
+			QueryBuilder builder = new QueryBuilder(
+					"update enrollment set role_id = :role_id where user_id = :user_id");
+			builder.setParameter("role_id", roleId);
+			builder.setParameter("user_id", userId);
+			s.executeUpdate(builder.query());
+			madeTA = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(s);
+			dataSource.close(connection);
+		}
+		return madeTA;
+	}
+
 }
