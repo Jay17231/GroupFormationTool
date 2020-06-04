@@ -80,7 +80,7 @@ public class LoginController {
 			mView = new ModelAndView("adminDashboard");
 			return mView;
 		} else {
-			mView = new ModelAndView("home");
+			mView = new ModelAndView();
 			String emailString = request.getParameter("email");
 			UserSummary userSummary = userService.getUserByEmailId(emailString);
 			Long userId = userSummary.getId();
@@ -93,14 +93,17 @@ public class LoginController {
 			Long roleId = enrollService.getRole(userSummary).getId();
 
 			if (userRole == null) {
+				mView = new ModelAndView("courses");
 				mView.addObject("guest", true);
-				return new ModelAndView("courses");
+				return mView;
 			}
 			if (role.compareToIgnoreCase("Student") == 0) {
+				mView = new ModelAndView("courses");
 				mView.addObject("student", true);
-				return new ModelAndView("courses");
+				return mView;
 			}
 
+			mView = new ModelAndView("home");
 			mView.addObject("course", courseName);
 			mView.addObject("courseid", userCourse.getId());
 			mView.addObject("userid", userId);
@@ -113,6 +116,7 @@ public class LoginController {
 			mView.addObject("roleid", roleId);
 			mView.addObject("name", name);
 			return mView;
+
 		}
 
 	}

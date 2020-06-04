@@ -20,6 +20,7 @@ import csci5408.catme.dao.EnrollmentDao;
 import csci5408.catme.domain.Enrollment;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.AuthenticationService;
+import csci5408.catme.service.EmailService;
 import csci5408.catme.service.UserService;
 
 /**
@@ -37,9 +38,13 @@ public class UploadCSVController {
 	final AuthenticationService auth;
 	final EnrollmentDao enrollmentDao;
 
-	public UploadCSVController(UserService user, AuthenticationService auth, EnrollmentDao enrollmentDao) {
+	final EmailService mail;
+
+	public UploadCSVController(UserService user, AuthenticationService auth, EnrollmentDao enrollmentDao,
+			EmailService mail) {
 		this.auth = auth;
 		this.user = user;
+		this.mail = mail;
 		this.enrollmentDao = enrollmentDao;
 		addedRecords = new ArrayList<String[]>();
 		discardRecords = new ArrayList<String[]>();
@@ -122,6 +127,9 @@ public class UploadCSVController {
 		enrollment.setRoleId(roleId);
 
 		enrollmentDao.save(enrollment); // Enrolling into course
+
+		mail.sendMail(newUser, "New Student Account - Credentials", "Hello " + firstName + " " + lastName
+				+ ". Your login email is: " + emailId + " and your password is " + password);
 
 		addedRecords.add(studRecord);
 
