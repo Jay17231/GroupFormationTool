@@ -1,17 +1,10 @@
 package csci5408.catme.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-
-import javax.servlet.http.HttpServletResponse;
-
+import csci5408.catme.authentication.ISessionStore;
+import csci5408.catme.dao.UserDao;
+import csci5408.catme.domain.User;
+import csci5408.catme.dto.UserSummary;
+import csci5408.catme.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -20,11 +13,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import csci5408.catme.authentication.ISessionStore;
-import csci5408.catme.dao.UserDao;
-import csci5408.catme.domain.User;
-import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.UserService;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AuthenticationServiceImplTest {
 
@@ -106,11 +100,14 @@ public class AuthenticationServiceImplTest {
 	@Test
 	public void loginTest() {
 		assertFalse(authenticationService.isAuthenticated());
+		assertNull(authenticationService.getLoggedInUser());
+
 		String emailId = "a@b.c";
 		String password = "abc";
 
 		UserSummary summary = new UserSummary();
 		summary.setEmailId(emailId);
+		summary.setAdmin(true);
 		HttpServletResponse response = new MockHttpServletResponse();
 
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(emailId, password);
@@ -124,6 +121,7 @@ public class AuthenticationServiceImplTest {
 		when(sessionStore.setSession(summary)).thenReturn("ABC");
 		assertTrue(authenticationService.login(summary.getEmailId(), "abc", response));
 		assertTrue(authenticationService.isAuthenticated());
+		assertNotNull(authenticationService.getLoggedInUser());
 	}
 
 	@Test
@@ -134,6 +132,22 @@ public class AuthenticationServiceImplTest {
 		assertNotNull(newPassword);
 		assertEquals(passlength, newPassword.length());
 
+	}
+
+	@Test
+	public void isAdminTest_True() {
+		String email = "aman@g.com";
+		User u = new User(1L, "A","V", "B", true, email);
+		when(userDao.findByEmail(email)).thenReturn(u);
+		assertTrue(authenticationService.isAdmin(email, ""));
+	}
+
+	@Test
+	public void isAdminTest_False() {
+		String email = "aman@g.com";
+		User u = new User(1L, "A","V", "B", false, email);
+		when(userDao.findByEmail(email)).thenReturn(u);
+		assertFalse(authenticationService.isAdmin(email, ""));
 	}
 
 }
