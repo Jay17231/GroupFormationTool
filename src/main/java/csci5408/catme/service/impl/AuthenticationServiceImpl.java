@@ -12,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -87,17 +86,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public void changePassword(UserSummary user, String password) {
-		String encodedPassword = bCryptPasswordEncoder.encode(password);
-		User u = userDao.findByEmail(user.getEmailId());
-		if (u == null) {
-			throw new UsernameNotFoundException(user.getEmailId() + " Not found");
-		}
-		u.setPassword(encodedPassword);
-		userDao.update(u);
-	}
-
-	@Override
 	public String resetPassword(int passlength) {
 
 		String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -128,7 +116,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		u.setPassword(encodedPassword);
 		userDao.update(u);
 	}
-
 
 	public boolean isAdmin(String email, String password) {
 		User u = userDao.findByEmail(email);
