@@ -9,6 +9,7 @@ import csci5408.catme.dao.CourseDao;
 import csci5408.catme.dao.EnrollmentDao;
 import csci5408.catme.dao.RoleDao;
 import csci5408.catme.dao.UserDao;
+import csci5408.catme.domain.Role;
 import csci5408.catme.domain.User;
 import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
@@ -57,10 +58,14 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	}
 
 	@Override
-	public String getRole(UserSummary user) {
-		String userRole = "";
+	public Role getRole(UserSummary user) {
+		Role role = new Role();
 		Long userId = user.getId();
-		userRole = enrollmentDao.findRole(userId);
-		return userRole;
+		String userRole = enrollmentDao.findRole(userId).getName();
+		Long roleId = enrollmentDao.findRole(userId).getId();
+		role.setId(roleId);
+		role.setName(userRole);
+
+		return role;
 	}
 }

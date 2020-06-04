@@ -26,6 +26,8 @@
 				    <div class="form-group mt-3 pull-left">
 				        <label for="file">Select a CSV file</label>
 				        <input type="file" name="file" class="form-control-file" id="file" accept=".csv">
+				        <input type="text" name="courseid" class="form-control-file" id="courseid" th:value=${courseid} hidden>
+				        <input type="text" name="userid" class="form-control-file" id="userid" th:value=${courseid} hidden>
 				    </div>
 				    <button type="submit" class="btn btn-primary">Import Students</button>
 				</form>

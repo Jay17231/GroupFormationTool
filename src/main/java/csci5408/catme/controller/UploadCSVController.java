@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
+import csci5408.catme.dao.EnrollmentDao;
+import csci5408.catme.domain.Enrollment;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.AuthenticationService;
 import csci5408.catme.service.UserService;
@@ -33,17 +35,20 @@ public class UploadCSVController {
 	final UserService user;
 	final UserSummary userSummary;
 	final AuthenticationService auth;
+	final EnrollmentDao enrollmentDao;
 
-	public UploadCSVController(UserService user, AuthenticationService auth) {
+	public UploadCSVController(UserService user, AuthenticationService auth, EnrollmentDao enrollmentDao) {
 		this.auth = auth;
 		this.user = user;
+		this.enrollmentDao = enrollmentDao;
 		addedRecords = new ArrayList<String[]>();
 		discardRecords = new ArrayList<String[]>();
 		userSummary = new UserSummary();
 	}
 
 	@PostMapping("/upload-csv-file")
-	public String uploadCSVFile(@RequestParam("file") MultipartFile file, Model model) {
+	public String uploadCSVFile(@RequestParam("file") MultipartFile file, Model model,
+			@RequestParam("courseid") Long courseid) {
 
 		// validate file
 		if (file.isEmpty()) {
@@ -54,15 +59,16 @@ public class UploadCSVController {
 			try {
 
 				Reader reader = new InputStreamReader(file.getInputStream());
-
+				Long userLong = null;
 				CSVReader csvReader = new CSVReaderBuilder(reader).build();
 				List<String[]> studentRecords = csvReader.readAll();
 				Iterator<String[]> recIter = studentRecords.iterator();
 
 				while (recIter.hasNext()) {
 					String[] record = recIter.next();
-					signUpStudentCsv(record);
+					signUpStudentCsv(record, courseid);
 				}
+
 				model.addAttribute("added", addedRecords);
 				model.addAttribute("discarded", discardRecords);
 				model.addAttribute("status", true);
@@ -77,7 +83,7 @@ public class UploadCSVController {
 		return "file-upload-status";
 	}
 
-	private void signUpStudentCsv(String[] studRecord) {
+	private void signUpStudentCsv(String[] studRecord, Long courseid) {
 
 		if (studRecord.length != 4) {
 			studRecord = ArrayUtils.add(studRecord, "Invalid Entry");
@@ -104,7 +110,18 @@ public class UploadCSVController {
 		userSummary.setFirstName(firstName);
 		userSummary.setStudentId(studentId);
 		userSummary.setAdmin(false);
-		auth.signUp(userSummary, password);
+
+		auth.signUp(userSummary, password); // Signing up
+
+		UserSummary newUser = user.getUserByEmailId(emailId);
+
+		Long roleId = (long) 402; // Role ID for student;
+		Enrollment enrollment = new Enrollment();
+		enrollment.setCourseId(courseid);
+		enrollment.setUserId(newUser.getId());
+		enrollment.setRoleId(roleId);
+
+		enrollmentDao.save(enrollment); // Enrolling into course
 
 		addedRecords.add(studRecord);
 

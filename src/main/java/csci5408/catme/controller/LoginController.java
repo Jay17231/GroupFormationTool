@@ -87,16 +87,19 @@ public class LoginController {
 
 			String courseName = userCourse.getCourseName();
 			String name = userSummary.getFirstName() + " " + userSummary.getLastName();
-			String role = enrollService.getRole(userSummary);
+			String role = enrollService.getRole(userSummary).getName();
+			Long roleId = enrollService.getRole(userSummary).getId();
 
 			mView.addObject("course", courseName);
 			mView.addObject("courseid", userCourse.getId());
+			mView.addObject("userid", userId);
 			mView.addObject("status", false);
 			if (role.compareTo("Instructor") == 0) {
 				mView.addObject("status", true);
 			}
 
 			mView.addObject("Role", role);
+			mView.addObject("roleid", roleId);
 			mView.addObject("name", name);
 			return mView;
 		}

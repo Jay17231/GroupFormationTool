@@ -1,17 +1,19 @@
 package csci5408.catme.dao.impl;
 
-import csci5408.catme.dao.EnrollmentDao;
-import csci5408.catme.domain.Enrollment;
-import csci5408.catme.sql.ConnectionManager;
-import csci5408.catme.sql.impl.QueryBuilder;
-import org.springframework.stereotype.Component;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Component;
+
+import csci5408.catme.dao.EnrollmentDao;
+import csci5408.catme.domain.Enrollment;
+import csci5408.catme.domain.Role;
+import csci5408.catme.sql.ConnectionManager;
+import csci5408.catme.sql.impl.QueryBuilder;
 
 @Component
 public class EnrollmentDaoImpl implements EnrollmentDao {
@@ -77,8 +79,8 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 	}
 
 	@Override
-	public String findRole(Long userId) {
-		String roleString = "";
+	public Role findRole(Long userId) {
+		Role roleString = new Role();
 
 		Connection connection = dataSource.getConnection();
 		ResultSet resultSet = null;
@@ -86,14 +88,15 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 		assert connection != null;
 
 		try {
-			 s = connection.createStatement();
+			s = connection.createStatement();
 			QueryBuilder builder = new QueryBuilder(
-					"select name from roles where id = (select role_id from enrollment where user_id = :user_id);");
+					"select * from roles where id = (select role_id from enrollment where user_id = :user_id);");
 			builder.setParameter("user_id", userId);
 			if (s.execute(builder.query())) {
 				resultSet = s.getResultSet();
 				if (resultSet.next()) {
-					roleString = resultSet.getString("name");
+					roleString.setId(resultSet.getLong("id"));
+					roleString.setName(resultSet.getString("name"));
 				}
 			}
 		} catch (SQLException e) {
