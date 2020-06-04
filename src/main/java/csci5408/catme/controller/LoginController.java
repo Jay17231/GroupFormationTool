@@ -1,6 +1,3 @@
-/**
- * 
- */
 package csci5408.catme.controller;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import csci5408.catme.dao.CourseDao;
+import csci5408.catme.domain.Course;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.AuthenticationService;
 import csci5408.catme.service.EnrollmentService;
@@ -29,12 +28,14 @@ public class LoginController {
 	final UserService userService;
 	final EnrollmentService enrollService;
 	final AuthenticationService authenticationService;
+	final CourseDao courseDao;
 
 	public LoginController(UserService userService, EnrollmentService enrollService,
-			AuthenticationService authenticationService) {
+			AuthenticationService authenticationService, CourseDao courseDao) {
 		this.authenticationService = authenticationService;
 		this.userService = userService;
 		this.enrollService = enrollService;
+		this.courseDao = courseDao;
 	}
 
 	@GetMapping("/signup")
@@ -62,6 +63,7 @@ public class LoginController {
 	@PostMapping("/login")
 	public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
 
+		Course userCourse;
 		ModelAndView mView = new ModelAndView();
 
 		if (authenticationService.login(request.getParameter("email"), request.getParameter("password"), response)) {
@@ -73,9 +75,15 @@ public class LoginController {
 				mView = new ModelAndView("home");
 				String emailString = request.getParameter("email");
 				UserSummary userSummary = userService.getUserByEmailId(emailString);
+				Long userId = userSummary.getId();
+				userCourse = courseDao.findCoursesByUserId(userId).get(0);
+
+				String courseName = userCourse.getCourseName();
 				String name = userSummary.getFirstName() + " " + userSummary.getLastName();
 				String role = enrollService.getRole(userSummary);
 
+				mView.addObject("course", courseName);
+				mView.addObject("courseid", userCourse.getId());
 				mView.addObject("status", false);
 				if (role.compareTo("Instructor") == 0) {
 					mView.addObject("status", true);

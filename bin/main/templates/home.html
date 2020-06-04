@@ -5,17 +5,21 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <link rel="stylesheet" type="text/css" href="/css/login.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     
 </head>
 <body>
   <div class="wrapper">
    	<div class="container">
-   	<h1>Welcome to the Dashboard</h1>
+   	<h1 class="display-4 text-center text-primary">
+   		CSCI <span th:text="${courseid}"></span> - 
+   		<span th:text="${course}"></span>
+   	</h1>
+   	<h2 class="display-3">Welcome to the Dashboard</h2>
    		<h2><span th:text="${Role}"></span> <span th:text="${name}"></span></h2>
    		<div th:if=${status} class="text-center">
-   			<a class="btn btn-large btn-primary">Upload Student CSV</a>
-   			<a class="btn btn-large btn-info">Assign TA</a>
+   			<a class="btn btn-large btn-primary text-white">Upload Student CSV</a>
+   			<a class="btn btn-large btn-info text-white">Assign TA</a>
    		</div>
    	</div>
   </div>
