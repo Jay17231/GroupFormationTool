@@ -1,5 +1,13 @@
 package csci5408.catme.controller;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.ModelAndView;
+
 import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.domain.Operation;
@@ -8,13 +16,6 @@ import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.AuthenticationService;
 import csci5408.catme.service.EnrollmentService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class CourseController {
@@ -23,7 +24,8 @@ public class CourseController {
 	final CourseDao courseDao;
 	final EnrollmentService enrollmentService;
 
-	public CourseController(AuthenticationService authenticationService, CourseDao courseDao, EnrollmentService enrollmentService) {
+	public CourseController(AuthenticationService authenticationService, CourseDao courseDao,
+			EnrollmentService enrollmentService) {
 		this.authenticationService = authenticationService;
 		this.courseDao = courseDao;
 		this.enrollmentService = enrollmentService;
@@ -33,7 +35,7 @@ public class CourseController {
 	public ModelAndView courseGreeting() {
 		Course userCourse;
 		ModelAndView mView;
-		if(!authenticationService.isAuthenticated()) {
+		if (!authenticationService.isAuthenticated()) {
 			return new ModelAndView("redirect:login");
 		}
 		UserSummary userSummary = authenticationService.getLoggedInUser();
@@ -91,21 +93,19 @@ public class CourseController {
 
 	@GetMapping("/courses/{courseId}")
 	public ModelAndView coursePage(@PathVariable Long courseId) {
-		if(!authenticationService.isAuthenticated()) {
+		if (!authenticationService.isAuthenticated()) {
 			return new ModelAndView("redirect:/login");
 		}
-		ModelAndView modelAndView = new ModelAndView("course-page");
+		ModelAndView modelAndView = new ModelAndView("course-single");
 		Optional<Course> c = courseDao.findById(courseId);
 		CourseRole courseRole = null;
-		if(c.isPresent()) {
-			courseRole = enrollmentService.getCourseRole(
-					authenticationService.getLoggedInUser(),
-					CourseSummary.from(c.get()),
-					true);
+		if (c.isPresent()) {
+			courseRole = enrollmentService.getCourseRole(authenticationService.getLoggedInUser(),
+					CourseSummary.from(c.get()), true);
 		}
 		boolean addStudents = false;
-		for (Operation operation: courseRole.getPermissions()) {
-			if(operation.toString().equals("ADD_STUDENTS")) {
+		for (Operation operation : courseRole.getPermissions()) {
+			if (operation.toString().equals("ADD_STUDENTS")) {
 				addStudents = true;
 			}
 		}

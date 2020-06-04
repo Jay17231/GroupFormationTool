@@ -12,7 +12,7 @@
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">CSCI 5408 CATEME</a>
+      <a class="navbar-brand" href="/">CSCI 5408 CATEME</a>
     </div>
     <ul class="nav navbar-nav navbar-right">
       <li><a href="/signout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
@@ -22,8 +22,19 @@
 
   <div class="wrapper">
    	<div class="container">
-   		<h1 th:if=${guest}>Welcome to the Guest Dashboard!</h1>
-   		<h1 th:if=${student}>Welcome to the Student Dashboard!</h1>
+   		<h1>Welcome to the Dashboard!</h1>
+        <h2>Enrolled Courses</h2>
+        <ul>
+            <li th:each="course: ${userCourses}">
+                <a th:href='${"/courses/"+course.courseId}' th:text='${course.courseName + " (" + course.roleName +")"}'></a>
+            </li>
+        </ul>
+        <h2>Global Courses</h2>
+        <ul>
+            <li th:each="course: ${globalCourses}">
+                <a th:href='${"/courses/"+course.id}' th:text="${course.courseName}"></a>
+            </li>
+        </ul>
    	</div>
   </div>
 </body>
