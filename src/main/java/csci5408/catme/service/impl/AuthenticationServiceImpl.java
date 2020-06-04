@@ -57,7 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				String cookieString = ISessionStore.setSession((UserSummary) auth.getPrincipal());
 				response.addCookie(new Cookie(AUTH_COOKIE_NAME, cookieString));
 			}
-		} catch (IllegalStateException e) {
+		} catch (Exception e) {
 			System.out.println("Code probably called from CommandLineRunner");
 		}
 
@@ -78,7 +78,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public boolean isAuthenticated() {
 		SecurityContext sc = SecurityContextHolder.getContext();
-		return sc.getAuthentication().isAuthenticated();
+		Authentication authentication = sc.getAuthentication();
+		if (authentication == null) {
+			return false;
+		}
+		return authentication.isAuthenticated();
 	}
 
 	@Override
@@ -111,5 +115,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		User u = userDao.findByEmail(user.getEmailId());
 		u.setPassword(encodedPassword);
 		userDao.update(u);
+	}
+
+	public boolean isAdmin(String email, String password) {
+		User u = userDao.findByEmail(email);
+		if (u.isAdmin()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

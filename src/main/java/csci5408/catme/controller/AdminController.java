@@ -28,7 +28,7 @@ import java.util.List;
 @Controller
 public class AdminController {
 	
-	@GetMapping("/adminhome")
+	@GetMapping("/adminDashboard")
     public String signup() {
       return "adminDashboard"; 
   }

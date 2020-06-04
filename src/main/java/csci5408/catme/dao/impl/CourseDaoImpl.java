@@ -5,7 +5,7 @@ import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.sql.MySQLDataSource;
 import csci5408.catme.sql.impl.QueryBuilder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Component
 public class CourseDaoImpl implements CourseDao {
 
     final MySQLDataSource dataSource;
@@ -25,9 +25,34 @@ public class CourseDaoImpl implements CourseDao {
         this.dataSource = dataSource;
     }
 
+
+
     @Override
     public Course save(Course course) {
-        return null;
+        Connection con = dataSource.getConnection();
+        ResultSet rs;
+        assert con != null;
+
+        try {
+            Statement s = con.createStatement();
+            QueryBuilder builder = new QueryBuilder(
+                    "INSERT INTO course" +
+                            "(id, name) " +
+                            "values (default,:name)");
+            builder.setParameter("name",course.getCourseName());
+
+
+            s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+            rs=s.getGeneratedKeys();
+            course.setId(rs.getLong(1));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.close(con);
+        }
+        return course;
     }
 
     @Override
@@ -42,7 +67,33 @@ public class CourseDaoImpl implements CourseDao {
 
     @Override
     public boolean delete(Course course) {
-        return false;
+        Connection con = dataSource.getConnection();
+        ResultSet rs;
+        assert con != null;
+
+        try {
+            Statement s = con.createStatement();
+            QueryBuilder builder = new QueryBuilder(
+                    "Delete from course" +
+                            "where id= :id " );
+            builder.setParameter("name",course.getId());
+
+
+            s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+            rs=s.getGeneratedKeys();
+            course.setId(rs.getLong(1));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.close(con);
+        }
+
+
+        return true;
+
+
     }
 
     @Override
@@ -112,4 +163,8 @@ public class CourseDaoImpl implements CourseDao {
         }
         return courses;
     }
+
+
+
+
 }

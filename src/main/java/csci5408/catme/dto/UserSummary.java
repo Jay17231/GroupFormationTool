@@ -28,6 +28,7 @@ public class UserSummary {
         userSummary.setFirstName(user.getFirstName());
         userSummary.setLastName(user.getLastName());
         userSummary.setStudentId(user.getStudentId());
+        userSummary.setId(user.getId());
         return userSummary;
     }
 

@@ -91,6 +91,7 @@ public class QueryBuilder implements IQueryBuilder {
 			} else if (val instanceof Integer || val instanceof LocalDate || val instanceof Float
 					|| val instanceof LocalDateTime || val instanceof Double || val instanceof Long
 					|| val instanceof Boolean || val == null) {
+
 				sql = sql.replace(key, this.getObjString(val));
 			} else if (val instanceof List || val instanceof Set) {
 				if (((Collection) val).size() == 0) {
@@ -101,6 +102,7 @@ public class QueryBuilder implements IQueryBuilder {
 					arr.add(this.getObjString(o));
 				}
 				sql = sql.replace(key, String.join(", ", arr));
+
 			}
 		}
 		return sql;
