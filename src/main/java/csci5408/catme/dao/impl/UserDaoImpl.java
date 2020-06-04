@@ -63,11 +63,12 @@ public class UserDaoImpl implements UserDao {
 		assert con != null;
 		try {
 			QueryBuilder builder = new QueryBuilder(
-					"UPDATE user SET first_name = :firstName, last_name = :lastName, email_id = :emailId, password = :password, student_id = :studentId, is_admin = :isAdmin");
+					"UPDATE user SET first_name = :firstName, last_name = :lastName, email_id = :emailId, password = :password, student_id = :studentId, is_admin = :isAdmin WHERE id = :userId");
 			builder.setParameter("firstName", user.getFirstName());
 			builder.setParameter("lastName", user.getLastName());
 			builder.setParameter("emailId", user.getEmailId());
 			builder.setParameter("password", user.getPassword());
+			builder.setParameter("userId", user.getId());
 			builder.setParameter("studentId", user.getStudentId());
 			builder.setParameter("isAdmin", user.isAdmin());
 			s = con.createStatement();
