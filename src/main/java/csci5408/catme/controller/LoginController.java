@@ -1,8 +1,10 @@
 package csci5408.catme.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import csci5408.catme.dao.CourseDao;
+import csci5408.catme.dto.UserSummary;
+import csci5408.catme.service.AuthenticationService;
+import csci5408.catme.service.EnrollmentService;
+import csci5408.catme.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,12 +12,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import csci5408.catme.dao.CourseDao;
-import csci5408.catme.domain.Course;
-import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.AuthenticationService;
-import csci5408.catme.service.EnrollmentService;
-import csci5408.catme.service.UserService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author krupa
@@ -65,9 +63,7 @@ public class LoginController {
 
 	@PostMapping("/login")
 	public ModelAndView loginPost(HttpServletRequest request, HttpServletResponse response) {
-
-		Course userCourse;
-		ModelAndView mView = new ModelAndView();
+		ModelAndView mView;
 		boolean authState = authenticationService.login(request.getParameter("email"), request.getParameter("password"),
 				response);
 
@@ -79,27 +75,7 @@ public class LoginController {
 			mView = new ModelAndView("redirect:adminDashboard");
 			return mView;
 		} else {
-			mView = new ModelAndView("home");
-			String emailString = request.getParameter("email");
-			UserSummary userSummary = userService.getUserByEmailId(emailString);
-			Long userId = userSummary.getId();
-			userCourse = courseDao.findCoursesByUserId(userId).get(0);
-
-			String courseName = userCourse.getName();
-			String name = userSummary.getFirstName() + " " + userSummary.getLastName();
-			String role = enrollService.getRole(userSummary);
-
-			mView.addObject("course", courseName);
-			mView.addObject("courseid", userCourse.getId());
-			mView.addObject("status", false);
-			if (role.compareTo("Instructor") == 0) {
-				mView.addObject("status", true);
-			}
-
-			mView.addObject("Role", role);
-			mView.addObject("name", name);
-			return mView;
+			return new ModelAndView("redirect:courses");
 		}
-
 	}
 }

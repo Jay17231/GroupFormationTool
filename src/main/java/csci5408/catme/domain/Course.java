@@ -1,38 +1,42 @@
 package csci5408.catme.domain;
 
-public class Course {
-	private int id;
+import java.io.Serializable;
 
-	private String name;
+public class Course implements Serializable {
+    private Long id;
 
-	public Course(int i, String name) {
-		this.id = i;
-		this.name = name;
+    private String name;
 
-	}
+    public Course(Long id,String name){
+        this.id=id;
+        this.name=name;
+    }
 
-	public Course() {
+    public Course(){
 
-	}
+    }
 
-	public int getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getCourseName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setCourseName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String toString() {
-		return "Course{" + "id=" + id + ", name='" + name + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

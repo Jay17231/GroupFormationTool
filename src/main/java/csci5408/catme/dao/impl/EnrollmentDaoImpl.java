@@ -2,6 +2,7 @@ package csci5408.catme.dao.impl;
 
 import csci5408.catme.dao.EnrollmentDao;
 import csci5408.catme.domain.Enrollment;
+import csci5408.catme.domain.Role;
 import csci5408.catme.sql.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Component;
@@ -58,7 +59,34 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 
 	@Override
 	public Enrollment update(Enrollment enrollment) {
-		return null;
+		String sql = "UPDATE enrollment " +
+				"set role_id= :roleId ," +
+				" user_id= :userId ," +
+				" course_id= :courseId " +
+				"where id= :id ";
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+
+		try {
+			s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder(sql);
+			builder.setParameter("courseId", enrollment.getCourseId());
+			builder.setParameter("userId", enrollment.getUserId());
+			builder.setParameter("roleId", enrollment.getRoleId());
+			builder.setParameter("id", enrollment.getId());
+			s.execute(builder.query());
+
+			return enrollment;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(rs);
+			dataSource.close(s);
+			dataSource.close(con);
+		}
 	}
 
 	@Override
@@ -77,8 +105,7 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 	}
 
 	@Override
-	public String findRole(Long userId) {
-		String roleString = "";
+	public Role findRole(Long userId, Long courseId) {
 
 		Connection connection = dataSource.getConnection();
 		ResultSet resultSet = null;
@@ -86,14 +113,22 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 		assert connection != null;
 
 		try {
-			 s = connection.createStatement();
-			QueryBuilder builder = new QueryBuilder(
-					"select name from roles where id = (select role_id from enrollment where user_id = :user_id);");
+			Role role = new Role();
+			s = connection.createStatement();
+			String sql = "select r.id, r.name \n" +
+					"from roles r\n" +
+					"inner join enrollment e on r.id = e.role_id\n" +
+					"where e.course_id = :course_id and e.user_id = :user_id";
+			QueryBuilder builder = new QueryBuilder(sql);
+
 			builder.setParameter("user_id", userId);
+			builder.setParameter("course_id", courseId);
 			if (s.execute(builder.query())) {
 				resultSet = s.getResultSet();
 				if (resultSet.next()) {
-					roleString = resultSet.getString("name");
+					role.setId(resultSet.getLong("id"));
+					role.setName(resultSet.getString("name"));
+					return role;
 				}
 			}
 		} catch (SQLException e) {
@@ -105,6 +140,73 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 			dataSource.close(connection);
 		}
 
-		return roleString;
+		return null;
 	}
+
+	@Override
+	public boolean makeTA(Long userId) {
+		Boolean madeTA = false;
+		Long roleId = (long) 403;
+		Connection connection = dataSource.getConnection();
+		Statement s = null;
+		assert connection != null;
+
+		try {
+			s = connection.createStatement();
+			QueryBuilder builder = new QueryBuilder(
+					"update enrollment set role_id = :role_id where user_id = :user_id");
+			builder.setParameter("role_id", roleId);
+			builder.setParameter("user_id", userId);
+			s.executeUpdate(builder.query());
+			madeTA = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(s);
+			dataSource.close(connection);
+		}
+		return madeTA;
+	}
+
+	@Override
+	public Enrollment findEnrollment(Long userId, Long courseId) {
+		String sql = "select id, course_id, user_id, role_id \n" +
+				"from enrollment\n" +
+				"where user_id = :userId and course_id = :courseId";
+
+		Connection connection = dataSource.getConnection();
+		ResultSet resultSet = null;
+		Statement s = null;
+		assert connection != null;
+		Enrollment enrollment = null;
+		try {
+			s = connection.createStatement();
+			QueryBuilder builder = new QueryBuilder(sql);
+
+			builder.setParameter("userId", userId);
+			builder.setParameter("courseId", courseId);
+			if (s.execute(builder.query())) {
+				resultSet = s.getResultSet();
+				if (resultSet.next()) {
+					enrollment = new Enrollment();
+					enrollment.setId(resultSet.getLong("id"));
+					enrollment.setCourseId(resultSet.getLong("course_id"));
+					enrollment.setUserId(resultSet.getLong("user_id"));
+					enrollment.setRoleId(resultSet.getLong("role_id"));
+				}
+				return enrollment;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(resultSet);
+			dataSource.close(s);
+			dataSource.close(connection);
+		}
+
+		return null;
+	}
+
 }

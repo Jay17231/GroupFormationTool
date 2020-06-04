@@ -54,8 +54,8 @@ public class AdminController {
 
 	@GetMapping("/viewcourse/{id}")
 	public String courses(@PathVariable("id") String id, Model model) {
-		int cid = Integer.parseInt(id);
-		Course course = cdao.findCoursesById(cid);
+
+		Course course = cdao.findCoursesById(Long.valueOf(id));
 		model.addAttribute("course", course);
 		return "admin_courses";
 	}
@@ -84,7 +84,7 @@ public class AdminController {
 	public String deleteCourse(@PathVariable("id") String id) {
 		Course c = new Course();
 		int cid = Integer.parseInt(id);
-		c.setId(cid);
+		c.setId(Long.valueOf(id));
 		cdao.delete(c);
 		return "redirect:/adminDashboard";
 	}

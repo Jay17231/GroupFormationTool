@@ -8,21 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
-
 import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.sql.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
+import org.springframework.stereotype.Component;
 
 @Component
 public class CourseDaoImpl implements CourseDao {
 
 	final ConnectionManager dataSource;
 
+
 	public CourseDaoImpl(ConnectionManager dataSource) {
 		this.dataSource = dataSource;
 	}
+
 
 	@Override
 	public Course save(Course course) {
@@ -33,14 +34,16 @@ public class CourseDaoImpl implements CourseDao {
 
 		try {
 			s = con.createStatement();
-			QueryBuilder builder = new QueryBuilder("INSERT INTO course" + "(id, name) " + "values (default,:name)");
-			builder.setParameter("name", course.getName());
+			QueryBuilder builder = new QueryBuilder(
+					"INSERT INTO course" +
+							"(id, name) " +
+							"values (default,:name)");
+			builder.setParameter("name", course.getCourseName());
+
 
 			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
 			rs = s.getGeneratedKeys();
-			if (rs.next()) {
-				course.setId(rs.getInt(1));
-			}
+			course.setId(rs.getLong(1));
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -59,9 +62,36 @@ public class CourseDaoImpl implements CourseDao {
 	}
 
 	@Override
-	public Optional<Course> findById(String s) {
+	public Optional<Course> findById(Long id) {
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+		Course course = null;
+		try {
+			s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder(
+					"SELECT id, name from course" +
+							" WHERE id = :id ");
+			builder.setParameter("id", id);
 
-		return Optional.empty();
+
+			s.execute(builder.query());
+			rs = s.getResultSet();
+			if (rs.next()) {
+				course = new Course(rs.getLong("id"), rs.getString("name"));
+				return Optional.of(course);
+			} else {
+				return Optional.empty();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(rs);
+			dataSource.close(s);
+			dataSource.close(con);
+		}
 	}
 
 	@Override
@@ -84,7 +114,7 @@ public class CourseDaoImpl implements CourseDao {
 			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
 			rs = s.getGeneratedKeys();
 			if (rs.next()) {
-				course.setId(rs.getInt(1));
+				course.setId(rs.getLong(1));
 			}
 
 		} catch (SQLException e) {
@@ -100,6 +130,8 @@ public class CourseDaoImpl implements CourseDao {
 
 	}
 
+
+
 	@Override
 	public List<Course> findAll() {
 		Connection con = dataSource.getConnection();
@@ -112,7 +144,9 @@ public class CourseDaoImpl implements CourseDao {
 			if (s.execute("select id, name from course")) {
 				rs = s.getResultSet();
 				while (rs.next()) {
-					Course u = new Course(rs.getInt("id"), rs.getString("name")
+					Course u = new Course(
+							rs.getLong("id"),
+							rs.getString("name")
 
 					);
 
@@ -131,43 +165,7 @@ public class CourseDaoImpl implements CourseDao {
 	}
 
 	@Override
-	public List<Course> findCoursesByUserId(Long id) {
-		Connection con = dataSource.getConnection();
-		ResultSet rs = null;
-		Statement s = null;
-		assert con != null;
-		List<Course> courses = new ArrayList<>();
-		try {
-			s = con.createStatement();
-
-			String sql = "select c.id, c.name\n" + "from course c\n" + "INNER JOIN enrollment e on e.course_id = c.id\n"
-					+ "INNER JOIN user u on u.id = e.user_id\n" + "where u.id = :id \n";
-			QueryBuilder builder = new QueryBuilder(sql);
-			builder.setParameter("id", id);
-
-			if (s.execute(builder.query())) {
-				rs = s.getResultSet();
-				while (rs.next()) {
-					Course u = new Course(rs.getInt("id"), rs.getString("name")
-
-					);
-
-					courses.add(u);
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		} finally {
-			dataSource.close(rs);
-			dataSource.close(s);
-			dataSource.close(con);
-		}
-		return courses;
-	}
-
-	@Override
-	public Course findCoursesById(int id) {
+	public Course findCoursesById(Long id) {
 		Connection con = dataSource.getConnection();
 		ResultSet rs = null;
 		Statement s = null;
@@ -182,7 +180,7 @@ public class CourseDaoImpl implements CourseDao {
 			s.execute(builder.query());
 			rs = s.getResultSet();
 			if (rs.next()) {
-				u = new Course(rs.getInt("id"), rs.getString("name"));
+				u = new Course(rs.getLong("id"), rs.getString("name"));
 			}
 
 		} catch (SQLException e) {
@@ -196,4 +194,45 @@ public class CourseDaoImpl implements CourseDao {
 		return u;
 	}
 
+	@Override
+	public List<Course> findCoursesByUserId(Long id) {
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+		List<Course> courses = new ArrayList<>();
+		try {
+			s = con.createStatement();
+
+			String sql = "select c.id, c.name\n" +
+					"from course c\n" +
+					"INNER JOIN enrollment e on e.course_id = c.id\n" +
+					"INNER JOIN user u on u.id = e.user_id\n" +
+					"where u.id = :id \n";
+			QueryBuilder builder = new QueryBuilder(sql);
+			builder.setParameter("id", id);
+
+
+			if (s.execute(builder.query())) {
+				rs = s.getResultSet();
+				while (rs.next()) {
+					Course u = new Course(
+							rs.getLong("id"),
+							rs.getString("name")
+
+					);
+
+					courses.add(u);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(rs);
+			dataSource.close(s);
+			dataSource.close(con);
+		}
+		return courses;
+	}
 }
