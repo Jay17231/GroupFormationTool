@@ -10,8 +10,12 @@ public class Course implements Serializable {
     public Course(Long id,String name){
         this.id=id;
         this.name=name;
+    }
+
+    public Course(){
 
     }
+
     public Long getId() {
         return id;
     }

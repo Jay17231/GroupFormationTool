@@ -63,12 +63,17 @@ public class LoginController {
 
 	@PostMapping("/login")
 	public ModelAndView loginPost(HttpServletRequest request, HttpServletResponse response) {
-
+		ModelAndView mView;
 		boolean authState = authenticationService.login(request.getParameter("email"), request.getParameter("password"),
 				response);
 
 		if (!authState) {
-			return new ModelAndView("login");
+			return new ModelAndView("redirect:login");
+		}
+
+		if (authenticationService.isAdmin(request.getParameter("email"), request.getParameter("password"))) {
+			mView = new ModelAndView("redirect:adminDashboard");
+			return mView;
 		} else {
 			return new ModelAndView("redirect:courses");
 		}

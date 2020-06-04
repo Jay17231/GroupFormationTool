@@ -7,6 +7,9 @@ import java.util.List;
 public interface CourseDao extends Dao<Course, Long> {
 	List<Course> findCoursesByUserId(Long id);
 
+	@Override
 	List<Course> findAll();
+
+	Course findCoursesById(Long id);
 
 }

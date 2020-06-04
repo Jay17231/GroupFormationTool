@@ -13,15 +13,20 @@
   
 <div class="container">
 <div class="row">
-<div><button type="button" class="btn btn-outline-primary" >Create Course</button></div>
+<div><a th:href="@{/createCourse}"><button type="button"  class="btn btn-outline-primary" >Create Course</button></a></div>
 </div>
+<div class="row">
+  <div th:each="adminDashboard, itemStat: *{allCourse}">
   <div class="card" style="width:400px">
   <div class="card-body">
-    <h4 class="card-title">Course Name</h4>
-    <p class="card-text">Description</p>
-    <a href="/viewcourse" class="btn btn-primary">View</a>
-  </div>
+    <h4 class="card-title" th:text="*{allCourse[__${itemStat.index}__].name}"></h4>
+    ID: <p class="card-text" th:text="*{allCourse[__${itemStat.index}__].id}" > </p>
+    <a th:href="@{/viewcourse/{id}(id = ${allCourse[__${itemStat.index}__].id})}" class="btn btn-primary">View</a>
+    </div>
+
 </div>
+  </div>
+
 </div>
 
 </body>

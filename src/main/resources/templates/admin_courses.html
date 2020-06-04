@@ -12,11 +12,11 @@
 
 <div class="container p-3 my-3 border">
   <div class="row">
-    <div class="col-sm-8" style="background-color:lavender;"><h1>CSCI 5408</h1>
-  <p>This is course description.</p></div>
+    <div class="col-sm-8" style="background-color:lavender;"><h1 th:text="${course.name}"></h1>
+  <p th:text="${course.id}" ></p></div>
     <div class="col-sm-4" style="background-color:lavenderblush;">
      <div><button type="button" class="btn btn-outline-primary" >Assign Instructor</button>
-    	<button type="button" class="btn btn-outline-danger">Delete Course</button>
+    	<a th:href="@{/deleteCourse/{id}(id = ${course.id})}"><button type="button" class="btn btn-outline-danger">Delete Course</button></a>
     	
    	</div>
     </div>

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseSummary {
+
     private Long id;
 
     private String name;
@@ -13,7 +14,6 @@ public class CourseSummary {
     public CourseSummary(Long id,String name){
         this.id=id;
         this.name=name;
-
     }
     public Long getId() {
         return id;
