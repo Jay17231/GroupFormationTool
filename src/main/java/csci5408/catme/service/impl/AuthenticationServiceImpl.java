@@ -121,6 +121,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return newPassword;
 	}
 
+	@Override
+	public void changePassword(UserSummary user, String password) {
+		String encodedPassword = bCryptPasswordEncoder.encode(password);
+		User u = userDao.findByEmail(user.getEmailId());
+		u.setPassword(encodedPassword);
+		userDao.update(u);
+	}
+
+
 	public boolean isAdmin(String email, String password) {
 		User u = userDao.findByEmail(email);
 		if (u.isAdmin()) {
