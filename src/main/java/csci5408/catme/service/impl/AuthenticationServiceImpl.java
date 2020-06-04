@@ -129,4 +129,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			return false;
 		}
 	}
+
+	public UserSummary getLoggedInUser() {
+		if(this.isAuthenticated()) {
+			SecurityContext context = SecurityContextHolder.getContext();
+			return (UserSummary) context.getAuthentication().getPrincipal();
+		}
+		return null;
+	}
 }

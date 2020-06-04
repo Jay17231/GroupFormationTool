@@ -1,6 +1,8 @@
 package csci5408.catme.domain;
 
-public class Course {
+import java.io.Serializable;
+
+public class Course implements Serializable {
     private Long id;
 
     private String name;

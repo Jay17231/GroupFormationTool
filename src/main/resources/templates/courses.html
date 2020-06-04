@@ -22,8 +22,17 @@
 
   <div class="wrapper">
    	<div class="container">
-   		<h1 th:if=${guest}>Welcome to the Guest Dashboard!</h1>
-   		<h1 th:if=${student}>Welcome to the Student Dashboard!</h1>
+   		<h1>Welcome to the Dashboard!</h1>
+        <h2>Enrolled Courses</h2>
+        <ul>
+            <li th:each="course: ${userCourses}" th:text="${course.courseName}"></li>
+        </ul>
+        <h2>Global Courses</h2>
+        <ul>
+            <li th:each="course: ${globalCourses}">
+                <a th:href='${"/courses/"+course.id}' th:text="${course.courseName}"></a>
+            </li>
+        </ul>
    	</div>
   </div>
 </body>
