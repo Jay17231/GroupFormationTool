@@ -38,7 +38,9 @@ public class CourseDaoImpl implements CourseDao {
 
 			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
 			rs = s.getGeneratedKeys();
-			course.setId(rs.getInt(1));
+			if (rs.next()) {
+				course.setId(rs.getInt(1));
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -71,12 +73,19 @@ public class CourseDaoImpl implements CourseDao {
 
 		try {
 			s = con.createStatement();
-			QueryBuilder builder = new QueryBuilder("Delete from course" + "where id= :id ");
-			builder.setParameter("name", course.getId());
+			QueryBuilder builder = new QueryBuilder("delete from enrollment where course_id= :id ");
+			builder.setParameter("id", course.getId());
+
+			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+
+			builder = new QueryBuilder("delete from course where id= :id ");
+			builder.setParameter("id", course.getId());
 
 			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
 			rs = s.getGeneratedKeys();
-			course.setId(rs.getInt(1));
+			if (rs.next()) {
+				course.setId(rs.getInt(1));
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -16,7 +16,7 @@
   <p th:text="${course.id}" ></p></div>
     <div class="col-sm-4" style="background-color:lavenderblush;">
      <div><button type="button" class="btn btn-outline-primary" >Assign Instructor</button>
-    	<button type="button" class="btn btn-outline-danger">Delete Course</button>
+    	<a th:href="@{/deleteCourse/{id}(id = ${course.id})}"><button type="button" class="btn btn-outline-danger">Delete Course</button></a>
     	
    	</div>
     </div>

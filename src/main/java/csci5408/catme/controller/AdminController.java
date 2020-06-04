@@ -67,4 +67,32 @@ public class AdminController {
 
 	}
 
+	@GetMapping("/createCourse")
+	public String createCourse(Model model) {
+		model.addAttribute("createCourse", new Course());
+		return "createCourse";
+	}
+
+	@PostMapping("/createCourse")
+	public String createCoursePost(@ModelAttribute Course createCourse) {
+
+		Course c = cdao.save(createCourse);
+		return "redirect:/adminDashboard";
+	}
+
+	@GetMapping("/deleteCourse/{id}")
+	public String deleteCourse(@PathVariable("id") String id) {
+		Course c = new Course();
+		int cid = Integer.parseInt(id);
+		c.setId(cid);
+		cdao.delete(c);
+		return "redirect:/adminDashboard";
+	}
+
+	@PostMapping("/deleteCourse/{id}")
+	public String deleteCoursePost() {
+
+		return "redirect:/adminDashboard";
+	}
+
 }
