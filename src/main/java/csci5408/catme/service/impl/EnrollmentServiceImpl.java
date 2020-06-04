@@ -1,13 +1,15 @@
 package csci5408.catme.service.impl;
 
 import csci5408.catme.dao.*;
-import csci5408.catme.domain.*;
+import csci5408.catme.domain.Course;
+import csci5408.catme.domain.Enrollment;
+import csci5408.catme.domain.Operation;
+import csci5408.catme.domain.Role;
 import csci5408.catme.dto.CourseRole;
 import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.EnrollmentService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,30 +57,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return false;
-	}
-
-	@Override
-	public boolean enrollStudent(CourseSummary c, UserSummary u) {
-		User user = userDao.findByEmail(u.getEmailId());
-		if (user == null) {
-			// @TODO: Create User Jay
-		}
-		assert c != null;
-		assert c.getId() != 0;
-		return false;
-	}
-
-	@Override
-	public boolean enrollStudents(CourseSummary c, List<UserSummary> users) {
-		for (UserSummary u : users) {
-			enrollStudent(c, u);
-		}
-		return true;
-	}
-
-	@Override
-	public boolean enrollStudents(CourseSummary c, MultipartFile file) {
 		return false;
 	}
 
