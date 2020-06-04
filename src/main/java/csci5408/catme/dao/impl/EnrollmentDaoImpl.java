@@ -59,7 +59,34 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 
 	@Override
 	public Enrollment update(Enrollment enrollment) {
-		return null;
+		String sql = "UPDATE enrollment " +
+				"set role_id= :roleId " +
+				"set user_id= :userId " +
+				"set course_id= :courseId " +
+				"where id= :id ";
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+
+		try {
+			s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder(sql);
+			builder.setParameter("courseId", enrollment.getCourseId());
+			builder.setParameter("userId", enrollment.getUserId());
+			builder.setParameter("roleId", enrollment.getRoleId());
+			builder.setParameter("id", enrollment.getId());
+			s.executeUpdate(builder.query());
+
+			return enrollment;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(rs);
+			dataSource.close(s);
+			dataSource.close(con);
+		}
 	}
 
 	@Override
@@ -140,6 +167,46 @@ public class EnrollmentDaoImpl implements EnrollmentDao {
 			dataSource.close(connection);
 		}
 		return madeTA;
+	}
+
+	@Override
+	public Enrollment findEnrollment(Long userId, Long courseId) {
+		String sql = "select id, course_id, user_id, role_id \n" +
+				"from enrollment\n" +
+				"where user_id = :userId and course_id = :courseId";
+
+		Connection connection = dataSource.getConnection();
+		ResultSet resultSet = null;
+		Statement s = null;
+		assert connection != null;
+		Enrollment enrollment = null;
+		try {
+			s = connection.createStatement();
+			QueryBuilder builder = new QueryBuilder(sql);
+
+			builder.setParameter("user_id", userId);
+			builder.setParameter("course_id", courseId);
+			if (s.execute(builder.query())) {
+				resultSet = s.getResultSet();
+				if (resultSet.next()) {
+					enrollment = new Enrollment();
+					enrollment.setId(resultSet.getLong("id"));
+					enrollment.setCourseId(resultSet.getLong("course_id"));
+					enrollment.setUserId(resultSet.getLong("user_id"));
+					enrollment.setRoleId(resultSet.getLong("role_id"));
+				}
+				return enrollment;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dataSource.close(resultSet);
+			dataSource.close(s);
+			dataSource.close(connection);
+		}
+
+		return null;
 	}
 
 }

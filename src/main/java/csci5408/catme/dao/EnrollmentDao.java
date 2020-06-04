@@ -7,4 +7,6 @@ public interface EnrollmentDao extends Dao<Enrollment, Long> {
 	Role findRole(Long userId, Long courseId);
 
 	boolean makeTA(Long userId);
+
+	Enrollment findEnrollment(Long userId, Long courseId);
 }

@@ -1,10 +1,7 @@
 package csci5408.catme.service.impl;
 
 import csci5408.catme.dao.*;
-import csci5408.catme.domain.Course;
-import csci5408.catme.domain.Operation;
-import csci5408.catme.domain.Role;
-import csci5408.catme.domain.User;
+import csci5408.catme.domain.*;
 import csci5408.catme.dto.CourseRole;
 import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
@@ -35,6 +32,30 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		this.enrollmentDao = enrollmentDao;
 		this.roleDao = roleDao;
 		this.operationDao = operationDao;
+	}
+
+	@Override
+	public boolean enrollUser(CourseSummary c, UserSummary u, Role role) {
+		try {
+			Role r = enrollmentDao.findRole(u.getId(), c.getId());
+			Long taRoleId = roleDao.getRoleIdByName("TA");
+			if(r != null) {
+				Enrollment e = enrollmentDao.findEnrollment(u.getId(), c.getId());
+				e.setRoleId(taRoleId);
+				enrollmentDao.update(e);
+				return true;
+			} else {
+				Enrollment e = new Enrollment();
+				e.setRoleId(taRoleId);
+				e.setCourseId(c.getId());
+				e.setUserId(u.getId());
+				enrollmentDao.save(e);
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	@Override

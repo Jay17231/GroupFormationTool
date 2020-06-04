@@ -99,4 +99,33 @@ public class RoleDaoImpl implements RoleDao {
         }
         return roles;
     }
+
+    @Override
+    public Long getRoleIdByName(String roleName) {
+        String sql = "select id, name from roles\n" +
+                    "where name= :roleName";
+        Connection con = dataSource.getConnection();
+        ResultSet rs = null;
+        Statement s = null;
+        assert con != null;
+        QueryBuilder queryBuilder = new QueryBuilder(sql);
+        queryBuilder.setParameter("roleName", roleName);
+        try {
+            s = con.createStatement();
+            if(s.execute(sql)) {
+                rs = s.getResultSet();
+                if (rs.next()) {
+                    return rs.getLong("id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            dataSource.close(rs);
+            dataSource.close(s);
+            dataSource.close(con);
+        }
+        return null;
+    }
 }

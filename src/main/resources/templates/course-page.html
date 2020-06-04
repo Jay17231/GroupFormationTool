@@ -24,6 +24,14 @@
             <h1>Welcome to the Course Page!</h1>
             <h2 th:text="${courseOp.get().courseName}"></h2>
             <span th:text="${'you are the course ' + (role.roleName != null ? role.roleName : 'Guest')}"></span>
+            <form th:if="${addStudents}" method="POST" th:action="@{/assign-ta}">
+                <div class="form-group mt-3 pull-left">
+                    <label>Enter the email ID of the student to assign as TA:</label>
+                    <input type="email" name="emailta" class="form-control" id="emailta" placeholder="Enter the email of the student">
+                    <input type="text" name="courseid" class="form-control-file" id="courseid" th:value="${role.courseId}" hidden>
+                </div>
+                <button type="submit" class="btn btn-success">Assign TA</button>
+            </form>
 
         </div>
 </div>

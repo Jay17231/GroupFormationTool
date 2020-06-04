@@ -2,6 +2,7 @@ package csci5408.catme.controller;
 
 import csci5408.catme.dao.CourseDao;
 import csci5408.catme.domain.Course;
+import csci5408.catme.domain.Operation;
 import csci5408.catme.dto.CourseRole;
 import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
@@ -102,8 +103,15 @@ public class CourseController {
 					CourseSummary.from(c.get()),
 					true);
 		}
+		boolean addStudents = false;
+		for (Operation operation: courseRole.getPermissions()) {
+			if(operation.toString().equals("ADD_STUDENTS")) {
+				addStudents = true;
+			}
+		}
 		modelAndView.addObject("role", courseRole);
 		modelAndView.addObject("courseOp", c);
+		modelAndView.addObject("addStudents", addStudents);
 		return modelAndView;
 	}
 }

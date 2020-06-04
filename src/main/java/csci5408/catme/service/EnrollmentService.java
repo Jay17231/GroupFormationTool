@@ -9,6 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface EnrollmentService {
+
+	boolean enrollUser(CourseSummary c, UserSummary u, Role role);
+
 	boolean enrollStudent(CourseSummary c, UserSummary u);
 
 	boolean enrollStudents(CourseSummary c, List<UserSummary> u);
