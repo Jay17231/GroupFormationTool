@@ -1,6 +1,7 @@
 package csci5408.catme.service.impl;
 
 import csci5408.catme.dao.*;
+import csci5408.catme.domain.Course;
 import csci5408.catme.domain.Enrollment;
 import csci5408.catme.domain.Role;
 import csci5408.catme.dto.CourseSummary;
@@ -8,8 +9,9 @@ import csci5408.catme.dto.UserSummary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -88,5 +90,49 @@ public class EnrollmentServiceImplTest {
         Role r = new Role();
         r.setName("TA");
         assertFalse(enrollmentService.enrollUser(summary, userSummary, r));
+    }
+
+    @Test
+    public void getRoleTest() {
+        when(enrollmentDao.findRole(1L, 2L)).thenReturn(new Role());
+        UserSummary summary = new UserSummary();
+        summary.setId(1L);
+        CourseSummary summary1 = new CourseSummary(2L, "ABC");
+        assertNotNull(enrollmentService.getRole(summary, summary1));
+    }
+
+    @Test
+    public void getCourseRoleTest() {
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(new Course(1L, "A"));
+        UserSummary summary = new UserSummary();
+        summary.setId(1L);
+        CourseSummary summary1 = new CourseSummary(1L,"A");
+        when(courseDao.findCoursesByUserId(1L)).thenReturn(courses);
+        when(enrollmentDao.findRole(1L, 1L)).thenReturn(null);
+        assertNotNull(enrollmentService.getCourseRole(summary, summary1, true));
+    }
+
+    @Test
+    public void getEnrolledCoursesTest() {
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(new Course(1L, "A"));
+        when(courseDao.findCoursesByUserId(1L)).thenReturn(courses);
+        UserSummary summary = new UserSummary();
+        summary.setId(1L);
+        assertNotNull(enrollmentService.getEnrolledCourses(summary));
+    }
+
+    @Test
+    public void getUserCoursesAndRolesTest() {
+        UserSummary summary = new UserSummary();
+        summary.setId(1L);
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(new Course(1L, "A"));
+        when(courseDao.findCoursesByUserId(1L)).thenReturn(courses);
+        UserSummary summary1 = new UserSummary();
+        summary.setId(1L);
+        assertNotNull(enrollmentService.getEnrolledCourses(summary1));
+        assertNotNull(enrollmentService.getUserCoursesAndRoles(summary));
     }
 }
