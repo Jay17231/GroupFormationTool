@@ -1,5 +1,6 @@
 package csci5408.catme.controller;
 
+import csci5408.catme.authentication.ISessionStore;
 import csci5408.catme.dao.CourseDao;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.AuthenticationService;
@@ -12,8 +13,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static csci5408.catme.authentication.AuthConfig.AUTH_COOKIE_NAME;
 
 /**
  * @author krupa
@@ -27,13 +32,16 @@ public class LoginController {
 	final EnrollmentService enrollService;
 	final AuthenticationService authenticationService;
 	final CourseDao courseDao;
+	final ISessionStore sessionStore;
 
 	public LoginController(UserService userService, EnrollmentService enrollService,
-			AuthenticationService authenticationService, CourseDao courseDao) {
+						   AuthenticationService authenticationService, CourseDao courseDao,
+						   ISessionStore sessionStore) {
 		this.authenticationService = authenticationService;
 		this.userService = userService;
 		this.enrollService = enrollService;
 		this.courseDao = courseDao;
+		this.sessionStore = sessionStore;
 	}
 
 	@GetMapping("/signup")
@@ -77,5 +85,24 @@ public class LoginController {
 		} else {
 			return new ModelAndView("redirect:courses");
 		}
+	}
+
+	@GetMapping("/signout")
+	public String logout(HttpServletRequest request) {
+		Cookie[] cookies = ((HttpServletRequest)request).getCookies();
+		if(cookies != null) {
+			for (Cookie cookie : cookies) {
+				String cookieName = cookie.getName();
+				if(cookieName.equals(AUTH_COOKIE_NAME)) {
+					sessionStore.invalidateSession(cookie.getValue());
+					try {
+						request.logout();
+					} catch (ServletException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return "redirect:/";
 	}
 }

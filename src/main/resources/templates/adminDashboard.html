@@ -15,6 +15,7 @@
 <div class="row">
 <div><a th:href="@{/createCourse}"><button type="button"  class="btn btn-outline-primary" >Create Course</button></a></div>
 </div>
+<div></div>
 <div class="row">
   <div th:each="adminDashboard, itemStat: *{allCourse}">
   <div class="card" style="width:400px">
@@ -23,7 +24,7 @@
     ID: <p class="card-text" th:text="*{allCourse[__${itemStat.index}__].id}" > </p>
     <a th:href="@{/viewcourse/{id}(id = ${allCourse[__${itemStat.index}__].id})}" class="btn btn-primary">View</a>
     </div>
-
+</div>
 </div>
   </div>
 

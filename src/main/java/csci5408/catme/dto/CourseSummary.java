@@ -40,7 +40,7 @@ public class CourseSummary {
     }
 
     public static CourseSummary from(Course course) {
-        return new CourseSummary(course.getId(), course.getCourseName());
+        return new CourseSummary(course.getId(), course.getName());
     }
 
     public static List<CourseSummary> from(List<Course> courses) {

@@ -58,8 +58,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			}
 		}  catch (NullPointerException ex) {
 			System.out.println("Code probably called from CommandLineRunner");
-		} catch (Exception ex) {
-			return false;
 		}
 
 		return sc.getAuthentication().isAuthenticated();

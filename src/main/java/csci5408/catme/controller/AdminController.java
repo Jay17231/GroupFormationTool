@@ -3,8 +3,9 @@
  */
 package csci5408.catme.controller;
 
-import java.util.List;
-
+import csci5408.catme.dao.impl.CourseDaoImpl;
+import csci5408.catme.domain.Course;
+import csci5408.catme.sql.ConnectionManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import csci5408.catme.dao.impl.CourseDaoImpl;
-import csci5408.catme.domain.Course;
-import csci5408.catme.sql.ConnectionManager;
+import java.util.List;
 
 /**
  * @author krupa
@@ -47,10 +46,6 @@ public class AdminController {
 
 	}
 
-	@GetMapping("/signout")
-	public String signout() {
-		return "logout.html";
-	}
 
 	@GetMapping("/viewcourse/{id}")
 	public String courses(@PathVariable("id") String id, Model model) {

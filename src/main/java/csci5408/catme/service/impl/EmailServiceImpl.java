@@ -1,26 +1,25 @@
 package csci5408.catme.service.impl;
 
+import csci5408.catme.configuration.ConfigProperties;
+import csci5408.catme.dto.UserSummary;
+import csci5408.catme.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.EmailService;
 
 @Service
 public class EmailServiceImpl implements EmailService {
 
 	private JavaMailSender javaMailSender;
 
-	@Value("${spring.mail.username}")
-	private String fromEmail;
+	private ConfigProperties configProperties;
 
 	@Autowired
-	public EmailServiceImpl(JavaMailSender javaMailSender) throws MailException {
+	public EmailServiceImpl(JavaMailSender javaMailSender, ConfigProperties properties) throws MailException {
 		this.javaMailSender = javaMailSender;
+		this.configProperties = properties;
 	}
 
 	@Override
@@ -28,12 +27,12 @@ public class EmailServiceImpl implements EmailService {
 
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(summary.getEmailId());
-		mailMessage.setFrom(fromEmail);
+		mailMessage.setFrom(configProperties.getFromEmail());
 		mailMessage.setSubject(subject);
 		mailMessage.setText(body);
 
 		javaMailSender.send(mailMessage);
 
-		return false;
+		return true;
 	}
 }
