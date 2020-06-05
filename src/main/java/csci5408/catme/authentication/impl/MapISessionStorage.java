@@ -28,4 +28,13 @@ public class MapISessionStorage implements ISessionStore {
         map.put(key, userSummary);
         return key;
     }
+
+    @Override
+    public boolean invalidateSession(String value) {
+        if(map.containsKey(value)) {
+            map.remove(value);
+            return true;
+        }
+        return false;
+    }
 }
