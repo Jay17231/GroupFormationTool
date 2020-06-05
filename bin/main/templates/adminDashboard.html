@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+</head>
+<body>
+          
+<div th:replace="header :: adminheader"></div>   
+
+  
+<div class="container">
+<div class="row">
+<div><a th:href="@{/createCourse}"><button type="button"  class="btn btn-outline-primary" >Create Course</button></a></div>
+</div>
+<div></div>
+<div class="row">
+  <div th:each="adminDashboard, itemStat: *{allCourse}">
+  <div class="card" style="width:400px">
+  <div class="card-body">
+    <h4 class="card-title" th:text="*{allCourse[__${itemStat.index}__].name}"></h4>
+    ID: <p class="card-text" th:text="*{allCourse[__${itemStat.index}__].id}" > </p>
+    <a th:href="@{/viewcourse/{id}(id = ${allCourse[__${itemStat.index}__].id})}" class="btn btn-primary">View</a>
+    </div>
+</div>
+</div>
+  </div>
+
+</div>
+
+</body>
+</html>

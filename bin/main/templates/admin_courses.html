@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+</head>
+<body>
+          
+<div th:replace="header :: adminheader"></div>   
+
+<div class="container p-3 my-3 border">
+  <div class="row">
+    <div class="col-sm-8" style="background-color:lavender;"><h1 th:text="${course.name}"></h1>
+  <p th:text="${course.id}" ></p></div>
+    <div class="col-sm-4" style="background-color:lavenderblush;">
+     <div><button type="button" class="btn btn-outline-primary" >Assign Instructor</button>
+    	<a th:href="@{/deleteCourse/{id}(id = ${course.id})}"><button type="button" class="btn btn-outline-danger">Delete Course</button></a>
+    	
+   	</div>
+    </div>
+  </div>
+  
+</div>
+ 
+</body>
+</html>
