@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Catme-Login</title>
     <link rel="stylesheet" type="text/css" href="/css/login.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
@@ -11,6 +11,7 @@
 <body>
   <div class="wrapper">
     <form class="form-signin" action="#" th:action="@{/login}" th:object="${user}" method="post">
+      <h1 class="form-title">Dalhousie University</h1>
       <h2 class="form-signin-heading">Please login</h2>
 
       <input type="text" class="form-control" name="email" placeholder="Email Address" required autofocus="" />
