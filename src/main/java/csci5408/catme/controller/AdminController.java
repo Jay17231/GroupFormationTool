@@ -30,18 +30,18 @@ public class AdminController {
 		this.courseDao = courseDao;
 	}
 
-	@GetMapping("/adminDashboard")
+	@GetMapping("/admin-dashboard")
 	public String signUp(Model model) {
 		List<Course> courses = courseDao.findAll();
 
 		model.addAttribute("allCourse", courses);
-		return "adminDashboard";
+		return "admin-dashboard";
 	}
 
-	@PostMapping("/adminDashboard")
+	@PostMapping("/admin-dashboard")
 	public String viewCourses(@ModelAttribute Course allCourse) {
 
-		return "adminDashboard";
+		return "admin-dashboard";
 
 	}
 
@@ -51,20 +51,20 @@ public class AdminController {
 
 		Course course = courseDao.findCoursesById(Long.valueOf(id));
 		model.addAttribute("course", course);
-		return "admin_courses";
+		return "admin-courses";
 	}
 
 	@PostMapping("/viewcourse/{id}")
 	public String postcourses(@ModelAttribute Course course) {
 
-		return "admin_courses";
+		return "admin-courses";
 
 	}
 
 	@GetMapping("/createCourse")
 	public String createCourse(Model model) {
 		model.addAttribute("createCourse", new Course());
-		return "createCourse";
+		return "create-course";
 	}
 
 	@PostMapping("/createCourse")

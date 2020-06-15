@@ -39,7 +39,7 @@ public class CourseController {
 		}
 		UserSummary userSummary = authenticationService.getLoggedInUser();
 		if (userSummary.getAdmin()) {
-			mView = new ModelAndView("adminDashboard");
+			mView = new ModelAndView("admin-dashboard");
 			return mView;
 		} else {
 			Long userId = userSummary.getId();

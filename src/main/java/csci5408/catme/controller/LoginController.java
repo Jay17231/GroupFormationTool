@@ -57,7 +57,7 @@ public class LoginController {
 
 	@GetMapping("/forgotpassword")
 	public String forgotpassword() {
-		return "ForgotPassword.html"; // extension depends on view resolver.
+		return "forgot-password.html"; // extension depends on view resolver.
 	}
 
 	@GetMapping("/login")
@@ -79,7 +79,7 @@ public class LoginController {
 		}
 
 		if (authenticationService.getLoggedInUser().getAdmin()) {
-			mView = new ModelAndView("redirect:adminDashboard");
+			mView = new ModelAndView("redirect:admin-dashboard");
 			return mView;
 		} else {
 			return new ModelAndView("redirect:courses");

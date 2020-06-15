@@ -22,7 +22,7 @@ public class ApplicationController {
     public ModelAndView greetings() {
         if(authenticationService.isAuthenticated()) {
             if(authenticationService.getLoggedInUser().getAdmin()) {
-                return new ModelAndView("adminDashboard");
+                return new ModelAndView("redirect:admin-dashboard");
             }
             return new ModelAndView("redirect:courses");
         }
