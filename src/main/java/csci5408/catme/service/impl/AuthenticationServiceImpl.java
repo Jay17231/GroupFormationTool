@@ -1,11 +1,12 @@
 package csci5408.catme.service.impl;
 
-import csci5408.catme.authentication.ISessionStore;
-import csci5408.catme.dao.UserDao;
-import csci5408.catme.domain.User;
-import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.AuthenticationService;
-import csci5408.catme.service.UserService;
+import static csci5408.catme.authentication.AuthConfig.AUTH_COOKIE_NAME;
+
+import java.util.Random;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,11 +16,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Random;
-
-import static csci5408.catme.authentication.AuthConfig.AUTH_COOKIE_NAME;
+import csci5408.catme.authentication.ISessionStore;
+import csci5408.catme.dao.UserDao;
+import csci5408.catme.domain.User;
+import csci5408.catme.dto.UserSummary;
+import csci5408.catme.service.AuthenticationService;
+import csci5408.catme.service.UserService;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -56,7 +58,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				String cookieString = ISessionStore.setSession((UserSummary) auth.getPrincipal());
 				response.addCookie(new Cookie(AUTH_COOKIE_NAME, cookieString));
 			}
-		}  catch (NullPointerException ex) {
+		} catch (NullPointerException ex) {
 			System.out.println("Code probably called from CommandLineRunner");
 		}
 
@@ -85,7 +87,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public String resetPassword(int passlength) {
+	public String resetPassword() {
 
 		String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		String lowerCase = "abcdefghijklmnopqrstuvwxyz";
@@ -93,6 +95,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		String numbers = "1234567890";
 		String combinedChars = upperCase + lowerCase + specialCharacters + numbers;
 		Random random = new Random();
+		int passlength = random.nextInt() % 10 + 10;
 		String newPassword = "";
 		char[] passwordArr = new char[passlength];
 
@@ -112,7 +115,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public void changePassword(UserSummary user, String password) {
 		String encodedPassword = bCryptPasswordEncoder.encode(password);
 		User u = userDao.findByEmail(user.getEmailId());
-		if(u == null) {
+		if (u == null) {
 			throw new UsernameNotFoundException(user.getEmailId());
 		}
 		u.setPassword(encodedPassword);
@@ -129,7 +132,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	public UserSummary getLoggedInUser() {
-		if(this.isAuthenticated()) {
+		if (this.isAuthenticated()) {
 			SecurityContext context = SecurityContextHolder.getContext();
 			return (UserSummary) context.getAuthentication().getPrincipal();
 		}

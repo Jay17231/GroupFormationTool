@@ -1,8 +1,8 @@
 package csci5408.catme.service;
 
-import csci5408.catme.dto.UserSummary;
-
 import javax.servlet.http.HttpServletResponse;
+
+import csci5408.catme.dto.UserSummary;
 
 public interface AuthenticationService {
 
@@ -21,7 +21,7 @@ public interface AuthenticationService {
 	 */
 	boolean isAdmin(String email, String password);
 
-	String resetPassword(int passlength);
+	String resetPassword();
 
 	void changePassword(UserSummary user, String password);
 

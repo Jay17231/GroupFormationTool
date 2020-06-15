@@ -109,7 +109,7 @@ public class UploadCSVController {
 			return;
 		}
 
-		String password = auth.resetPassword(8);
+		String password = auth.resetPassword();
 		userSummary.setEmailId(emailId);
 		userSummary.setLastName(lastName);
 		userSummary.setFirstName(firstName);
