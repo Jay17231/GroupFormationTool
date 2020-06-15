@@ -89,13 +89,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public String resetPassword() {
 
+		// Random passwordLengthRandom = new Random();
+		int passlength = (int) Math.floor((Math.random() * 10) + 10);
+
 		String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		String lowerCase = "abcdefghijklmnopqrstuvwxyz";
 		String specialCharacters = "!@#$";
 		String numbers = "1234567890";
 		String combinedChars = upperCase + lowerCase + specialCharacters + numbers;
 		Random random = new Random();
-		int passlength = random.nextInt() % 10 + 10;
 		String newPassword = "";
 		char[] passwordArr = new char[passlength];
 

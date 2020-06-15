@@ -1,10 +1,18 @@
 package csci5408.catme.service.impl;
 
-import csci5408.catme.authentication.ISessionStore;
-import csci5408.catme.dao.UserDao;
-import csci5408.catme.domain.User;
-import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.UserService;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -13,12 +21,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import csci5408.catme.authentication.ISessionStore;
+import csci5408.catme.dao.UserDao;
+import csci5408.catme.domain.User;
+import csci5408.catme.dto.UserSummary;
+import csci5408.catme.service.UserService;
 
 public class AuthenticationServiceImplTest {
 
@@ -127,17 +134,18 @@ public class AuthenticationServiceImplTest {
 	@Test
 	public void generatePassword() {
 
-		int passlength = 8;
-		String newPassword = authenticationService.resetPassword(passlength);
+		int minPasswordLength = 10;
+		int maxPasswordLength = 20;
+		String newPassword = authenticationService.resetPassword();
 		assertNotNull(newPassword);
-		assertEquals(passlength, newPassword.length());
+		assertTrue(minPasswordLength <= newPassword.length() && maxPasswordLength >= newPassword.length());
 
 	}
 
 	@Test
 	public void isAdminTest_True() {
 		String email = "aman@g.com";
-		User u = new User(1L, "A","V", "B", true, email);
+		User u = new User(1L, "A", "V", "B", true, email);
 		when(userDao.findByEmail(email)).thenReturn(u);
 		assertTrue(authenticationService.isAdmin(email, ""));
 	}
@@ -145,7 +153,7 @@ public class AuthenticationServiceImplTest {
 	@Test
 	public void isAdminTest_False() {
 		String email = "aman@g.com";
-		User u = new User(1L, "A","V", "B", false, email);
+		User u = new User(1L, "A", "V", "B", false, email);
 		when(userDao.findByEmail(email)).thenReturn(u);
 		assertFalse(authenticationService.isAdmin(email, ""));
 	}
