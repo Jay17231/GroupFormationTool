@@ -61,25 +61,6 @@ public class AssignTAController {
 		model.addAttribute("email", emailId);
 		enrollmentService.enrollUser(courseSummary, userSummary, taRole);
 
-//		if (role.getName().compareToIgnoreCase("Student") != 0) {
-//			model.addAttribute("message", "User is not a student. Please try a student's email address");
-//			model.addAttribute("status", false);
-//			return "assign-ta-details";
-//		}
-//
-//		boolean madeta = enrollmentDao.makeTA(userId);
-//
-//		if (!madeta) {
-//			model.addAttribute("message", "Something went wrong");
-//			model.addAttribute("status", false);
-//			return "assign-ta-details";
-//		}
-//		model.addAttribute("message", "Role Changed to TA Successfully!");
-//		model.addAttribute("status", madeta);
-//		model.addAttribute("name", userSummary.getFirstName() + " " + userSummary.getLastName());
-//		model.addAttribute("studentId", userSummary.getStudentId());
-//		model.addAttribute("email", emailId);
-//
 		return "assign-ta-details";
 	}
 

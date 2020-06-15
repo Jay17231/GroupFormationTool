@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 
 /**
- * @author krupa
+ * @author Krupa Patel
  */
 
 @Controller
@@ -31,7 +31,7 @@ public class AdminController {
 	}
 
 	@GetMapping("/adminDashboard")
-	public String signup(Model model) {
+	public String signUp(Model model) {
 		List<Course> courses = courseDao.findAll();
 
 		model.addAttribute("allCourse", courses);
@@ -39,7 +39,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/adminDashboard")
-	public String viewcourses(@ModelAttribute Course allCourse) {
+	public String viewCourses(@ModelAttribute Course allCourse) {
 
 		return "adminDashboard";
 
@@ -47,7 +47,7 @@ public class AdminController {
 
 
 	@GetMapping("/viewcourse/{id}")
-	public String courses(@PathVariable("id") String id, Model model) {
+	public String getCourseById(@PathVariable("id") String id, Model model) {
 
 		Course course = courseDao.findCoursesById(Long.valueOf(id));
 		model.addAttribute("course", course);
