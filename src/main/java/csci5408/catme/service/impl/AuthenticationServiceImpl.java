@@ -1,12 +1,11 @@
 package csci5408.catme.service.impl;
 
-import static csci5408.catme.authentication.AuthConfig.AUTH_COOKIE_NAME;
-
-import java.util.Random;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-
+import csci5408.catme.authentication.ISessionStore;
+import csci5408.catme.dao.IUserDao;
+import csci5408.catme.domain.User;
+import csci5408.catme.dto.UserSummary;
+import csci5408.catme.service.IAuthenticationService;
+import csci5408.catme.service.IUserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,28 +15,27 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import csci5408.catme.authentication.ISessionStore;
-import csci5408.catme.dao.UserDao;
-import csci5408.catme.domain.User;
-import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.AuthenticationService;
-import csci5408.catme.service.UserService;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Random;
+
+import static csci5408.catme.authentication.AuthConfig.AUTH_COOKIE_NAME;
 
 @Service
-public class AuthenticationServiceImpl implements AuthenticationService {
+public class AuthenticationServiceImpl implements IAuthenticationService {
 
 	final AuthenticationManager authenticationManager;
 
 	final ISessionStore ISessionStore;
 
-	final UserService userService;
+	final IUserService userService;
 
 	final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	final UserDao userDao;
+	final IUserDao userDao;
 
 	public AuthenticationServiceImpl(AuthenticationManager authenticationManager, ISessionStore ISessionStore,
-			UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder, UserDao userDao) {
+									 IUserService userService, BCryptPasswordEncoder bCryptPasswordEncoder, IUserDao userDao) {
 		this.authenticationManager = authenticationManager;
 		this.ISessionStore = ISessionStore;
 		this.userService = userService;

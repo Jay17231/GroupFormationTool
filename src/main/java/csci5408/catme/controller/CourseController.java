@@ -1,31 +1,30 @@
 package csci5408.catme.controller;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.ModelAndView;
-
-import csci5408.catme.dao.CourseDao;
+import csci5408.catme.dao.ICourseDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.domain.Operation;
 import csci5408.catme.dto.CourseRole;
 import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.AuthenticationService;
-import csci5408.catme.service.EnrollmentService;
+import csci5408.catme.service.IAuthenticationService;
+import csci5408.catme.service.IEnrollmentService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class CourseController {
 
-	final AuthenticationService authenticationService;
-	final CourseDao courseDao;
-	final EnrollmentService enrollmentService;
+	final IAuthenticationService authenticationService;
+	final ICourseDao courseDao;
+	final IEnrollmentService enrollmentService;
 
-	public CourseController(AuthenticationService authenticationService, CourseDao courseDao,
-			EnrollmentService enrollmentService) {
+	public CourseController(IAuthenticationService authenticationService, ICourseDao courseDao,
+							IEnrollmentService enrollmentService) {
 		this.authenticationService = authenticationService;
 		this.courseDao = courseDao;
 		this.enrollmentService = enrollmentService;

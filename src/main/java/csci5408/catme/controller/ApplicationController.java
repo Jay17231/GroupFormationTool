@@ -1,6 +1,6 @@
 package csci5408.catme.controller;
 
-import csci5408.catme.service.AuthenticationService;
+import csci5408.catme.service.IAuthenticationService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,9 +11,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ApplicationController {
 
-    private final AuthenticationService authenticationService;
+    private final IAuthenticationService authenticationService;
 
-    public ApplicationController(AuthenticationService authenticationService) {
+    public ApplicationController(IAuthenticationService authenticationService) {
 
         this.authenticationService = authenticationService;
     }

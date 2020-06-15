@@ -5,7 +5,7 @@ package csci5408.catme.controller;
 
 import csci5408.catme.dao.impl.CourseDaoImpl;
 import csci5408.catme.domain.Course;
-import csci5408.catme.sql.ConnectionManager;
+import csci5408.catme.sql.impl.ConnectionManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,23 +17,22 @@ import java.util.List;
 
 /**
  * @author krupa
- *
  */
 
 @Controller
 public class AdminController {
 
-	ConnectionManager dataSource = new ConnectionManager();
-	CourseDaoImpl cdao = new CourseDaoImpl(dataSource);
+	ConnectionManager dataSource;
+	CourseDaoImpl courseDao;
 
-	public AdminController(ConnectionManager datasource, CourseDaoImpl cdao) {
+	public AdminController(ConnectionManager datasource, CourseDaoImpl courseDao) {
 		this.dataSource = datasource;
-		this.cdao = cdao;
+		this.courseDao = courseDao;
 	}
 
 	@GetMapping("/adminDashboard")
 	public String signup(Model model) {
-		List<Course> courses = cdao.findAll();
+		List<Course> courses = courseDao.findAll();
 
 		model.addAttribute("allCourse", courses);
 		return "adminDashboard";
@@ -50,7 +49,7 @@ public class AdminController {
 	@GetMapping("/viewcourse/{id}")
 	public String courses(@PathVariable("id") String id, Model model) {
 
-		Course course = cdao.findCoursesById(Long.valueOf(id));
+		Course course = courseDao.findCoursesById(Long.valueOf(id));
 		model.addAttribute("course", course);
 		return "admin_courses";
 	}
@@ -71,7 +70,7 @@ public class AdminController {
 	@PostMapping("/createCourse")
 	public String createCoursePost(@ModelAttribute Course createCourse) {
 
-		Course c = cdao.save(createCourse);
+		Course c = courseDao.save(createCourse);
 		return "redirect:/adminDashboard";
 	}
 
@@ -80,7 +79,7 @@ public class AdminController {
 		Course c = new Course();
 		int cid = Integer.parseInt(id);
 		c.setId(Long.valueOf(id));
-		cdao.delete(c);
+		courseDao.delete(c);
 		return "redirect:/adminDashboard";
 	}
 

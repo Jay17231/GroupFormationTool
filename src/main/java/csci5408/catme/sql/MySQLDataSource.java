@@ -1,5 +1,6 @@
 package csci5408.catme.sql;
 
+import csci5408.catme.sql.impl.ConnectionManager;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 /**
  * @author Aman Vishnani (aman.vishnani@dal.ca)
+ * @deprecated in favour of {@link IConnectionManager}
  */
 @Component
 public class MySQLDataSource {

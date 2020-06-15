@@ -1,10 +1,10 @@
 package csci5408.catme.service;
 
-import javax.servlet.http.HttpServletResponse;
-
 import csci5408.catme.dto.UserSummary;
 
-public interface AuthenticationService {
+import javax.servlet.http.HttpServletResponse;
+
+public interface IAuthenticationService {
 
 	boolean login(String email, String password, HttpServletResponse response);
 
@@ -13,11 +13,11 @@ public interface AuthenticationService {
 	boolean isAuthenticated();
 
 	/**
-	 * @deprecated in favour of {@link #getLoggedInUser()}
-	 * @author Krupa Ptel
 	 * @param email
 	 * @param password
 	 * @return
+	 * @author Krupa Patel
+	 * @deprecated in favour of {@link #getLoggedInUser()}
 	 */
 	boolean isAdmin(String email, String password);
 

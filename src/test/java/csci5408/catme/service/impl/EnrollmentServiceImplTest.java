@@ -17,24 +17,24 @@ import static org.mockito.Mockito.when;
 
 public class EnrollmentServiceImplTest {
 
-    final UserDao userDao;
+    final IUserDao userDao;
 
-    final CourseDao courseDao;
+    final ICourseDao courseDao;
 
-    final EnrollmentDao enrollmentDao;
+    final IEnrollmentDao enrollmentDao;
 
-    final RoleDao roleDao;
+    final IRoleDao roleDao;
 
-    final OperationDao operationDao;
+    final IOperationDao operationDao;
 
     EnrollmentServiceImpl enrollmentService;
 
     public EnrollmentServiceImplTest() {
-        this.userDao = mock(UserDao.class);
-        this.courseDao = mock(CourseDao.class);
-        this.enrollmentDao = mock(EnrollmentDao.class);
-        this.roleDao = mock(RoleDao.class);
-        this.operationDao = mock(OperationDao.class);
+        this.userDao = mock(IUserDao.class);
+        this.courseDao = mock(ICourseDao.class);
+        this.enrollmentDao = mock(IEnrollmentDao.class);
+        this.roleDao = mock(IRoleDao.class);
+        this.operationDao = mock(IOperationDao.class);
     }
 
     @BeforeEach

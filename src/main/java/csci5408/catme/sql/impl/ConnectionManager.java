@@ -1,6 +1,7 @@
-package csci5408.catme.sql;
+package csci5408.catme.sql.impl;
 
-import org.springframework.beans.factory.annotation.Value;
+import csci5408.catme.configuration.ConfigProperties;
+import csci5408.catme.sql.IConnectionManager;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -9,20 +10,18 @@ import java.sql.*;
  * @author Aman Vishnani (aman.vishnani@dal.ca)
  */
 @Service
-public class ConnectionManager {
+public class ConnectionManager implements IConnectionManager {
 
-    @Value("${spring.datasource.url}")
-    private String url;
+    private ConfigProperties configProperties;
 
-    @Value("${spring.datasource.username}")
-    private String username;
+    public ConnectionManager(ConfigProperties configProperties) {
 
-    @Value("${spring.datasource.password}")
-    private String password;
+    }
 
     public Connection getConnection() {
         try {
-            return DriverManager.getConnection(url, username, password);
+            return DriverManager.getConnection(configProperties.getDbUrl(),
+                    configProperties.getDbUsername(), configProperties.getDbPassword());
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
