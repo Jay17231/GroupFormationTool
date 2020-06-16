@@ -1,6 +1,6 @@
 package csci5408.catme.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Question {
 
@@ -14,7 +14,7 @@ public class Question {
 
 	private String questionText;
 
-	private LocalDate creationDate;
+	private LocalDateTime creationDate;
 
 	public Long getId() {
 		return id;
@@ -56,11 +56,11 @@ public class Question {
 		this.questionText = questionText;
 	}
 
-	public LocalDate getCreationDate() {
+	public LocalDateTime getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(LocalDate creationDate) {
+	public void setCreationDate(LocalDateTime creationDate) {
 		this.creationDate = creationDate;
 	}
 

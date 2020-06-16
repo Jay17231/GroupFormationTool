@@ -1,6 +1,7 @@
 package csci5408.catme.dao.impl;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -26,6 +27,7 @@ public class QuestionDaoImpl implements IQuestionDao {
 	public Question save(Question question) {
 
 		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
 		Statement s = null;
 		assert con != null;
 
@@ -40,10 +42,18 @@ public class QuestionDaoImpl implements IQuestionDao {
 			builder.setParameter("question_type_id", question.getQuestionTypeId());
 			builder.setParameter("creation_date", question.getCreationDate());
 
+			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+
+			rs = s.getGeneratedKeys();
+			if (rs.next()) {
+				question.setId(rs.getLong(1));
+			}
+
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		} finally {
 			dataSource.close(s);
+			dataSource.close(rs);
 			dataSource.close(con);
 		}
 
@@ -65,20 +75,34 @@ public class QuestionDaoImpl implements IQuestionDao {
 	@Override
 	public boolean delete(Question question) {
 		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
 		Statement s = null;
 		assert con != null;
 
 		try {
 
 			s = con.createStatement();
-			QueryBuilder builder = new QueryBuilder("DELETE FROM questions WHERE id = :questionId");
+			QueryBuilder builder = new QueryBuilder("DELETE FROM question_options WHERE id = :questionId");
 			builder.setParameter("questionId", question.getId());
+
+			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+
+			builder = new QueryBuilder("DELETE FROM questions WHERE id = :questionId");
+			builder.setParameter("questionId", question.getId());
+
+			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+
+			rs = s.getGeneratedKeys();
+			if (rs.next()) {
+				question.setId(rs.getLong(1));
+			}
 
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 			return false;
 		} finally {
 			dataSource.close(s);
+			dataSource.close(rs);
 			dataSource.close(con);
 		}
 
@@ -93,18 +117,6 @@ public class QuestionDaoImpl implements IQuestionDao {
 
 	@Override
 	public List<Question> getQuestionsByUser(Long userId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Question findQuestionById(Long questionId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getQuestionType(Long questionId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
