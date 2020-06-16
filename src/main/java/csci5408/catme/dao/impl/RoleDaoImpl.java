@@ -1,8 +1,8 @@
 package csci5408.catme.dao.impl;
 
-import csci5408.catme.dao.RoleDao;
+import csci5408.catme.dao.IRoleDao;
 import csci5408.catme.domain.Role;
-import csci5408.catme.sql.ConnectionManager;
+import csci5408.catme.sql.impl.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class RoleDaoImpl implements RoleDao {
+public class RoleDaoImpl implements IRoleDao {
 
 	final ConnectionManager dataSource;
 

@@ -8,37 +8,37 @@ import csci5408.catme.domain.Role;
 import csci5408.catme.dto.CourseRole;
 import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.EnrollmentService;
+import csci5408.catme.service.IEnrollmentService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class EnrollmentServiceImpl implements EnrollmentService {
+public class EnrollmentServiceImpl implements IEnrollmentService {
 
-	final UserDao userDao;
+    final IUserDao userDao;
 
-	final CourseDao courseDao;
+    final ICourseDao courseDao;
 
-	final EnrollmentDao enrollmentDao;
+    final IEnrollmentDao enrollmentDao;
 
-	final RoleDao roleDao;
+    final IRoleDao roleDao;
 
-	final OperationDao operationDao;
+    final IOperationDao operationDao;
 
-	public EnrollmentServiceImpl(UserDao dao, CourseDao courseDao, EnrollmentDao enrollmentDao, RoleDao roleDao,
-								 OperationDao operationDao) {
-		this.userDao = dao;
-		this.courseDao = courseDao;
-		this.enrollmentDao = enrollmentDao;
-		this.roleDao = roleDao;
-		this.operationDao = operationDao;
-	}
+    public EnrollmentServiceImpl(IUserDao dao, ICourseDao courseDao, IEnrollmentDao enrollmentDao, IRoleDao roleDao,
+                                 IOperationDao operationDao) {
+        this.userDao = dao;
+        this.courseDao = courseDao;
+        this.enrollmentDao = enrollmentDao;
+        this.roleDao = roleDao;
+        this.operationDao = operationDao;
+    }
 
-	@Override
-	public boolean enrollUser(CourseSummary c, UserSummary u, Role role) {
-		try {
+    @Override
+    public boolean enrollUser(CourseSummary c, UserSummary u, Role role) {
+        try {
 			Role r = enrollmentDao.findRole(u.getId(), c.getId());
 			Long taRoleId = roleDao.getRoleIdByName("TA");
 			if(r != null) {

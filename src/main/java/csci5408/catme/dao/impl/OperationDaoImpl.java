@@ -1,8 +1,8 @@
 package csci5408.catme.dao.impl;
 
-import csci5408.catme.dao.OperationDao;
+import csci5408.catme.dao.IOperationDao;
 import csci5408.catme.domain.Operation;
-import csci5408.catme.sql.ConnectionManager;
+import csci5408.catme.sql.impl.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class OperationDaoImpl implements OperationDao {
+public class OperationDaoImpl implements IOperationDao {
 
     private final ConnectionManager dataSource;
 

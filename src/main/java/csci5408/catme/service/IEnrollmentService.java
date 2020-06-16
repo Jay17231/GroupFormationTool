@@ -7,7 +7,7 @@ import csci5408.catme.dto.UserSummary;
 
 import java.util.List;
 
-public interface EnrollmentService {
+public interface IEnrollmentService {
 
 	boolean enrollUser(CourseSummary c, UserSummary u, Role role);
 

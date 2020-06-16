@@ -1,11 +1,13 @@
 package csci5408.catme.controller;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import csci5408.catme.dao.IEnrollmentDao;
+import csci5408.catme.domain.Enrollment;
+import csci5408.catme.dto.UserSummary;
+import csci5408.catme.service.IAuthenticationService;
+import csci5408.catme.service.IEmailService;
+import csci5408.catme.service.IUserService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,15 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-
-import csci5408.catme.dao.EnrollmentDao;
-import csci5408.catme.domain.Enrollment;
-import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.AuthenticationService;
-import csci5408.catme.service.EmailService;
-import csci5408.catme.service.UserService;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Jay Gajjar (jy386888@dal.ca)
@@ -33,15 +31,15 @@ public class UploadCSVController {
 	private List<String[]> addedRecords;
 	private List<String[]> discardRecords;
 
-	final UserService user;
+	final IUserService user;
 	final UserSummary userSummary;
-	final AuthenticationService auth;
-	final EnrollmentDao enrollmentDao;
+	final IAuthenticationService auth;
+	final IEnrollmentDao enrollmentDao;
 
-	final EmailService mail;
+	final IEmailService mail;
 
-	public UploadCSVController(UserService user, AuthenticationService auth, EnrollmentDao enrollmentDao,
-			EmailService mail) {
+	public UploadCSVController(IUserService user, IAuthenticationService auth, IEnrollmentDao enrollmentDao,
+							   IEmailService mail) {
 		this.auth = auth;
 		this.user = user;
 		this.mail = mail;
@@ -109,7 +107,7 @@ public class UploadCSVController {
 			return;
 		}
 
-		String password = auth.resetPassword(8);
+		String password = auth.resetPassword();
 		userSummary.setEmailId(emailId);
 		userSummary.setLastName(lastName);
 		userSummary.setFirstName(firstName);

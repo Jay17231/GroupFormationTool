@@ -1,20 +1,20 @@
 package csci5408.catme.service.impl;
 
-import csci5408.catme.dao.UserDao;
+import csci5408.catme.dao.IUserDao;
 import csci5408.catme.domain.User;
 import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.UserService;
+import csci5408.catme.service.IUserService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
 
     final
-    UserDao userDao;
+    IUserDao userDao;
 
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(IUserDao userDao) {
         this.userDao = userDao;
     }
 

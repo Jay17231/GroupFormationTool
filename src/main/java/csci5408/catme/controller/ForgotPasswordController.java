@@ -1,22 +1,21 @@
 package csci5408.catme.controller;
 
+import csci5408.catme.service.IAuthenticationService;
+import csci5408.catme.service.IEmailService;
+import csci5408.catme.service.IUserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import csci5408.catme.service.AuthenticationService;
-import csci5408.catme.service.EmailService;
-import csci5408.catme.service.UserService;
-
 @Controller
 public class ForgotPasswordController {
 
-	final UserService user;
-	final EmailService mail;
-	final AuthenticationService auth;
+	final IUserService user;
+	final IEmailService mail;
+	final IAuthenticationService auth;
 
-	public ForgotPasswordController(UserService user, EmailService mail, AuthenticationService auth) {
+	public ForgotPasswordController(IUserService user, IEmailService mail, IAuthenticationService auth) {
 		this.user = user;
 		this.mail = mail;
 		this.auth = auth;
@@ -32,7 +31,7 @@ public class ForgotPasswordController {
 			mView.addObject("status", false);
 			return mView.addObject("name", "User does not exist. Please try a different email address");
 		}
-		String newPass = auth.resetPassword(8);
+		String newPass = auth.resetPassword();
 
 		String nameString = user.getUserByEmailId(useremail).getFirstName();
 

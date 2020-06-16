@@ -1,11 +1,11 @@
 package csci5408.catme.controller;
 
 import csci5408.catme.authentication.ISessionStore;
-import csci5408.catme.dao.CourseDao;
+import csci5408.catme.dao.ICourseDao;
 import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.AuthenticationService;
-import csci5408.catme.service.EnrollmentService;
-import csci5408.catme.service.UserService;
+import csci5408.catme.service.IAuthenticationService;
+import csci5408.catme.service.IEnrollmentService;
+import csci5408.catme.service.IUserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,20 +22,19 @@ import static csci5408.catme.authentication.AuthConfig.AUTH_COOKIE_NAME;
 
 /**
  * @author krupa
- *
  */
 
 @Controller
 public class LoginController {
 
-	final UserService userService;
-	final EnrollmentService enrollService;
-	final AuthenticationService authenticationService;
-	final CourseDao courseDao;
+	final IUserService userService;
+	final IEnrollmentService enrollService;
+	final IAuthenticationService authenticationService;
+	final ICourseDao courseDao;
 	final ISessionStore sessionStore;
 
-	public LoginController(UserService userService, EnrollmentService enrollService,
-						   AuthenticationService authenticationService, CourseDao courseDao,
+	public LoginController(IUserService userService, IEnrollmentService enrollService,
+						   IAuthenticationService authenticationService, ICourseDao courseDao,
 						   ISessionStore sessionStore) {
 		this.authenticationService = authenticationService;
 		this.userService = userService;
@@ -58,7 +57,7 @@ public class LoginController {
 
 	@GetMapping("/forgotpassword")
 	public String forgotpassword() {
-		return "ForgotPassword.html"; // extension depends on view resolver.
+		return "forgot-password.html"; // extension depends on view resolver.
 	}
 
 	@GetMapping("/login")
@@ -79,8 +78,8 @@ public class LoginController {
 			return new ModelAndView("redirect:login");
 		}
 
-		if (authenticationService.isAdmin(request.getParameter("email"), request.getParameter("password"))) {
-			mView = new ModelAndView("redirect:adminDashboard");
+		if (authenticationService.getLoggedInUser().getAdmin()) {
+			mView = new ModelAndView("redirect:admin-dashboard");
 			return mView;
 		} else {
 			return new ModelAndView("redirect:courses");

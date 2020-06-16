@@ -1,5 +1,11 @@
 package csci5408.catme.dao.impl;
 
+import csci5408.catme.dao.ICourseDao;
+import csci5408.catme.domain.Course;
+import csci5408.catme.sql.impl.ConnectionManager;
+import csci5408.catme.sql.impl.QueryBuilder;
+import org.springframework.stereotype.Component;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,14 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import csci5408.catme.dao.CourseDao;
-import csci5408.catme.domain.Course;
-import csci5408.catme.sql.ConnectionManager;
-import csci5408.catme.sql.impl.QueryBuilder;
-import org.springframework.stereotype.Component;
-
 @Component
-public class CourseDaoImpl implements CourseDao {
+public class CourseDaoImpl implements ICourseDao {
 
 	final ConnectionManager dataSource;
 
