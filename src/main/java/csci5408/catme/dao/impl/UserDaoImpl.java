@@ -2,6 +2,7 @@ package csci5408.catme.dao.impl;
 
 import csci5408.catme.dao.IUserDao;
 import csci5408.catme.domain.User;
+import csci5408.catme.sql.IConnectionManager;
 import csci5408.catme.sql.impl.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @Component
 public class UserDaoImpl implements IUserDao {
 
-	final ConnectionManager dataSource;
+	final IConnectionManager dataSource;
 
 	public UserDaoImpl(ConnectionManager dataSource) {
 		this.dataSource = dataSource;
