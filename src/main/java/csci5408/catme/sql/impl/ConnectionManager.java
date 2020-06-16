@@ -15,7 +15,7 @@ public class ConnectionManager implements IConnectionManager {
     private ConfigProperties configProperties;
 
     public ConnectionManager(ConfigProperties configProperties) {
-
+        this.configProperties = configProperties;
     }
 
     public Connection getConnection() {
