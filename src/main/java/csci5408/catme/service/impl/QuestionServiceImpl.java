@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import csci5408.catme.dao.IQuestionDao;
+import csci5408.catme.domain.Question;
 import csci5408.catme.domain.QuestionType;
 import csci5408.catme.service.IQuestionService;
 
@@ -32,6 +33,24 @@ public class QuestionServiceImpl implements IQuestionService {
 		Long typeId = null;
 		typeId = questionDao.getTypeIdByName(questionType);
 		return typeId;
+	}
+
+	@Override
+	public Question addQuestion(Question question) {
+		Question addedQuestion = questionDao.save(question);
+		return addedQuestion;
+	}
+
+	@Override
+	public Boolean removeQuestion(Question question) {
+		boolean removedQuestion = questionDao.delete(question);
+		return removedQuestion;
+	}
+
+	@Override
+	public List<Question> questionsByUser(Long userId) {
+		List<Question> allQuestions = questionDao.getQuestionsByUser(userId);
+		return allQuestions;
 	}
 
 }

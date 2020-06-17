@@ -8,35 +8,29 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import csci5408.catme.dao.impl.QuestionDaoImpl;
 import csci5408.catme.domain.Question;
 import csci5408.catme.domain.QuestionType;
+import csci5408.catme.service.IQuestionService;
 import csci5408.catme.service.impl.AuthenticationServiceImpl;
-import csci5408.catme.service.impl.QuestionServiceImpl;
 
 /**
  * @author Jay Gajjar
  */
 
 @Controller
-@Validated
 public class QuestionController {
 
 	AuthenticationServiceImpl auth;
-	QuestionDaoImpl questionDao;
-	QuestionServiceImpl questionService;
+	IQuestionService questionService;
 
-	public QuestionController(AuthenticationServiceImpl auth, QuestionDaoImpl questionDao,
-			QuestionServiceImpl questionService) {
+	public QuestionController(AuthenticationServiceImpl auth, IQuestionService questionService) {
 		this.auth = auth;
-		this.questionDao = questionDao;
 		this.questionService = questionService;
 	}
 
@@ -44,7 +38,7 @@ public class QuestionController {
 	public String allQuestions(Model model) {
 
 		Long userId = auth.getLoggedInUser().getId();
-		List<Question> questions = questionDao.getQuestionsByUser(userId);
+		List<Question> questions = questionService.questionsByUser(userId);
 
 		model.addAttribute("allquestions", questions);
 		return "question-manager";
@@ -64,14 +58,14 @@ public class QuestionController {
 
 		Long userId = auth.getLoggedInUser().getId();
 		LocalDateTime creationDateTime = LocalDateTime.now();
-		Long typeId = questionDao.getTypeIdByName(questionType);
+		Long typeId = questionService.getQuestionTypeIdByName(questionType);
 
 		model.addAttribute("thisid", questionType);
 
 		createQuestion.setQuestionTypeId(typeId);
 		createQuestion.setUserId(userId);
 		createQuestion.setCreationDate(creationDateTime);
-		Question question = questionDao.save(createQuestion);
+		Question question = questionService.addQuestion(createQuestion);
 		return "redirect:/question-manager";
 	}
 
@@ -80,7 +74,7 @@ public class QuestionController {
 		Question question = new Question();
 		int questionId = Integer.parseInt(id);
 		question.setId(Long.valueOf(questionId));
-		questionDao.delete(question);
+		questionService.removeQuestion(question);
 		return "redirect:/question-manager";
 	}
 
