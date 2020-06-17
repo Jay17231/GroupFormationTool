@@ -31,6 +31,7 @@ public class QueryBuilderTest {
         setParameterTestCollections();
         setParameterTestNull();
         setParameterTestEmptyCollection();
+        sortingTest();
     }
 
     private void setParameterTestEmptyCollection() {
@@ -125,10 +126,23 @@ public class QueryBuilderTest {
 
 
         builder1 = new QueryBuilder("SELECT * from ABC where i > :abc and k < :def");
-        builder1.setParameter("abc", LocalDate.of(2020, 5,27));
+        builder1.setParameter("abc", LocalDate.of(2020, 5, 27));
         builder1.setParameter("def", LocalDateTime.of(2020, 5, 27, 23, 0, 1));
         q1 = builder1.query();
         assertNotNull(q1);
         assertEquals("SELECT * from ABC where i > '2020-05-27' and k < '2020-05-27 23:00:01'", q1);
+    }
+
+    private void sortingTest() {
+        QueryBuilder builder1;
+        String q1;
+        builder1 = new QueryBuilder("SELECT * from ABC order by :orderField1 :sortType1 , :orderField2 :sortType2");
+        builder1.setSortByAttribute("orderField1", "f_name");
+        builder1.setSortType("sortType1", Sort.ASC);
+        builder1.setSortByAttribute("orderField2", "l_name");
+        builder1.setSortType("sortType2", Sort.DESC);
+        q1 = builder1.query();
+        assertNotNull(q1);
+        assertEquals("SELECT * from ABC order by f_name ASC , l_name DESC", q1);
     }
 }

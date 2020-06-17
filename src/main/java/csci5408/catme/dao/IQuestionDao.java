@@ -1,13 +1,13 @@
 package csci5408.catme.dao;
 
-import java.util.List;
-import java.util.Map;
-
 import csci5408.catme.domain.Question;
+import csci5408.catme.sql.Sort;
+
+import java.util.List;
 
 public interface IQuestionDao extends IDao<Question, Long> {
 
-	Map<String, List<Question>> getQuestionsByUser(Long userId);
+	List<Question> getQuestionsByUser(Long userId, String attribute, Sort sort);
 
 	Long getTypeIdByName(String questionType);
 

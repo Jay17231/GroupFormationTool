@@ -32,17 +32,23 @@
 					</div>
 					<div class="col-md-6 text-center">
 						<h3 class="display-5 text-center mb-3">Your Questions</h3>
-						<a th:href="@{/sort-manager}" class="btn btn-sm btn-primary text-white mb-3"><i class="fa fa-filter"></i> Sort Questions</a>
+						<a class="btn btn-sm btn-primary text-white mb-3" th:href="@{/questions}">
+							<i class="fa fa-filter"></i> Sort Questions
+						</a>
 						<div class="card mb-3" th:each="q : ${allquestions}">
 							<div class="card-header" th:text="${q.getQuestionTitle()}"></div>
-						  	<div class="card-body">
-						  		<p th:text="${q.getQuestionText()}"></p>
-						  		<span class="text-muted d-block">Creation Date:</span>
-					  			<small class="text-muted" th:text="${q.getCreationDate()}"></small>
-						  	</div>
-						  	<div class="card-footer">
-						  		<a class="float-right btn btn-md btn-danger text-white" th:href="@{/deleteQuestion/{id}(id = ${q.getId()})}"><i class="fa fa-trash"></i> Delete Question</a>
-						  		<a class="float-left btn btn-md btn-info text-white" th:href="@{/deleteQuestion/{id}(id = ${q.getId()})}"><i class="fa fa-eye"></i> View Question</a>
+							<div class="card-body">
+								<p th:text="${q.getQuestionText()}"></p>
+								<span class="text-muted d-block">Creation Date:</span>
+								<small class="text-muted" th:text="${q.getCreationDate()}"></small>
+							</div>
+							<div class="card-footer">
+								<a class="float-right btn btn-md btn-danger text-white"
+								   th:href="@{/deleteQuestion/{id}(id = ${q.getId()})}"><i class="fa fa-trash"></i>
+									Delete Question</a>
+								<a class="float-left btn btn-md btn-info text-white"
+								   th:href="@{/deleteQuestion/{id}(id = ${q.getId()})}"><i class="fa fa-eye"></i> View
+									Question</a>
 					  		</div>
 						</div>
 					</div>

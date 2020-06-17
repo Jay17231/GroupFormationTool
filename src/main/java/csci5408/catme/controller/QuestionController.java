@@ -3,22 +3,17 @@
  */
 package csci5408.catme.controller;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import csci5408.catme.domain.Question;
 import csci5408.catme.domain.QuestionOptions;
 import csci5408.catme.domain.QuestionType;
 import csci5408.catme.service.IQuestionService;
 import csci5408.catme.service.impl.AuthenticationServiceImpl;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Jay Gajjar
@@ -39,7 +34,7 @@ public class QuestionController {
 	public String allQuestions(Model model) {
 
 		Long userId = auth.getLoggedInUser().getId();
-		List<Question> questions = questionService.questionsByUser(userId, "sort-cd-desc");
+		List<Question> questions = questionService.questionsByUser(userId, "", "");
 
 		model.addAttribute("allquestions", questions);
 		model.addAttribute("sortStatus", true);
@@ -129,52 +124,18 @@ public class QuestionController {
 		return "redirect:/question-manager";
 	}
 
-	@GetMapping("/questions/sort-cd-asc")
-	public String sortByCreationDateASC(Model model) {
+	@GetMapping("/questions")
+	public String sortByCreationDateASC(
+			Model model,
+			@RequestParam(defaultValue = "DESC") String sortType,
+			@RequestParam(defaultValue = "creation_date") String sortField
+	) {
 
 		Long userId = auth.getLoggedInUser().getId();
-		List<Question> questions = questionService.questionsByUser(userId, "sort-cd-asc");
+		List<Question> questions = questionService.questionsByUser(userId, sortType, sortField);
 
 		model.addAttribute("sortedquestions", questions);
 		model.addAttribute("sortStatus", true);
-		return "sort-manager";
-	}
-
-	@GetMapping("/questions/sort-title-asc")
-	public String sortByTitleASC(Model model) {
-
-		Long userId = auth.getLoggedInUser().getId();
-		List<Question> questions = questionService.questionsByUser(userId, "sort-title-asc");
-
-		model.addAttribute("sortedquestions", questions);
-		model.addAttribute("sortStatus", true);
-		return "sort-manager";
-	}
-
-	@GetMapping("/questions/sort-cd-desc")
-	public String sortByCreationDateDESC(Model model) {
-
-		Long userId = auth.getLoggedInUser().getId();
-		List<Question> questions = questionService.questionsByUser(userId, "sort-cd-desc");
-
-		model.addAttribute("sortStatus", true);
-		model.addAttribute("sortedquestions", questions);
-		return "sort-manager";
-	}
-
-	@GetMapping("/questions/sort-title-desc")
-	public String sortByTitleDESC(Model model) {
-
-		Long userId = auth.getLoggedInUser().getId();
-		List<Question> questions = questionService.questionsByUser(userId, "sort-title-desc");
-
-		model.addAttribute("sortedquestions", questions);
-		model.addAttribute("sortStatus", true);
-		return "sort-manager";
-	}
-
-	@GetMapping("/sort-manager")
-	public String sortManager() {
 		return "sort-manager";
 	}
 

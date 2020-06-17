@@ -1,15 +1,15 @@
 package csci5408.catme.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
 import csci5408.catme.dao.IQuestionDao;
 import csci5408.catme.domain.Question;
 import csci5408.catme.domain.QuestionType;
 import csci5408.catme.service.IQuestionService;
+import csci5408.catme.sql.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class QuestionServiceImpl implements IQuestionService {
@@ -22,10 +22,7 @@ public class QuestionServiceImpl implements IQuestionService {
 
 	@Override
 	public List<QuestionType> getQuestionTypes() {
-		List<QuestionType> qTypes = new ArrayList<QuestionType>();
-		for (QuestionType q : QuestionType.values()) {
-			qTypes.add(q);
-		}
+		List<QuestionType> qTypes = new ArrayList<QuestionType>(Arrays.asList(QuestionType.values()));
 		return qTypes;
 	}
 
@@ -49,25 +46,24 @@ public class QuestionServiceImpl implements IQuestionService {
 	}
 
 	@Override
-	public List<Question> questionsByUser(Long userId, String typeOfSort) {
+	public List<Question> questionsByUser(Long userId, String sortType, String sortField) {
 
-		Map<String, List<Question>> sortedMaps = questionDao.getQuestionsByUser(userId);
-		List<Question> allQuestions = sortedMaps.get("creationDateDESC");
+		Sort order = Sort.DESC;
+		String field = "creation_date";
 
-		if (typeOfSort.compareToIgnoreCase("sort-cd-asc") == 0) {
-			allQuestions = sortedMaps.get("creationDateASC");
-		}
-		if (typeOfSort.compareToIgnoreCase("sort-cd-desc") == 0) {
-			allQuestions = sortedMaps.get("creationDateDESC");
-		}
-		if (typeOfSort.compareToIgnoreCase("sort-title-asc") == 0) {
-			allQuestions = sortedMaps.get("titleASC");
-		}
-		if (typeOfSort.compareToIgnoreCase("sort-title-desc") == 0) {
-			allQuestions = sortedMaps.get("titleDESC");
+		if (sortType.equalsIgnoreCase("ASC")) {
+			order = Sort.ASC;
 		}
 
-		return allQuestions;
+		if (
+				sortField.equalsIgnoreCase("question_title") ||
+						sortField.equalsIgnoreCase("questionTitle")
+		) {
+			field = "question_title";
+		}
+
+		List<Question> questions = questionDao.getQuestionsByUser(userId, field, order);
+		return questions;
 	}
 
 }

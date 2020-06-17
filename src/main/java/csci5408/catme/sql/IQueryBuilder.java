@@ -9,14 +9,28 @@ import java.util.Collection;
  */
 public interface IQueryBuilder {
     void setParameter(String key, Integer value);
+
     void setParameter(String key, String value);
+
     void setParameter(String key, LocalDate value);
+
     void setParameter(String key, LocalDateTime value);
+
     void setParameter(String key, Double value);
+
     void setParameter(String key, Float value);
+
     void setParameter(String key, Collection<?> value);
+
     void setParameter(String key, Boolean value);
+
     void setParameter(String key, Long value);
+
     void setLikeParameter(String key, String value);
+
+    void setSortType(String key, Sort value);
+
+    void setSortByAttribute(String key, String value);
+
     String query();
 }
