@@ -1,6 +1,8 @@
 package csci5408.catme.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Question {
 
@@ -15,6 +17,11 @@ public class Question {
 	private String questionText;
 
 	private LocalDateTime creationDate;
+
+	private List<QuestionOptions> questionOptions = new ArrayList<QuestionOptions>();
+
+	public Question() {
+	};
 
 	public Long getId() {
 		return id;
@@ -62,6 +69,18 @@ public class Question {
 
 	public void setCreationDate(LocalDateTime creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public void addOption(QuestionOptions questionOption) {
+		this.questionOptions.add(questionOption);
+	}
+
+	public List<QuestionOptions> getQuestionOptions() {
+		return questionOptions;
+	}
+
+	public void setQuestionOptions(List<QuestionOptions> questionOptions) {
+		this.questionOptions = questionOptions;
 	}
 
 }
