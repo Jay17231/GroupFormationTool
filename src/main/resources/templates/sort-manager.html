@@ -21,19 +21,21 @@
 		
 		<div class="wrapper">
 		    <div class="container mb-3">
-		        <h1>Welcome to the Questions Manager</h1>
-		        <small class="text-muted mb-3">Create, Update, and Delete your Questions Here</small>
+		        <h1>Welcome to the Sorting Manager</h1>
+		        <small class="text-muted mb-3">Sort your Questions Here</small>
 		        <hr class="mt-3 mb-3">
 		        <div class="row">
-					<div class="col-md-6 text-center">
-						<h3 class="display-5 mb-3">Create Question</h3>
-						<a th:href="@{/create-question}" class="btn btn-md btn-primary"><i class="fa fa-plus"></i> Create a new question</a>
+					<div class="col-md-6 text-left">
+						<h3 class="display-5 mb-3">Sort Questions</h3>
+						<a th:href="@{/questions/sort-cd-asc}" class="btn btn-md btn-primary d-block mb-3"><i class="fas fa-sort-amount-up"></i> Sort By Creation Date ASC</a>
+						<a th:href="@{/questions/sort-cd-desc}" class="btn btn-md btn-primary d-block mb-3"><i class="fas fa-sort-amount-down"></i> Sort By Creation Date DESC</a>
+						<a th:href="@{/questions/sort-title-asc}" class="btn btn-md btn-primary d-block mb-3"><i class="fas fa-sort-alpha-up"></i> Sort By Title ASC</a>
+						<a th:href="@{/questions/sort-title-desc}" class="btn btn-md btn-primary d-block"><i class="fas fa-sort-alpha-up"></i> Sort By Title DESC</a>
 						<p th:text="${thisid}"></p>
 					</div>
 					<div class="col-md-6 text-center">
 						<h3 class="display-5 text-center mb-3">Your Questions</h3>
-						<a th:href="@{/sort-manager}" class="btn btn-sm btn-primary text-white"><i class="fa fa-filter"></i> Sort Questions</a>
-						<div class="card mb-3" th:each="q : ${allquestions}">
+						<div class="card mb-3" th:each="q : ${sortedquestions}">
 							<div class="card-header" th:text="${q.getQuestionTitle()}"></div>
 						  	<div class="card-body">
 						  		<p th:text="${q.getQuestionText()}"></p>

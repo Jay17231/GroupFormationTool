@@ -5,7 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -151,8 +153,13 @@ public class QuestionDaoImpl implements IQuestionDao {
 	}
 
 	@Override
-	public List<Question> getQuestionsByUser(Long userId) {
-		List<Question> questionByUser = new ArrayList<Question>();
+	public Map<String, List<Question>> getQuestionsByUser(Long userId) {
+		Map<String, List<Question>> sortedListsMap = new HashMap<String, List<Question>>();
+
+		List<Question> creationDateASC = new ArrayList<Question>();
+		List<Question> creationDateDESC = new ArrayList<Question>();
+		List<Question> titleASC = new ArrayList<Question>();
+		List<Question> titleDESC = new ArrayList<Question>();
 
 		Connection con = dataSource.getConnection();
 		ResultSet rs = null;
@@ -162,7 +169,8 @@ public class QuestionDaoImpl implements IQuestionDao {
 		try {
 
 			s = con.createStatement();
-			QueryBuilder builder = new QueryBuilder("SELECT * FROM questions WHERE user_id = :user_id");
+			QueryBuilder builder = new QueryBuilder(
+					"SELECT * FROM questions WHERE user_id = :user_id ORDER BY creation_date ASC");
 			builder.setParameter("user_id", userId);
 
 			if (s.execute(builder.query())) {
@@ -176,8 +184,80 @@ public class QuestionDaoImpl implements IQuestionDao {
 					question.setQuestionText(rs.getString("question_text"));
 					question.setQuestionTitle(rs.getString("question_title"));
 
-					questionByUser.add(question);
+					creationDateASC.add(question);
 				}
+			}
+
+			dataSource.close(rs);
+
+			rs = null;
+			builder = new QueryBuilder("SELECT * FROM questions WHERE user_id = :user_id ORDER BY creation_date DESC");
+			builder.setParameter("user_id", userId);
+
+			if (s.execute(builder.query())) {
+				rs = s.getResultSet();
+				while (rs.next()) {
+					Question question = new Question();
+					question.setCreationDate(rs.getTimestamp("creation_date").toLocalDateTime());
+					question.setId(rs.getLong("id"));
+					question.setUserId(userId);
+					question.setQuestionTypeId(rs.getLong("question_type_id"));
+					question.setQuestionText(rs.getString("question_text"));
+					question.setQuestionTitle(rs.getString("question_title"));
+
+					creationDateDESC.add(question);
+				}
+			}
+
+			dataSource.close(rs);
+
+			rs = null;
+			builder = new QueryBuilder("SELECT * FROM questions WHERE user_id = :user_id ORDER BY question_title ASC");
+			builder.setParameter("user_id", userId);
+
+			if (s.execute(builder.query())) {
+				rs = s.getResultSet();
+				while (rs.next()) {
+					Question question = new Question();
+					question.setCreationDate(rs.getTimestamp("creation_date").toLocalDateTime());
+					question.setId(rs.getLong("id"));
+					question.setUserId(userId);
+					question.setQuestionTypeId(rs.getLong("question_type_id"));
+					question.setQuestionText(rs.getString("question_text"));
+					question.setQuestionTitle(rs.getString("question_title"));
+
+					titleASC.add(question);
+				}
+			}
+
+			dataSource.close(rs);
+
+			rs = null;
+			builder = new QueryBuilder("SELECT * FROM questions WHERE user_id = :user_id ORDER BY question_title DESC");
+			builder.setParameter("user_id", userId);
+
+			if (s.execute(builder.query())) {
+				rs = s.getResultSet();
+				while (rs.next()) {
+					Question question = new Question();
+					question.setCreationDate(rs.getTimestamp("creation_date").toLocalDateTime());
+					question.setId(rs.getLong("id"));
+					question.setUserId(userId);
+					question.setQuestionTypeId(rs.getLong("question_type_id"));
+					question.setQuestionText(rs.getString("question_text"));
+					question.setQuestionTitle(rs.getString("question_title"));
+
+					titleDESC.add(question);
+				}
+			}
+
+			sortedListsMap.put("creationDateASC", creationDateASC);
+			sortedListsMap.put("creationDateDESC", creationDateDESC);
+			sortedListsMap.put("titleASC", titleASC);
+			sortedListsMap.put("titleDESC", titleDESC);
+
+			for (Question q : creationDateDESC) {
+				System.out.println(q.getQuestionTitle());
 			}
 
 		} catch (SQLException sqle) {
@@ -189,7 +269,7 @@ public class QuestionDaoImpl implements IQuestionDao {
 			dataSource.close(con);
 		}
 
-		return questionByUser;
+		return sortedListsMap;
 	}
 
 }

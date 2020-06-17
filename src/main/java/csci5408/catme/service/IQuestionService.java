@@ -9,7 +9,7 @@ public interface IQuestionService {
 
 	List<QuestionType> getQuestionTypes();
 
-	List<Question> questionsByUser(Long userId);
+	List<Question> questionsByUser(Long userId, String typeOfSort);
 
 	Long getQuestionTypeIdByName(String questionType);
 

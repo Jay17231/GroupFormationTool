@@ -32,6 +32,7 @@
 					</div>
 					<div class="col-md-6 text-center">
 						<h3 class="display-5 text-center mb-3">Your Questions</h3>
+						<a th:href="@{/sort-manager}" class="btn btn-sm btn-primary text-white"><i class="fa fa-filter"></i> Sort Questions</a>
 						<div class="card mb-3" th:each="q : ${allquestions}">
 							<div class="card-header" th:text="${q.getQuestionTitle()}"></div>
 						  	<div class="card-body">
@@ -44,7 +45,7 @@
 					  		</div>
 						</div>
 					</div>
-			</div>
+				</div>
 			</div>
 		</div>
 	</body>

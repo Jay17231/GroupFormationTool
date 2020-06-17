@@ -2,6 +2,7 @@ package csci5408.catme.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -48,8 +49,24 @@ public class QuestionServiceImpl implements IQuestionService {
 	}
 
 	@Override
-	public List<Question> questionsByUser(Long userId) {
-		List<Question> allQuestions = questionDao.getQuestionsByUser(userId);
+	public List<Question> questionsByUser(Long userId, String typeOfSort) {
+
+		Map<String, List<Question>> sortedMaps = questionDao.getQuestionsByUser(userId);
+		List<Question> allQuestions = sortedMaps.get("creationDateDESC");
+
+		if (typeOfSort.compareToIgnoreCase("sort-cd-asc") == 0) {
+			allQuestions = sortedMaps.get("creationDateASC");
+		}
+		if (typeOfSort.compareToIgnoreCase("sort-cd-desc") == 0) {
+			allQuestions = sortedMaps.get("creationDateDESC");
+		}
+		if (typeOfSort.compareToIgnoreCase("sort-title-asc") == 0) {
+			allQuestions = sortedMaps.get("titleASC");
+		}
+		if (typeOfSort.compareToIgnoreCase("sort-title-desc") == 0) {
+			allQuestions = sortedMaps.get("titleDESC");
+		}
+
 		return allQuestions;
 	}
 

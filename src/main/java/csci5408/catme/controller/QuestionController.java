@@ -38,9 +38,11 @@ public class QuestionController {
 	public String allQuestions(Model model) {
 
 		Long userId = auth.getLoggedInUser().getId();
-		List<Question> questions = questionService.questionsByUser(userId);
+		List<Question> questions = questionService.questionsByUser(userId, "sort-cd-desc");
 
 		model.addAttribute("allquestions", questions);
+		model.addAttribute("sortStatus", true);
+
 		return "question-manager";
 	}
 
@@ -82,6 +84,55 @@ public class QuestionController {
 	public String deleteQuestionPost() {
 
 		return "redirect:/question-manager";
+	}
+
+	@GetMapping("/questions/sort-cd-asc")
+	public String sortByCreationDateASC(Model model) {
+
+		Long userId = auth.getLoggedInUser().getId();
+		List<Question> questions = questionService.questionsByUser(userId, "sort-cd-asc");
+
+		model.addAttribute("sortedquestions", questions);
+		model.addAttribute("sortStatus", true);
+		return "sort-manager";
+	}
+
+	@GetMapping("/questions/sort-title-asc")
+	public String sortByTitleASC(Model model) {
+
+		Long userId = auth.getLoggedInUser().getId();
+		List<Question> questions = questionService.questionsByUser(userId, "sort-title-asc");
+
+		model.addAttribute("sortedquestions", questions);
+		model.addAttribute("sortStatus", true);
+		return "sort-manager";
+	}
+
+	@GetMapping("/questions/sort-cd-desc")
+	public String sortByCreationDateDESC(Model model) {
+
+		Long userId = auth.getLoggedInUser().getId();
+		List<Question> questions = questionService.questionsByUser(userId, "sort-cd-desc");
+
+		model.addAttribute("sortStatus", true);
+		model.addAttribute("sortedquestions", questions);
+		return "sort-manager";
+	}
+
+	@GetMapping("/questions/sort-title-desc")
+	public String sortByTitleDESC(Model model) {
+
+		Long userId = auth.getLoggedInUser().getId();
+		List<Question> questions = questionService.questionsByUser(userId, "sort-title-desc");
+
+		model.addAttribute("sortedquestions", questions);
+		model.addAttribute("sortStatus", true);
+		return "sort-manager";
+	}
+
+	@GetMapping("/sort-manager")
+	public String sortManager() {
+		return "sort-manager";
 	}
 
 }
