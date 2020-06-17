@@ -22,6 +22,10 @@ public class User {
 
 	private String password;
 
+	public User() {
+
+	}
+
 	public User(Long id, String firstName, String lastName, String studentId, Boolean admin, String emailId) {
 		this.id = id;
 		this.firstName = firstName;
