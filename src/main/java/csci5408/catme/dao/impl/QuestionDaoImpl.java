@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -116,9 +117,79 @@ public class QuestionDaoImpl implements IQuestionDao {
 	}
 
 	@Override
+	public Long getTypeIdByName(String questionType) {
+		Long typeId = null;
+
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+
+		try {
+
+			s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder("SELECT * FROM question_type WHERE question_type = :questionType");
+			builder.setParameter("questionType", questionType);
+
+			if (s.execute(builder.query())) {
+				rs = s.getResultSet();
+				while (rs.next()) {
+					typeId = rs.getLong("id");
+				}
+			}
+
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			return null;
+		} finally {
+			dataSource.close(s);
+			dataSource.close(rs);
+			dataSource.close(con);
+		}
+
+		return typeId;
+	}
+
+	@Override
 	public List<Question> getQuestionsByUser(Long userId) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Question> questionByUser = new ArrayList<Question>();
+
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+
+		try {
+
+			s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder("SELECT * FROM questions WHERE user_id = :user_id");
+			builder.setParameter("user_id", userId);
+
+			if (s.execute(builder.query())) {
+				rs = s.getResultSet();
+				while (rs.next()) {
+					Question question = new Question();
+					question.setCreationDate(rs.getTimestamp("creation_date").toLocalDateTime());
+					question.setId(rs.getLong("id"));
+					question.setUserId(userId);
+					question.setQuestionTypeId(rs.getLong("question_type_id"));
+					question.setQuestionText(rs.getString("question_text"));
+					question.setQuestionTitle(rs.getString("question_title"));
+
+					questionByUser.add(question);
+				}
+			}
+
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			return null;
+		} finally {
+			dataSource.close(s);
+			dataSource.close(rs);
+			dataSource.close(con);
+		}
+
+		return questionByUser;
 	}
 
 }
