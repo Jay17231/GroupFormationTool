@@ -10,6 +10,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import csci5408.catme.dao.IPasswordPolicyDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.dto.PasswordPolicy;
@@ -20,6 +22,8 @@ import csci5408.catme.sql.impl.ConnectionManager;
  * @author krupa
  *
  */
+
+@Component
 public class PasswordPolicyDaoImpl implements IPasswordPolicyDao {
 	
 	final ConnectionManager dataSource;

@@ -4,6 +4,7 @@ import csci5408.catme.service.IAuthenticationService;
 import csci5408.catme.service.IEmailService;
 import csci5408.catme.service.IUserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,6 +22,11 @@ public class ForgotPasswordController {
 		this.auth = auth;
 	}
 
+	@GetMapping("/forgotpassword")
+	public String forgotpassword() {
+		return "forgot-password.html"; // extension depends on view resolver.
+	}
+	
 	@RequestMapping("password-reset")
 	public ModelAndView passwordSent(@RequestParam("email") String useremail) {
 
@@ -32,7 +38,6 @@ public class ForgotPasswordController {
 			return mView.addObject("name", "User does not exist. Please try a different email address");
 		}
 		String newPass = auth.resetPassword();
-
 		String nameString = user.getUserByEmailId(useremail).getFirstName();
 
 		mView.addObject("newPassword", newPass);

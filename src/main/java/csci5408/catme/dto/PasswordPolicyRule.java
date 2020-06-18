@@ -5,9 +5,20 @@ public class PasswordPolicyRule {
 	boolean isMinLength;
 	boolean isMaxLength;
 	boolean isMinUpperCase;
+	
 	boolean isMinLowerCase;
 	boolean isMinSymbol;
 	boolean isBlockChar;
+	
+	public PasswordPolicyRule() {
+		this.isMaxLength = true;
+		this.isBlockChar = true;
+		this.isMinLength = true;	
+		this.isMinUpperCase = true;
+		this.isMinLowerCase = true;
+		this.isMinSymbol = true;
+		
+	}
 	
 	
 	public boolean isMinLength() {
