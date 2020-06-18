@@ -11,6 +11,9 @@ import csci5408.catme.service.IEmailService;
 import csci5408.catme.service.IUserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -72,13 +75,11 @@ public class ForgotPasswordController {
 
 	@GetMapping("/update-password")
 	public ModelAndView updatepassword(@RequestParam("email") String useremail,
-									   @RequestParam(value = "status",defaultValue = "true")  Boolean status,
-									   Model model) {
+									   @RequestParam(value = "status",defaultValue = "true")  Boolean status) {
 
 		System.out.println(useremail);
 		// Check if user exists
 		if (userService.getUserByEmailId(useremail) != null) {
-			model.addAttribute("user",new User());
 			ModelAndView mView = new ModelAndView("update-password");
 			mView.addObject("status", status);
 			mView.addObject("email",useremail);
@@ -122,13 +123,6 @@ public class ForgotPasswordController {
 			ModelAndView mView = new ModelAndView("login");
 			mView.addObject("status", true);
 			return mView;
-
-
-
-
-
-
-
 	}
 
 
