@@ -1,6 +1,7 @@
 package csci5408.catme.service.impl;
 
 import csci5408.catme.authentication.ISessionStore;
+import csci5408.catme.dao.IPasswordHistoryDao;
 import csci5408.catme.dao.IUserDao;
 import csci5408.catme.domain.User;
 import csci5408.catme.dto.UserSummary;
@@ -22,11 +23,12 @@ import static org.mockito.Mockito.when;
 
 public class AuthenticationServiceImplTest {
 
-	private AuthenticationManager authenticationManager;
-	private IUserDao userDao;
-	private ISessionStore sessionStore;
-	private IUserService userService;
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final AuthenticationManager authenticationManager;
+	private final IUserDao userDao;
+	private final ISessionStore sessionStore;
+	private final IUserService userService;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final IPasswordHistoryDao passwordHistoryDao;
 	private AuthenticationServiceImpl authenticationService;
 
 	public AuthenticationServiceImplTest() {
@@ -34,13 +36,14 @@ public class AuthenticationServiceImplTest {
 		userDao = mock(IUserDao.class);
 		sessionStore = mock(ISessionStore.class);
 		userService = mock(IUserService.class);
+		passwordHistoryDao = mock(IPasswordHistoryDao.class);
 		bCryptPasswordEncoder = mock(BCryptPasswordEncoder.class);
 	}
 
 	@BeforeEach
 	public void setup() {
 		authenticationService = new AuthenticationServiceImpl(authenticationManager, sessionStore, userService,
-				bCryptPasswordEncoder, userDao);
+				bCryptPasswordEncoder, userDao, passwordHistoryDao);
 	}
 
 	@Test

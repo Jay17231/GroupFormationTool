@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailServiceImpl implements IEmailService {
 
-	private JavaMailSender javaMailSender;
+	private final JavaMailSender javaMailSender;
 
-	private ConfigProperties configProperties;
+	private final ConfigProperties configProperties;
 
 	@Autowired
 	public EmailServiceImpl(JavaMailSender javaMailSender, ConfigProperties properties) throws MailException {
@@ -24,15 +24,26 @@ public class EmailServiceImpl implements IEmailService {
 
 	@Override
 	public boolean sendMail(UserSummary summary, String subject, String body) {
+		return this.sendMail(summary.getEmailId(), subject, body);
+	}
 
+	@Override
+	public boolean sendMail(String emailId, String subject, String body) {
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		mailMessage.setTo(summary.getEmailId());
+		mailMessage.setTo(emailId);
 		mailMessage.setFrom(configProperties.getFromEmail());
 		mailMessage.setSubject(subject);
 		mailMessage.setText(body);
-
 		javaMailSender.send(mailMessage);
+		return true;
+	}
 
+	@Override
+	public boolean sendResetPasswordLink(String userEmail) {
+		String url = configProperties.getHostname() + "update-password?email=" + userEmail;
+
+		this.sendMail(userEmail, "Forgot Password - New Credentials",
+				"Your login email: " + userEmail + ". Your Password: \n" + url);
 		return true;
 	}
 }

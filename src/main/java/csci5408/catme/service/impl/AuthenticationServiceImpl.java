@@ -1,6 +1,7 @@
 package csci5408.catme.service.impl;
 
 import csci5408.catme.authentication.ISessionStore;
+import csci5408.catme.dao.IPasswordHistoryDao;
 import csci5408.catme.dao.IUserDao;
 import csci5408.catme.domain.User;
 import csci5408.catme.dto.UserSummary;
@@ -34,13 +35,16 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
 	final IUserDao userDao;
 
+	final IPasswordHistoryDao passwordHistoryDao;
+
 	public AuthenticationServiceImpl(AuthenticationManager authenticationManager, ISessionStore ISessionStore,
-									 IUserService userService, BCryptPasswordEncoder bCryptPasswordEncoder, IUserDao userDao) {
+									 IUserService userService, BCryptPasswordEncoder bCryptPasswordEncoder, IUserDao userDao, IPasswordHistoryDao passwordHistoryDao) {
 		this.authenticationManager = authenticationManager;
 		this.ISessionStore = ISessionStore;
 		this.userService = userService;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 		this.userDao = userDao;
+		this.passwordHistoryDao = passwordHistoryDao;
 	}
 
 	@Override
@@ -120,6 +124,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 		}
 		u.setPassword(encodedPassword);
 		userDao.update(u);
+		passwordHistoryDao.passwordInsert(u.getId(), encodedPassword);
 	}
 
 	public boolean isAdmin(String email, String password) {

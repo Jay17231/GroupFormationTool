@@ -11,14 +11,25 @@ import static org.mockito.Mockito.when;
 
 public class EmailServiceImplTest {
 
+    private EmailServiceImpl emailService;
+    private ConfigProperties cfp;
+
+    public EmailServiceImplTest() {
+        JavaMailSender jms = mock(JavaMailSender.class);
+        cfp = mock(ConfigProperties.class);
+        emailService = new EmailServiceImpl(jms, cfp);
+    }
+
     @Test
     public void sendMailTest() {
-        JavaMailSender jms = mock(JavaMailSender.class);
-        ConfigProperties cfp = mock(ConfigProperties.class);
-        EmailServiceImpl emailService = new EmailServiceImpl(jms, cfp);
         UserSummary userSummary = new UserSummary();
         userSummary.setEmailId("jon@doe.com");
         when(cfp.getFromEmail()).thenReturn("a@b.ccc");
         assertTrue(emailService.sendMail(userSummary, "Hi", "Bye"));
+    }
+
+    @Test
+    public void sendResetPasswordLinkTest() {
+        assertTrue(emailService.sendResetPasswordLink("a@g.c"));
     }
 }

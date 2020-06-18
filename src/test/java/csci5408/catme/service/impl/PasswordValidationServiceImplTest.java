@@ -1,12 +1,17 @@
 package csci5408.catme.service.impl;
 
+import csci5408.catme.dao.IPasswordHistoryDao;
 import csci5408.catme.dao.impl.PasswordPolicyDaoImpl;
+import csci5408.catme.domain.PasswordHistory;
 import csci5408.catme.dto.PasswordPolicy;
+import csci5408.catme.dto.PasswordValidationResult;
+import csci5408.catme.dto.UserSummary;
+import csci5408.catme.service.IUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-
-import csci5408.catme.dto.PasswordValidationResult;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,22 +19,30 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-
 public class PasswordValidationServiceImplTest {
-	
-	private PasswordPolicyDaoImpl passwordPolicyDao;
+
+	private final PasswordPolicyDaoImpl passwordPolicyDao;
 	private PasswordValidationServiceImpl passwordValidationService;
-	
-	
-	
+	final private IUserService userService;
+	final private IPasswordHistoryDao passwordHistoryDao;
+	final private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+
 	public PasswordValidationServiceImplTest() {
+		this.userService = mock(IUserService.class);
 		this.passwordPolicyDao = mock(PasswordPolicyDaoImpl.class);
+		this.passwordHistoryDao = mock(IPasswordHistoryDao.class);
+		this.bCryptPasswordEncoder = mock(BCryptPasswordEncoder.class);
 	}
-	
+
 	@BeforeEach
-	public void setup()
-	{
-		passwordValidationService = new PasswordValidationServiceImpl(passwordPolicyDao); 
+	public void setup() {
+		passwordValidationService = new PasswordValidationServiceImpl(
+				passwordPolicyDao,
+				userService,
+				passwordHistoryDao,
+				bCryptPasswordEncoder
+		);
 	}
 	
 	@Test
@@ -117,8 +130,42 @@ public class PasswordValidationServiceImplTest {
 		result = passwordValidationService.validatePassword(password);
 		assertTrue(result.isValidated());
 	}
-	
-	
-	
+
+
+	@Test
+	public void isOldPasswordTest_True() {
+		String email = "a@g.c";
+		Long userId = 1L;
+		UserSummary summary = new UserSummary();
+		summary.setEmailId(email);
+		summary.setId(userId);
+		PasswordHistory passwordHistory = new PasswordHistory(1L, "ABC", null, 1L);
+		ArrayList<PasswordHistory> histories = new ArrayList<>();
+		histories.add(passwordHistory);
+
+		when(userService.getUserByEmailId(email)).thenReturn(summary);
+		when(passwordHistoryDao.getPasswordsByUserId(userId)).thenReturn(histories);
+		when(bCryptPasswordEncoder.matches("ABC", "ABC")).thenReturn(true);
+
+		assertTrue(passwordValidationService.isOldPassword(email, "ABC"));
+	}
+
+	@Test
+	public void isOldPasswordTest_False() {
+		String email = "a@g.c";
+		Long userId = 1L;
+		UserSummary summary = new UserSummary();
+		summary.setEmailId(email);
+		summary.setId(userId);
+		PasswordHistory passwordHistory = new PasswordHistory(1L, "ABC", null, 1L);
+		ArrayList<PasswordHistory> histories = new ArrayList<>();
+		histories.add(passwordHistory);
+
+		when(userService.getUserByEmailId(email)).thenReturn(summary);
+		when(passwordHistoryDao.getPasswordsByUserId(userId)).thenReturn(histories);
+		when(bCryptPasswordEncoder.matches("ABC", "ABC")).thenReturn(false);
+
+		assertFalse(passwordValidationService.isOldPassword(email, "ABC"));
+	}
 
 }
