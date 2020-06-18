@@ -84,7 +84,6 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 			return true;
 		}
 		else {
-			
 			return false;
 		}
 	}
@@ -97,30 +96,18 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 				upper++;
 			}
 		}
-		
-		if(upper> passwordPloicy.getMinUpperCase()) {
-			return true;
-		}else {
-			
-		return false;
-		}
+		return checkMinimum(upper, passwordPloicy.getMinUpperCase()) ;		
 	}
 	
 	public boolean checkMinLowerCase(String password, PasswordPolicy passwordPloicy)
 	{
-		int upper=0;
+		int lower=0;
 		for (int i=0; i < password.length();i++) {
 			if( Character.isLowerCase(password.charAt(i))) {
-				upper++;
+				lower++;
 			}
 		}
-		
-		if(upper> passwordPloicy.getMinLowerCase()) {
-			return true;
-		}else {
-			
-		return false;
-		}
+		return checkMinimum(lower , passwordPloicy.getMinLowerCase());
 	}
 	
 	public boolean checkMinSymbol(String password, PasswordPolicy passwordPloicy)
@@ -131,13 +118,7 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 				symbol++;
 			}
 		}
-		
-		if(symbol> passwordPloicy.getMinSymbol()) {
-			return true;
-		}else {
-			
-			return false;
-		}
+		return checkMinimum(symbol , passwordPloicy.getMinSymbol());
 	}
 	
 	
@@ -152,6 +133,16 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 			}
 		}
 		return true;	
+	}
+	
+	public boolean checkMinimum(int count, int minCount)
+	{
+		if(count > minCount) {
+			return true;
+		}else {
+			
+			return false;
+		}
 	}
 
 
