@@ -11,8 +11,8 @@ import csci5408.catme.service.IEmailService;
 import csci5408.catme.service.IUserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -34,6 +34,11 @@ public class ForgotPasswordController {
 		this.passwordhistory=passwordhistory;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder ;
 		this.configProperties = configProperties;
+	}
+
+	@GetMapping("/forgotpassword")
+	public String forgotpassword() {
+		return "forgot-password.html"; // extension depends on view resolver.
 	}
 
 	@RequestMapping("password-reset")
