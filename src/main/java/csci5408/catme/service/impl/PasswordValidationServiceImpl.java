@@ -44,19 +44,70 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 		
 	}
 	
-	public boolean checkMaxLength(String password, PasswordPolicy passwordPloicy)
-	{
-		if(password.length() <= passwordPloicy.getMaxLength())
-		{
+	public boolean checkMaxLength(String password, PasswordPolicy passwordPloicy){
+		if(password.length() <= passwordPloicy.getMaxLength()){
 			return true;
 		}
 		else {
 			failedRule.setMaxLength(false);
 			return false;
 		}
-		
-		
 	}
+	
+	public boolean checkMinUpperCase(String password, PasswordPolicy passwordPloicy)
+	{
+		int upper=0;
+		for (int i=0; i < password.length();i++) {
+			if( Character.isUpperCase(password.charAt(i))) {
+				upper++;
+			}
+		}
+		
+		if(upper> passwordPloicy.getMinUpperCase()) {
+			return true;
+		}else {
+			failedRule.setMinUpperCase(false);
+		return false;
+		}
+	}
+	
+	public boolean checkMinLowerCase(String password, PasswordPolicy passwordPloicy)
+	{
+		int upper=0;
+		for (int i=0; i < password.length();i++) {
+			if( Character.isLowerCase(password.charAt(i))) {
+				upper++;
+			}
+		}
+		
+		if(upper> passwordPloicy.getMinUpperCase()) {
+			return true;
+		}else {
+			failedRule.setMinLowerCase(false);
+		return false;
+		}
+	}
+	
+	public boolean checkMinSymbol(String password, PasswordPolicy passwordPloicy)
+	{
+		int symbol=0;
+		for (int i=0; i < password.length();i++) {
+			if( (int)password.charAt(i) >= 33 && (int)password.charAt(i) < 48 || (int)password.charAt(i) >= 58 && (int)password.charAt(i) < 64 ) {
+				symbol++;
+			}
+		}
+		
+		if(symbol> passwordPloicy.getMinUpperCase()) {
+			return true;
+		}else {
+			failedRule.setMinSymbol(false);
+			return false;
+		}
+	}
+	
+	
+	
+	
 	
 	
 
