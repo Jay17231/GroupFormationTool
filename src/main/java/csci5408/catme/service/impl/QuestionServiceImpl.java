@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class QuestionServiceImpl implements IQuestionService {
@@ -43,6 +44,12 @@ public class QuestionServiceImpl implements IQuestionService {
 	public Boolean removeQuestion(Question question) {
 		boolean removedQuestion = questionDao.delete(question);
 		return removedQuestion;
+	}
+
+	@Override
+	public Question getById(Long id) {
+		Optional<Question> q = questionDao.findById(id);
+		return q.orElse(null);
 	}
 
 	@Override

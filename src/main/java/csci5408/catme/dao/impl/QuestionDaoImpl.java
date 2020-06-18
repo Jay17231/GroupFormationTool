@@ -2,6 +2,7 @@ package csci5408.catme.dao.impl;
 
 import csci5408.catme.dao.IQuestionDao;
 import csci5408.catme.domain.Question;
+import csci5408.catme.domain.QuestionType;
 import csci5408.catme.sql.Sort;
 import csci5408.catme.sql.impl.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
@@ -36,7 +37,9 @@ public class QuestionDaoImpl implements IQuestionDao {
 
 			s = con.createStatement();
 			QueryBuilder builder = new QueryBuilder(
-					"Insert INTO questions (user_id, question_title, question_text, question_type_id, creation_date) values (:userid, :question_title, :question_text, :question_type_id, :creation_date)");
+					"Insert INTO questions " +
+							"(user_id, question_title, question_text, question_type_id, creation_date) " +
+							"values (:userid, :question_title, :question_text, :question_type_id, :creation_date)");
 			builder.setParameter("userid", question.getUserId());
 			builder.setParameter("question_title", question.getQuestionTitle());
 			builder.setParameter("question_text", question.getQuestionText());
@@ -49,6 +52,8 @@ public class QuestionDaoImpl implements IQuestionDao {
 			if (rs.next()) {
 				question.setId(rs.getLong(1));
 			}
+			Optional<Question> q = findById(question.getId());
+			return q.orElse(null);
 
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -69,8 +74,41 @@ public class QuestionDaoImpl implements IQuestionDao {
 
 	@Override
 	public Optional<Question> findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+		Question question = null;
+		try {
+
+			s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder(
+					"SELECT q.id as id, q.user_id, question_title, question_text, question_type_id, " +
+							"creation_date, qt.question_type as question_type " +
+							"from questions q " +
+							"inner join question_type qt on q.question_type_id = qt.id " +
+							"where q.id = :id");
+			builder.setParameter("id", id);
+
+
+			s.execute(builder.query());
+
+			rs = s.getResultSet();
+			if (rs.next()) {
+				question = getQuestion(rs);
+			}
+
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		} finally {
+			dataSource.close(s);
+			dataSource.close(rs);
+			dataSource.close(con);
+		}
+		if (question == null) {
+			return Optional.empty();
+		}
+		return Optional.of(question);
 	}
 
 	@Override
@@ -163,7 +201,10 @@ public class QuestionDaoImpl implements IQuestionDao {
 
 			s = con.createStatement();
 			QueryBuilder builder = new QueryBuilder(
-					"SELECT * FROM questions " +
+					"SELECT q.id as id, q.user_id, question_title, question_text, question_type_id, " +
+							"creation_date, qt.question_type as question_type " +
+							"from questions q " +
+							"inner join question_type qt on q.question_type_id = qt.id " +
 							"WHERE user_id = :user_id " +
 							"ORDER BY :sortField :sortType");
 			builder.setSortByAttribute("sortField", attribute);
@@ -173,15 +214,7 @@ public class QuestionDaoImpl implements IQuestionDao {
 			if (s.execute(builder.query())) {
 				rs = s.getResultSet();
 				while (rs.next()) {
-					Question question = new Question();
-					question.setCreationDate(rs.getTimestamp("creation_date").toLocalDateTime());
-					question.setId(rs.getLong("id"));
-					question.setUserId(userId);
-					question.setQuestionTypeId(rs.getLong("question_type_id"));
-					question.setQuestionText(rs.getString("question_text"));
-					question.setQuestionTitle(rs.getString("question_title"));
-
-					questions.add(question);
+					questions.add(getQuestion(rs));
 				}
 			}
 
@@ -195,6 +228,18 @@ public class QuestionDaoImpl implements IQuestionDao {
 		}
 
 		return questions;
+	}
+
+	private Question getQuestion(ResultSet rs) throws SQLException {
+		Question question = new Question();
+		question.setCreationDate(rs.getTimestamp("creation_date").toLocalDateTime());
+		question.setId(rs.getLong("id"));
+		question.setUserId(rs.getLong("user_id"));
+		question.setQuestionTypeId(rs.getLong("question_type_id"));
+		question.setQuestionText(rs.getString("question_text"));
+		question.setQuestionTitle(rs.getString("question_title"));
+		question.setType(QuestionType.valueOf(rs.getString("question_type")));
+		return question;
 	}
 
 }

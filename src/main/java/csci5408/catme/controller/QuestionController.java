@@ -11,6 +11,7 @@ import csci5408.catme.service.impl.AuthenticationServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,8 +53,8 @@ public class QuestionController {
 	}
 
 	@PostMapping("/createQuestion")
-	public String createQuestionPost(@ModelAttribute Question createQuestion,
-			@RequestParam(value = "questionType") String questionType, Model model) {
+	public ModelAndView createQuestionPost(@ModelAttribute Question createQuestion,
+										   @RequestParam(value = "questionType") String questionType) {
 
 		Long userId = auth.getLoggedInUser().getId();
 		LocalDateTime creationDateTime = LocalDateTime.now();
@@ -66,48 +67,42 @@ public class QuestionController {
 		QuestionOptions option = new QuestionOptions();
 		// createQuestion.addOption(option);
 
-		if (questionType.compareTo(QuestionType.MCQ_CHOOSE_ONE.name()) == 0) {
-
-			model.addAttribute("createQuestion", createQuestion);
-			model.addAttribute("type", QuestionType.valueOf(questionType).label);
-			model.addAttribute("createQuestionList", createQuestion.getQuestionOptions());
-			model.addAttribute("step2", true);
-			model.addAttribute("step1", false);
-			return "create-question";
+		if (questionType.equalsIgnoreCase(QuestionType.MCQ_CHOOSE_ONE.name())) {
+			Question question = questionService.addQuestion(createQuestion);
+			return new ModelAndView("redirect:/question/" + question.getId() + "/edit");
 		}
 
 		Question question = questionService.addQuestion(createQuestion);
 
-		return "redirect:/question-manager";
+		return new ModelAndView("redirect:/question-manager");
 	}
 
-	@PostMapping("/createQuestion/add-new-option")
-	public String createQuestionOptionPost(@ModelAttribute("createQuestion") Question createQuestion,
-			@RequestParam(value = "optionText") String optionText, @RequestParam(value = "storedAs") Long storedAs,
-			Model model) {
-
-		// List<QuestionOptions> listOptions = new ArrayList<QuestionOptions>();
-		Question question = new Question();
-		QuestionOptions option = new QuestionOptions();
-		question.setQuestionOptions(createQuestion.getQuestionOptions());
-		option.setOptionText(optionText);
-		option.setStoredAs(storedAs);
-		question.addOption(option);
-		// createQuestion.getQuestionOptions().addAll(question.getQuestionOptions());
-
-		System.out.println("-------");
-		for (QuestionOptions questionOptions : createQuestion.getQuestionOptions()) {
-			System.out.println(questionOptions.getOptionText());
+	@GetMapping("/question/{questionId}/edit")
+	public ModelAndView createQuestionOptionPost(
+			@PathVariable Long questionId
+	) {
+		Question question = questionService.getById(questionId);
+		if (question == null) {
+			throw new RuntimeException("Question Not found.");
 		}
-		// question.setQuestionOptions(createQuestion.getQuestionOptions());
-
-		model.addAttribute("createQuestion", question);
-		model.addAttribute("createQuestionList", question.getQuestionOptions());
-		model.addAttribute("step2", true);
-		model.addAttribute("step1", false);
-
-		return "create-question";
+		ModelAndView modelAndView = new ModelAndView("add-options");
+		modelAndView.addObject("question", question);
+		return modelAndView;
 	}
+
+	@PostMapping("/question/{questionId}/edit/add")
+	public ModelAndView addOptions(
+			@PathVariable Long questionId,
+			@RequestParam("optionText") String optionText,
+			@RequestParam("storedAs") Integer storedAs
+	) {
+		// @TODO: Only save option. Question was created and questionId is provided.
+
+		String redirectUrl = "/question/" + questionId + "/edit";
+		ModelAndView modelAndView = new ModelAndView("redirect:" + redirectUrl);
+		return modelAndView;
+	}
+
 
 	@GetMapping("/deleteQuestion/{id}")
 	public String deleteQuestion(@PathVariable("id") String id) {
@@ -118,12 +113,15 @@ public class QuestionController {
 		return "redirect:/question-manager";
 	}
 
-	@PostMapping("/deleteQuestion/{id}")
-	public String deleteQuestionPost() {
-
-		return "redirect:/question-manager";
-	}
-
+	/**
+	 * Sorting feature
+	 *
+	 * @param model
+	 * @param sortType
+	 * @param sortField
+	 * @return
+	 * @author Jay
+	 */
 	@GetMapping("/questions")
 	public String sortByCreationDateASC(
 			Model model,

@@ -20,8 +20,12 @@ public class Question {
 
 	private List<QuestionOptions> questionOptions = new ArrayList<QuestionOptions>();
 
+	private QuestionType type;
+
 	public Question() {
-	};
+	}
+
+	;
 
 	public Long getId() {
 		return id;
@@ -83,4 +87,11 @@ public class Question {
 		this.questionOptions = questionOptions;
 	}
 
+	public QuestionType getType() {
+		return type;
+	}
+
+	public void setType(QuestionType type) {
+		this.type = type;
+	}
 }

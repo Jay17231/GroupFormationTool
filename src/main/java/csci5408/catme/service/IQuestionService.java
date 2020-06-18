@@ -17,4 +17,5 @@ public interface IQuestionService {
 
 	Boolean removeQuestion(Question question);
 
+	Question getById(Long id);
 }
