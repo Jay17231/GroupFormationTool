@@ -68,9 +68,11 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 	
 	
 	
-	public boolean checkMinLength(String password, PasswordPolicy passwordPloicy)
+	public boolean checkMinLength(String password, PasswordPolicy passwordPolicy)
 	{
 		if(password.length() >= passwordPolicy.getMinLength()){
+			System.out.println("password len "+password.length());
+			System.out.println("db min lent "+passwordPolicy.getMinLength());
 			return true;
 		}
 		else{

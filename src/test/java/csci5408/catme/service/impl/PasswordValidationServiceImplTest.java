@@ -47,12 +47,23 @@ public class PasswordValidationServiceImplTest {
 	@Test
 	public void checkMinLength_True()
 	{
-		
+		String password = "krupa";
+		PasswordPolicy passwordPolicy = new PasswordPolicy() ;
+		passwordPolicy.setMinLength(3);
+		when(passwordPolicyDao.find()).thenReturn(passwordPolicy);
+		System.out.println("test ln"+passwordPolicy.getMinLength());
+		assertTrue(passwordValidationService.checkMinLength(password, passwordPolicy));
 	}
 	
 	@Test
 	public void checkMinLength_False()
 	{
+		String password = "k";
+		PasswordPolicy passwordPolicy = new PasswordPolicy() ;
+		passwordPolicy.setMinLength(3);
+		when(passwordPolicyDao.find()).thenReturn(passwordPolicy);
+		System.out.println("test ln"+passwordPolicy.getMinLength());
+		assertFalse(passwordValidationService.checkMinLength(password, passwordPolicy));
 		
 	}
 	
