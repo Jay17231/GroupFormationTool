@@ -104,7 +104,7 @@ public class PasswordValidationServiceImplTest {
 	@Test
 	public void validatePassword_TruePasswordPolicyDisable()
 	{
-		String password = "K?patel";
+		String password = "K@patel";
 		PasswordPolicy passwordPolicy = new PasswordPolicy() ;
 		passwordPolicy.setMinLength(-1);
 		passwordPolicy.setBlockChar("-1");
