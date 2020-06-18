@@ -3,7 +3,7 @@
  */
 package csci5408.catme.service;
 
-import csci5408.catme.dto.PasswordPolicyRule;
+import csci5408.catme.dto.PasswordValidationResult;
 
 /**
  * @author krupa
@@ -11,6 +11,6 @@ import csci5408.catme.dto.PasswordPolicyRule;
  */
 public interface IPasswordValidationService {
 
-	PasswordPolicyRule validatePassword(String password);
-	boolean isValidated();
+	PasswordValidationResult validatePassword(String password);
+	
 }

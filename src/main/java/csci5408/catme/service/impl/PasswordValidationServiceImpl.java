@@ -6,7 +6,7 @@ import csci5408.catme.dao.IPasswordPolicyDao;
 
 import csci5408.catme.dao.impl.PasswordPolicyDaoImpl;
 import csci5408.catme.dto.PasswordPolicy;
-import csci5408.catme.dto.PasswordPolicyRule;
+import csci5408.catme.dto.PasswordValidationResult;
 import csci5408.catme.service.IPasswordValidationService;
 
 @Service
@@ -15,67 +15,58 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 	
 	final IPasswordPolicyDao passwordPolicyDao;
 	PasswordPolicy passwordPolicy = new PasswordPolicy();
-	PasswordPolicyRule failedRule = new PasswordPolicyRule();
-	PasswordPolicyRule passedRule = new PasswordPolicyRule();
-	boolean flag;
-	
 	
 	
 	PasswordValidationServiceImpl(PasswordPolicyDaoImpl passwordPolicyDao)
 	{
-		this.passwordPolicyDao = passwordPolicyDao;	
-		this.flag = true;
+		this.passwordPolicyDao = passwordPolicyDao;		
 	}
 	
 
 	@Override
-	public PasswordPolicyRule validatePassword(String password) {
+	public PasswordValidationResult validatePassword(String password) {
+		PasswordValidationResult result = new PasswordValidationResult();
 		
 		passwordPolicy = passwordPolicyDao.find();
 		
 		if(passwordPolicy.getMinLength() != -1){
 			if(!checkMinLength(password, passwordPolicy)) {
-				flag = false;
-				failedRule.setMinLength(flag);
+				result.setMinLength(false);
 			}	
 		}
 		if(passwordPolicy.getMaxLength() != -1){
 			if(!checkMaxLength(password, passwordPolicy)) {
-				flag = false;
-				failedRule.setMaxLength(flag);
+				result.setMaxLength(false);
 			}	
 		}
 		if(passwordPolicy.getMinUpperCase() != -1){
 			if(!checkMinUpperCase(password, passwordPolicy)) {
-				flag = false;
-				failedRule.setMinUpperCase(flag);
+				
+				result.setMinUpperCase(false);
 			}	
 		}
 		if(passwordPolicy.getMinLowerCase() != -1){
 			if(!checkMinLowerCase(password, passwordPolicy)) {
-				flag = false;
-				failedRule.setMinLowerCase(flag);
+				
+				result.setMinLowerCase(false);
 			}	
 		}
 		if(passwordPolicy.getMinSymbol() != -1){
 			if(!checkMinSymbol(password, passwordPolicy)) {
-				flag = false;
-				failedRule.setMinSymbol(flag);
+				
+				result.setMinSymbol(false);
 			}	
 		}
 		if(passwordPolicy.getBlockChar() != null){
 			if(!checkBlockSymbol(password, passwordPolicy)) {
-				flag = false;
-				failedRule.setBlockChar(flag);
+				
+				result.setBlockChar(false);
 			}	
 		}
-		return failedRule;
+		return result;
 	}
 	
-	@Override
-	public boolean isValidated() {
-		return flag;
-	}
+	
 	
 	public boolean checkMinLength(String password, PasswordPolicy passwordPloicy)
 	{

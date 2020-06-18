@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import csci5408.catme.authentication.ISessionStore;
 import csci5408.catme.dao.ICourseDao;
-import csci5408.catme.dto.PasswordPolicyRule;
+import csci5408.catme.dto.PasswordValidationResult;
 import csci5408.catme.dto.UserSummary;
 import csci5408.catme.service.IAuthenticationService;
 import csci5408.catme.service.IEnrollmentService;
@@ -23,22 +23,13 @@ import csci5408.catme.service.IUserService;
 @Controller
 public class SignupController {
 	
-	final IUserService userService;
-	final IEnrollmentService enrollService;
+	
 	final IAuthenticationService authenticationService;
-	final ICourseDao courseDao;
-	final ISessionStore sessionStore;
 	final IPasswordValidationService passwordValidationService;
-	PasswordPolicyRule passwordValidated;
+	PasswordValidationResult passwordValidationResult;
 
-	public SignupController(IUserService userService, IEnrollmentService enrollService,
-						   IAuthenticationService authenticationService, ICourseDao courseDao,
-						   ISessionStore sessionStore, IPasswordValidationService passwordValidationService) {
+	public SignupController(IAuthenticationService authenticationService, IPasswordValidationService passwordValidationService) {
 		this.authenticationService = authenticationService;
-		this.userService = userService;
-		this.enrollService = enrollService;
-		this.courseDao = courseDao;
-		this.sessionStore = sessionStore;
 		this.passwordValidationService = passwordValidationService;
 	}	
 	
@@ -51,20 +42,20 @@ public class SignupController {
 	@PostMapping("/signup")
 	public String signupPost(@ModelAttribute UserSummary signup, HttpServletRequest request, Model model) {
 		
-		passwordValidated = passwordValidationService.validatePassword(request.getParameter("password").toString());
-		if(passwordValidationService.isValidated())
+		passwordValidationResult = passwordValidationService.validatePassword(request.getParameter("password").toString());
+		if(passwordValidationResult.isValidated())
 		{
 			UserSummary userSummary = authenticationService.signUp(signup, request.getParameter("password").toString());
 			return "redirect:login"; // extension depends on view resolver.
 		}
 		else {
 			model.addAttribute("signup", new UserSummary());
-			model.addAttribute("minLength",passwordValidated.isMinLength());
-			model.addAttribute("maxLength",passwordValidated.isMaxLength());
-			model.addAttribute("minUpper",passwordValidated.isMinUpperCase());
-			model.addAttribute("minLower",passwordValidated.isMinLowerCase());
-			model.addAttribute("minSymbol",passwordValidated.isMinSymbol());
-			model.addAttribute("blockSymbol",passwordValidated.isBlockChar());
+			model.addAttribute("minLength",passwordValidationResult.isMinLength());
+			model.addAttribute("maxLength",passwordValidationResult.isMaxLength());
+			model.addAttribute("minUpper",passwordValidationResult.isMinUpperCase());
+			model.addAttribute("minLower",passwordValidationResult.isMinLowerCase());
+			model.addAttribute("minSymbol",passwordValidationResult.isMinSymbol());
+			model.addAttribute("blockSymbol",passwordValidationResult.isBlockChar());
 			return "signup-error.html";
 		}	
 	}

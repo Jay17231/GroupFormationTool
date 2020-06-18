@@ -1,16 +1,16 @@
 package csci5408.catme.dto;
 
-public class PasswordPolicyRule {
+public class PasswordValidationResult {
 	
 	boolean isMinLength;
 	boolean isMaxLength;
-	boolean isMinUpperCase;
-	
+	boolean isMinUpperCase;	
 	boolean isMinLowerCase;
 	boolean isMinSymbol;
 	boolean isBlockChar;
 	
-	public PasswordPolicyRule() {
+	
+	public PasswordValidationResult() {
 		this.isMaxLength = true;
 		this.isBlockChar = true;
 		this.isMinLength = true;	
@@ -21,6 +21,15 @@ public class PasswordPolicyRule {
 	}
 	
 	
+	public boolean isValidated() {
+		return (
+				isMinLength() && isMaxLength() && 
+				isMinUpperCase() && isMinLowerCase() && 
+				isBlockChar() && isMinSymbol()
+				);
+	}
+
+
 	public boolean isMinLength() {
 		return isMinLength;
 	}
