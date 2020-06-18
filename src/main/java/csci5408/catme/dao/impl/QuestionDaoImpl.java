@@ -2,6 +2,7 @@ package csci5408.catme.dao.impl;
 
 import csci5408.catme.dao.IQuestionDao;
 import csci5408.catme.domain.Question;
+import csci5408.catme.domain.QuestionOptions;
 import csci5408.catme.domain.QuestionType;
 import csci5408.catme.sql.Sort;
 import csci5408.catme.sql.impl.ConnectionManager;
@@ -96,6 +97,8 @@ public class QuestionDaoImpl implements IQuestionDao {
 			rs = s.getResultSet();
 			if (rs.next()) {
 				question = getQuestion(rs);
+				List<QuestionOptions> options = getOptionByQuestionId(id);
+				question.setQuestionOptions(options);
 			}
 
 		} catch (SQLException sqle) {
@@ -121,20 +124,15 @@ public class QuestionDaoImpl implements IQuestionDao {
 		try {
 
 			s = con.createStatement();
-			QueryBuilder builder = new QueryBuilder("DELETE FROM question_options WHERE id = :questionId");
+			QueryBuilder builder = new QueryBuilder("DELETE FROM question_options WHERE question_id = :questionId");
 			builder.setParameter("questionId", question.getId());
 
-			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+			s.execute(builder.query());
 
 			builder = new QueryBuilder("DELETE FROM questions WHERE id = :questionId");
 			builder.setParameter("questionId", question.getId());
 
-			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
-
-			rs = s.getGeneratedKeys();
-			if (rs.next()) {
-				question.setId(rs.getLong(1));
-			}
+			s.execute(builder.query());
 
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -189,6 +187,43 @@ public class QuestionDaoImpl implements IQuestionDao {
 	}
 
 	@Override
+	public QuestionOptions saveOption(QuestionOptions options) {
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+
+		try {
+
+			s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder(
+					"Insert INTO question_options " +
+							"(question_id, storedas, option_value) " +
+							"values (:question_id, :storedas, :option_value)");
+			builder.setParameter("question_id", options.getQuestionId());
+			builder.setParameter("storedas", options.getStoredAs());
+			builder.setParameter("option_value", options.getOptionText());
+
+			s.executeUpdate(builder.query(), Statement.RETURN_GENERATED_KEYS);
+
+			rs = s.getGeneratedKeys();
+			if (rs.next()) {
+				options.setId(rs.getLong(1));
+			}
+
+			return options;
+
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			return null;
+		} finally {
+			dataSource.close(s);
+			dataSource.close(rs);
+			dataSource.close(con);
+		}
+	}
+
+	@Override
 	public List<Question> getQuestionsByUser(Long userId, String attribute, Sort sort) {
 
 		List<Question> questions = new ArrayList<>();
@@ -228,6 +263,49 @@ public class QuestionDaoImpl implements IQuestionDao {
 		}
 
 		return questions;
+	}
+
+	public List<QuestionOptions> getOptionByQuestionId(Long questionId) {
+		List<QuestionOptions> options = new ArrayList<>();
+		Connection con = dataSource.getConnection();
+		ResultSet rs = null;
+		Statement s = null;
+		assert con != null;
+		try {
+
+			s = con.createStatement();
+			QueryBuilder builder = new QueryBuilder(
+					"SELECT id, question_id, storedas, option_value " +
+							"from question_options " +
+							"WHERE question_id = :question_id ");
+			builder.setParameter("question_id", questionId);
+
+			if (s.execute(builder.query())) {
+				rs = s.getResultSet();
+				while (rs.next()) {
+					options.add(getOption(rs));
+				}
+			}
+
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			return options;
+		} finally {
+			dataSource.close(s);
+			dataSource.close(rs);
+			dataSource.close(con);
+		}
+
+		return options;
+	}
+
+	private QuestionOptions getOption(ResultSet rs) throws SQLException {
+		QuestionOptions option = new QuestionOptions();
+		option.setQuestionId(rs.getLong("question_id"));
+		option.setId(rs.getLong("id"));
+		option.setOptionText(rs.getString("option_value"));
+		option.setStoredAs(rs.getLong("storedas"));
+		return option;
 	}
 
 	private Question getQuestion(ResultSet rs) throws SQLException {

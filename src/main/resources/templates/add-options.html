@@ -43,10 +43,10 @@
                     <div class="form-options">
                         <div class="row" th:each="option : ${question.getQuestionOptions()}">
                             <div class="col-md-7">
-                                <span th:value="${option.getOptionText()}"> </span>
+                                <span th:text="${option.getOptionText()}"> </span>
                             </div>
                             <div class="col-md-5">
-                                <span th:value="${option.getStoredAs()}"> </span>
+                                <span th:text="${option.getStoredAs()}"> </span>
                             </div>
                         </div>
                         <div class="row">
@@ -66,6 +66,9 @@
                 </div>
                 <hr class="mt-3 mb-3">
             </form>
+            <a th:href="'/question-manager'">
+                <button class="btn btn-primary"> Done</button>
+            </a>
         </div>
     </div>
 </div>

@@ -1,6 +1,7 @@
 package csci5408.catme.service;
 
 import csci5408.catme.domain.Question;
+import csci5408.catme.domain.QuestionOptions;
 import csci5408.catme.domain.QuestionType;
 
 import java.util.List;
@@ -15,7 +16,9 @@ public interface IQuestionService {
 
 	Question addQuestion(Question question);
 
+	QuestionOptions addOption(Long questionId, QuestionOptions option);
+
 	Boolean removeQuestion(Question question);
 
-	Question getById(Long id);
+	Question getQuestionById(Long id);
 }

@@ -2,6 +2,7 @@ package csci5408.catme.service.impl;
 
 import csci5408.catme.dao.IQuestionDao;
 import csci5408.catme.domain.Question;
+import csci5408.catme.domain.QuestionOptions;
 import csci5408.catme.domain.QuestionType;
 import csci5408.catme.service.IQuestionService;
 import csci5408.catme.sql.Sort;
@@ -41,13 +42,20 @@ public class QuestionServiceImpl implements IQuestionService {
 	}
 
 	@Override
+	public QuestionOptions addOption(Long questionId, QuestionOptions option) {
+		option.setQuestionId(questionId);
+		QuestionOptions createdOption = questionDao.saveOption(option);
+		return createdOption;
+	}
+
+	@Override
 	public Boolean removeQuestion(Question question) {
 		boolean removedQuestion = questionDao.delete(question);
 		return removedQuestion;
 	}
 
 	@Override
-	public Question getById(Long id) {
+	public Question getQuestionById(Long id) {
 		Optional<Question> q = questionDao.findById(id);
 		return q.orElse(null);
 	}

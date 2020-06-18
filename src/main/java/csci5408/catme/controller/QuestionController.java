@@ -81,7 +81,7 @@ public class QuestionController {
 	public ModelAndView createQuestionOptionPost(
 			@PathVariable Long questionId
 	) {
-		Question question = questionService.getById(questionId);
+		Question question = questionService.getQuestionById(questionId);
 		if (question == null) {
 			throw new RuntimeException("Question Not found.");
 		}
@@ -94,9 +94,12 @@ public class QuestionController {
 	public ModelAndView addOptions(
 			@PathVariable Long questionId,
 			@RequestParam("optionText") String optionText,
-			@RequestParam("storedAs") Integer storedAs
+			@RequestParam("storedAs") Long storedAs
 	) {
-		// @TODO: Only save option. Question was created and questionId is provided.
+		QuestionOptions options = new QuestionOptions();
+		options.setStoredAs(storedAs);
+		options.setOptionText(optionText);
+		questionService.addOption(questionId, options);
 
 		String redirectUrl = "/question/" + questionId + "/edit";
 		ModelAndView modelAndView = new ModelAndView("redirect:" + redirectUrl);
