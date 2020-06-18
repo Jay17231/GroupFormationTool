@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Question</title>
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">CSCI 5408 CATEME</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/signout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+  <h2>Create Question</h2>
+  <div class="row">
+  	<div class="col-md-4 border border-dark p-4" th:if="${step1}">
+		<form th:action="@{/createQuestion}" th:object="${createQuestion}" method="post">
+    
+		    <div class="form-group">
+	    		  <h3 class="display-4">Step 1</h3>
+			      <label for="name">Question Title: <span th:text="${id}"></span></label>
+			      <input type="text" class="form-control mb-3" th:field="*{questionTitle}" placeholder="Enter Question Title" required />
+			      <input type="text" class="form-control mb-3" th:field="*{questionText}" placeholder="Enter Question Text" required />
+			      <select class="form-control" th:name="questionType" required>
+			      	<option disabled>Please select the type</option>
+			      	<option th:each="type: ${qtypes}" th:value="${type}" th:text="${type.label}"></option>
+			      </select>
+		    </div>
+    		
+   		 	<button type="submit" class="btn btn-md btn-info">Submit</button>
+  		</form>
+  	</div>
+  	
+  	<!--  Step 2 MCQ -->
+  	<div class="col-md-6 border border-dark p-4" th:if="${step2}">
+		<form th:action="@{/createQuestion/add-new-option}" th:object="${createQuestion}" method="post">
+			
+		    <div class="form-group">
+	    		  <h3 class="display-4">Step 2</h3>
+	    		  <p th:text="${createQuestion.getQuestionTitle()}"></p>
+			      <label for="name">Type Of Question: <span th:text="${type}"></span></label>
+			      <hr class="mt-3 mb-3">
+			      <div class="row">
+			      	<div class="col-md-7">
+			      		<h3>Option Value:</h3>
+			      	</div>
+			      	<div class="col-md-5">
+			      		<h3>Stored As:</h3>
+			      	</div>
+			      </div>
+			      <input type="text" th:value="${type}" th:name="questionType" hidden>			      
+
+			      <div class="form-options">
+			      	<div class="row" th:each="option : ${createQuestionList}">
+				      	<div class="col-md-7">
+				      		<input type="text" class="form-control mb-3" th:value="${option.getOptionText()}" placeholder="Enter Option Text" required/>
+				      	</div>
+				      	<div class="col-md-5">
+				      		<input type="number" class="form-control mb-3" th:value="${option.getStoredAs()}" placeholder="Stored As" required/>
+				      	</div>
+				      </div>
+				      <div class="row">
+				      	<div class="col-md-7">
+				      		<input type="text" class="form-control mb-3" th:name="optionText" placeholder="Enter Option Text" required />
+				      	</div>
+				      	<div class="col-md-5">
+				      		<input type="number" class="form-control mb-3" th:name="storedAs" placeholder="Stored As" required />
+				      	</div>
+			      	</div>
+			      </div>
+			      <button type="submit" class="btn btn-secondary btn-sm"><i class="fa fa-plus"></i> Add New Option</button>
+		    </div>
+    		<hr class="mt-3 mb-3">
+   		 	<button type="submit" class="float-right btn btn-lg btn-info" th:action="@{/createQuestion}">Submit</button>
+  		</form>
+  	</div>
+  </div>
+</div>
+​
+
+​
+
+</body>
+</html>

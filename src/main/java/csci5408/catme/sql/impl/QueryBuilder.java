@@ -1,16 +1,11 @@
 package csci5408.catme.sql.impl;
 
+import csci5408.catme.sql.IQueryBuilder;
+import csci5408.catme.sql.Sort;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import csci5408.catme.sql.IQueryBuilder;
+import java.util.*;
 
 /**
  * @author Aman Vishnani (aman.vishnani@dal.ca)
@@ -21,11 +16,17 @@ public class QueryBuilder implements IQueryBuilder {
 
 	private Map<String, Object> paramMap;
 
+	private Map<String, Sort> sortOrderMap;
+
+	private Map<String, String> sortParamMap;
+
 	private Set<String> likeSet;
 
 	public QueryBuilder(String sql) {
 		this.sql = sql;
 		this.paramMap = new HashMap<>();
+		this.sortParamMap = new HashMap<>();
+		this.sortOrderMap = new HashMap<>();
 		this.likeSet = new HashSet<>();
 	}
 
@@ -37,6 +38,16 @@ public class QueryBuilder implements IQueryBuilder {
 	@Override
 	public void setParameter(String key, String value) {
 		this.setParameterDefault(key, value);
+	}
+
+	@Override
+	public void setSortType(String key, Sort value) {
+		sortOrderMap.put(key, value);
+	}
+
+	@Override
+	public void setSortByAttribute(String key, String value) {
+		sortParamMap.put(key, value);
 	}
 
 	@Override
@@ -83,6 +94,25 @@ public class QueryBuilder implements IQueryBuilder {
 	@Override
 	public String query() {
 		String sql = this.sql;
+		sql = getParameterizedQuery(sql);
+		sql = getSortedQuery(sql);
+		return sql;
+	}
+
+	private String getSortedQuery(String sql) {
+		for (Map.Entry<String, Sort> entry : sortOrderMap.entrySet()) {
+			sql = sql.replace(":" + entry.getKey(), entry.getValue().name());
+		}
+
+		for (Map.Entry<String, String> entry : sortParamMap.entrySet()
+		) {
+			sql = sql.replace(":" + entry.getKey(), entry.getValue());
+		}
+		return sql;
+	}
+
+
+	private String getParameterizedQuery(String sql) {
 		for (Map.Entry<String, Object> obj : this.paramMap.entrySet()) {
 			String key = ":" + obj.getKey();
 			Object val = obj.getValue();
