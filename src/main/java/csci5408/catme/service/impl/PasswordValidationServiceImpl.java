@@ -74,7 +74,6 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 			return true;
 		}
 		else{
-			
 			return false;
 		}
 	}
