@@ -27,10 +27,22 @@
 		        <div class="row">
 					<div class="col-md-6 text-left">
 						<h3 class="display-5 mb-3">Sort Questions</h3>
-						<a th:href="@{/questions/sort-cd-asc}" class="btn btn-md btn-primary d-block mb-3"><i class="fas fa-sort-amount-up"></i> Sort By Creation Date ASC</a>
-						<a th:href="@{/questions/sort-cd-desc}" class="btn btn-md btn-primary d-block mb-3"><i class="fas fa-sort-amount-down"></i> Sort By Creation Date DESC</a>
-						<a th:href="@{/questions/sort-title-asc}" class="btn btn-md btn-primary d-block mb-3"><i class="fas fa-sort-alpha-up"></i> Sort By Title ASC</a>
-						<a th:href="@{/questions/sort-title-desc}" class="btn btn-md btn-primary d-block"><i class="fas fa-sort-alpha-up"></i> Sort By Title DESC</a>
+						<a class="btn btn-md btn-primary d-block mb-3"
+						   th:href="@{/questions(sortType='ASC', sortField='creation_date')}">
+							<i class="fas fa-sort-amount-up"></i> Sort By Creation Date ASC
+						</a>
+						<a class="btn btn-md btn-primary d-block mb-3"
+						   th:href="@{/questions(sortType='DESC', sortField='creation_date')}">
+							<i class="fas fa-sort-amount-down"></i> Sort By Creation Date DESC
+						</a>
+						<a class="btn btn-md btn-primary d-block mb-3"
+						   th:href="@{/questions(sortType='ASC', sortField='question_title')}">
+							<i class="fas fa-sort-alpha-up"></i> Sort By Title ASC
+						</a>
+						<a class="btn btn-md btn-primary d-block"
+						   th:href="@{/questions(sortType='DESC', sortField='question_title')}">
+							<i class="fas fa-sort-alpha-up"></i> Sort By Title DESC
+						</a>
 						<p th:text="${thisid}"></p>
 					</div>
 					<div class="col-md-6 text-center">
