@@ -46,7 +46,7 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
 	public boolean enrollUser(CourseSummary c, UserSummary u, Role role) {
 		try {
 			Role r = enrollmentDao.findRole(u.getId(), c.getId());
-			Long taRoleId = roleDao.getRoleIdByName("TA");
+			Long taRoleId = roleDao.getRoleIdByName(role.getName());
 			if (r != null) {
 				Enrollment e = enrollmentDao.findEnrollment(u.getId(), c.getId());
 				e.setRoleId(taRoleId);
@@ -110,4 +110,14 @@ public class EnrollmentServiceImpl implements IEnrollmentService {
 		Optional<Course> courseOptional = courseDao.findById(courseId);
 		return courseOptional;
 	}
+
+	@Override
+	public Role getRoleByName(String roleName) {
+		Long roleId = roleDao.getRoleIdByName(roleName);
+		Role role = new Role();
+		role.setId(roleId);
+		role.setName(roleName);
+		return role;
+	}
+
 }

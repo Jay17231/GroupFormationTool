@@ -23,4 +23,6 @@ public interface IEnrollmentService {
 
 	Optional<Course> getCourseById(Long courseId);
 
+	Role getRoleByName(String roleName);
+
 }

@@ -21,6 +21,7 @@ import csci5408.catme.dao.IUserDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.domain.Enrollment;
 import csci5408.catme.domain.Role;
+import csci5408.catme.domain.Roles;
 import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
 
@@ -154,9 +155,19 @@ public class EnrollmentServiceImplTest {
 		when(courseDao.findById(1L)).thenReturn(Optional.of(course));
 		when(enrollmentService.getCourseById(1L)).thenReturn(Optional.of(course));
 		Optional<Course> courseFromDao = courseDao.findById(1L);
-		System.out.println(courseFromDao.get().getName());
 		Optional<Course> courseFromService = enrollmentService.getCourseById(1L);
-		assertFalse(courseFromService.isEmpty());
+		assertNotNull(courseFromService);
 		assertEquals(courseFromDao.get().getName(), courseFromService.get().getName());
+	}
+
+	@Test
+	public void getRoleByNameTest() {
+		Role role = new Role();
+		role.setId(1L);
+		role.setName("GUEST");
+		when(roleDao.getRoleIdByName("GUEST")).thenReturn(role.getId());
+		assertNotNull(enrollmentService.getRoleByName(Roles.GUEST.name()));
+		assertEquals(roleDao.getRoleIdByName(Roles.GUEST.name()),
+				enrollmentService.getRoleByName(Roles.GUEST.name()).getId());
 	}
 }
