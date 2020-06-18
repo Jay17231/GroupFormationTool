@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import csci5408.catme.dao.impl.PasswordPolicyDaoImpl;
 import csci5408.catme.dto.PasswordPolicy;
+import csci5408.catme.dto.PasswordValidationResult;
 
 
 public class PasswordValidationServiceImplTest {
@@ -45,27 +46,78 @@ public class PasswordValidationServiceImplTest {
 	}
 	
 	@Test
-	public void checkMinLength_True()
+	public void validatePassword_True()
 	{
-		String password = "krupa";
+		String password = "K@patel";
 		PasswordPolicy passwordPolicy = new PasswordPolicy() ;
 		passwordPolicy.setMinLength(3);
+		passwordPolicy.setBlockChar("!#$%^&*()_+~");
+		passwordPolicy.setMaxLength(12);
+		passwordPolicy.setMinUpperCase(1);
+		passwordPolicy.setMinLowerCase(1);
+		passwordPolicy.setMinSymbol(1);
+		
 		when(passwordPolicyDao.find()).thenReturn(passwordPolicy);
-		System.out.println("test ln"+passwordPolicy.getMinLength());
-		assertTrue(passwordValidationService.checkMinLength(password, passwordPolicy));
+		PasswordValidationResult result = new PasswordValidationResult();
+		result = passwordValidationService.validatePassword(password);
+		assertTrue(result.isValidated());
 	}
 	
 	@Test
-	public void checkMinLength_False()
+	public void validatePassword_FalseMinLength()
 	{
-		String password = "k";
+		String password = "K@patel";
 		PasswordPolicy passwordPolicy = new PasswordPolicy() ;
-		passwordPolicy.setMinLength(3);
-		when(passwordPolicyDao.find()).thenReturn(passwordPolicy);
-		System.out.println("test ln"+passwordPolicy.getMinLength());
-		assertFalse(passwordValidationService.checkMinLength(password, passwordPolicy));
+		passwordPolicy.setMinLength(8);
+		passwordPolicy.setBlockChar("!#$%^&*()_@+~");
+		passwordPolicy.setMaxLength(12);
+		passwordPolicy.setMinUpperCase(3);
+		passwordPolicy.setMinLowerCase(6);
+		passwordPolicy.setMinSymbol(4);
 		
+		when(passwordPolicyDao.find()).thenReturn(passwordPolicy);
+		PasswordValidationResult result = new PasswordValidationResult();
+		result = passwordValidationService.validatePassword(password);
+		assertFalse(result.isValidated());
 	}
+	
+	@Test
+	public void validatePassword_FalseMaxLength()
+	{
+		String password = "K?patel";
+		PasswordPolicy passwordPolicy = new PasswordPolicy() ;
+		passwordPolicy.setMinLength(8);
+		passwordPolicy.setBlockChar("!#$%^&*()_@+~");
+		passwordPolicy.setMaxLength(5);
+		passwordPolicy.setMinUpperCase(3);
+		passwordPolicy.setMinLowerCase(6);
+		passwordPolicy.setMinSymbol(4);
+		
+		when(passwordPolicyDao.find()).thenReturn(passwordPolicy);
+		PasswordValidationResult result = new PasswordValidationResult();
+		result = passwordValidationService.validatePassword(password);
+		assertFalse(result.isValidated());
+	}
+	
+	@Test
+	public void validatePassword_TruePasswordPolicyDisable()
+	{
+		String password = "K?patel";
+		PasswordPolicy passwordPolicy = new PasswordPolicy() ;
+		passwordPolicy.setMinLength(-1);
+		passwordPolicy.setBlockChar("-1");
+		passwordPolicy.setMaxLength(-1);
+		passwordPolicy.setMinUpperCase(-1);
+		passwordPolicy.setMinLowerCase(-1);
+		passwordPolicy.setMinSymbol(-1);
+		
+		when(passwordPolicyDao.find()).thenReturn(passwordPolicy);
+		PasswordValidationResult result = new PasswordValidationResult();
+		result = passwordValidationService.validatePassword(password);
+		assertTrue(result.isValidated());
+	}
+	
+	
 	
 
 }

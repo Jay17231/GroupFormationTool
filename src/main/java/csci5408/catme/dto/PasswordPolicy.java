@@ -48,6 +48,10 @@ public class PasswordPolicy {
 		this.minSymbol = minSymbol;
 	}
 	public String getBlockChar() {
+		if(blockChar.isEmpty())
+		{
+			return "-1";
+		}
 		return blockChar;
 	}
 	public void setBlockChar(String blockChar) {

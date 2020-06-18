@@ -57,7 +57,7 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 				result.setMinSymbol(false);
 			}	
 		}
-		if(passwordPolicy.getBlockChar() != null){
+		if(passwordPolicy.getBlockChar() != "-1"){
 			if(!checkBlockSymbol(password, passwordPolicy)) {
 				
 				result.setBlockChar(false);
@@ -71,8 +71,6 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 	public boolean checkMinLength(String password, PasswordPolicy passwordPolicy)
 	{
 		if(password.length() >= passwordPolicy.getMinLength()){
-			System.out.println("password len "+password.length());
-			System.out.println("db min lent "+passwordPolicy.getMinLength());
 			return true;
 		}
 		else{
@@ -115,7 +113,7 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 	{
 		int symbol=0;
 		for (int i=0; i < password.length();i++) {
-			if( (int)password.charAt(i) >= 33 && (int)password.charAt(i) < 64 ) {
+			if( (int)password.charAt(i) >= 33 && (int)password.charAt(i) <= 64 ) {
 				symbol++;
 			}
 		}
@@ -138,7 +136,7 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 	
 	public boolean checkMinimum(int count, int minCount)
 	{
-		if(count > minCount) {
+		if(count >= minCount) {
 			return true;
 		}else {
 			
