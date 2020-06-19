@@ -6,8 +6,11 @@ import csci5408.catme.sql.impl.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +25,9 @@ public class PasswordHistoryDaoImpl implements IPasswordHistoryDao {
 
 
     @Override
-    public List<PasswordHistory> getPasswordsByUserId(Long userId) {
+    public List<PasswordHistory> getPasswordsByUserId(Long userId, Long count) {
         Connection con = dataSource.getConnection();
         ResultSet rs = null;
-        ResultSet rs1=null;
         Statement s = null;
         assert con != null;
         List<PasswordHistory> passwords = new ArrayList<>();
@@ -33,9 +35,10 @@ public class PasswordHistoryDaoImpl implements IPasswordHistoryDao {
         try {
             s = con.createStatement();
             String sql = "SELECT * from password_history" +
-                    " WHERE u_id = :id ORDER BY creationtime DESC LIMIT 3";
+                    " WHERE u_id = :id ORDER BY creationtime DESC LIMIT :count ";
             QueryBuilder builder = new QueryBuilder(sql);
             builder.setParameter("id", userId);
+            builder.setParameter("count", count);
             rs = s.executeQuery(builder.query());
 
             while (rs.next()) {

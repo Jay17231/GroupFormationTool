@@ -142,10 +142,13 @@ public class PasswordValidationServiceImplTest {
 		PasswordHistory passwordHistory = new PasswordHistory(1L, "ABC", null, 1L);
 		ArrayList<PasswordHistory> histories = new ArrayList<>();
 		histories.add(passwordHistory);
+		PasswordPolicy policy = new PasswordPolicy();
+		policy.setPasswordHistoryCount(1L);
 
 		when(userService.getUserByEmailId(email)).thenReturn(summary);
-		when(passwordHistoryDao.getPasswordsByUserId(userId)).thenReturn(histories);
+		when(passwordHistoryDao.getPasswordsByUserId(userId, 1L)).thenReturn(histories);
 		when(bCryptPasswordEncoder.matches("ABC", "ABC")).thenReturn(true);
+		when(passwordPolicyDao.find()).thenReturn(policy);
 
 		assertTrue(passwordValidationService.isOldPassword(email, "ABC"));
 	}
@@ -160,12 +163,28 @@ public class PasswordValidationServiceImplTest {
 		PasswordHistory passwordHistory = new PasswordHistory(1L, "ABC", null, 1L);
 		ArrayList<PasswordHistory> histories = new ArrayList<>();
 		histories.add(passwordHistory);
+		PasswordPolicy policy = new PasswordPolicy();
+		policy.setPasswordHistoryCount(1L);
+
 
 		when(userService.getUserByEmailId(email)).thenReturn(summary);
-		when(passwordHistoryDao.getPasswordsByUserId(userId)).thenReturn(histories);
+		when(passwordHistoryDao.getPasswordsByUserId(userId, 1L)).thenReturn(histories);
 		when(bCryptPasswordEncoder.matches("ABC", "ABC")).thenReturn(false);
+		when(passwordPolicyDao.find()).thenReturn(policy);
 
 		assertFalse(passwordValidationService.isOldPassword(email, "ABC"));
+	}
+
+	@Test
+	public void isOldPasswordTest_Disabled() {
+		String email = "a@g.c";
+		String password = "123";
+
+		PasswordPolicy policy = new PasswordPolicy();
+		policy.setPasswordHistoryCount(0L);
+
+		when(passwordPolicyDao.find()).thenReturn(policy);
+		assertFalse(passwordValidationService.isOldPassword(email, password));
 	}
 
 }

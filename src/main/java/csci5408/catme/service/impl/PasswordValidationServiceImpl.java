@@ -81,8 +81,15 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 
 	@Override
 	public boolean isOldPassword(String email, String password) {
+		PasswordPolicy passwordPolicy = passwordPolicyDao.find();
+		if (passwordPolicy.getPasswordHistoryCount() <= 0) {
+			return false;
+		}
 		UserSummary userSummary = userService.getUserByEmailId(email);
-		List<PasswordHistory> lists = passwordHistoryDao.getPasswordsByUserId(userSummary.getId());
+		List<PasswordHistory> lists = passwordHistoryDao.getPasswordsByUserId(
+				userSummary.getId(),
+				passwordPolicy.getPasswordHistoryCount()
+		);
 		for (PasswordHistory list : lists) {
 			if (bCryptPasswordEncoder.matches(password, list.getPassword())) {
 				return true;
