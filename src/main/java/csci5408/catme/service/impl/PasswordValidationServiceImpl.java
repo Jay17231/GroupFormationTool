@@ -75,6 +75,7 @@ public class PasswordValidationServiceImpl implements IPasswordValidationService
 				result.setBlockChar(false);
 			}
 		}
+		
 		return result;
 	}
 

@@ -52,6 +52,7 @@ public class PasswordPolicyDaoImpl implements IPasswordPolicyDao {
 				passwordPolicy.setMinLowerCase(rs.getInt(4));
 				passwordPolicy.setMinSymbol(rs.getInt(5));
 				passwordPolicy.setBlockChar(rs.getString(6));
+				passwordPolicy.setPasswordHistoryCount(rs.getLong(7));
 				
 			}
 		} catch (SQLException e) {
