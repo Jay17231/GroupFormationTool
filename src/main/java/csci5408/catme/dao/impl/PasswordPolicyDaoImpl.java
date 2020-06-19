@@ -41,18 +41,17 @@ public class PasswordPolicyDaoImpl implements IPasswordPolicyDao {
 		PasswordPolicy passwordPolicy = new PasswordPolicy();
 		try {
 			s = con.createStatement();
-			if (s.execute("select * from password_policy where isActive = True")) {
+			if (s.execute("select min_length,max_length,min_no_uppercase,min_no_lowercase,min_no_symbol,block_char,password_history from password_policy where isActive = True")) {
 				rs = s.getResultSet();
-				
 			}
 			if (rs.next()) {
-				passwordPolicy.setMinLength(rs.getInt(1));
-				passwordPolicy.setMaxLength(rs.getInt(2));
-				passwordPolicy.setMinUpperCase(rs.getInt(3));
-				passwordPolicy.setMinLowerCase(rs.getInt(4));
-				passwordPolicy.setMinSymbol(rs.getInt(5));
-				passwordPolicy.setBlockChar(rs.getString(6));
-				passwordPolicy.setPasswordHistoryCount(rs.getLong(7));
+				passwordPolicy.setMinLength(rs.getInt("min_length"));
+				passwordPolicy.setMaxLength(rs.getInt("max_length"));
+				passwordPolicy.setMinUpperCase(rs.getInt("min_no_uppercase"));
+				passwordPolicy.setMinLowerCase(rs.getInt("min_no_lowercase"));
+				passwordPolicy.setMinSymbol(rs.getInt("min_no_symbol"));
+				passwordPolicy.setBlockChar(rs.getString("block_char"));
+				passwordPolicy.setPasswordHistoryCount(rs.getInt("password_history"));
 				
 			}
 		} catch (SQLException e) {

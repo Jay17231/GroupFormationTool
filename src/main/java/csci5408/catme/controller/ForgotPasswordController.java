@@ -2,6 +2,7 @@ package csci5408.catme.controller;
 
 import csci5408.catme.configuration.ConfigProperties;
 import csci5408.catme.dao.impl.PasswordHistoryDaoImpl;
+import csci5408.catme.dto.PasswordValidationResult;
 import csci5408.catme.service.IAuthenticationService;
 import csci5408.catme.service.IEmailService;
 import csci5408.catme.service.IPasswordValidationService;
@@ -21,6 +22,7 @@ public class ForgotPasswordController {
 	final IEmailService emailService;
 	final IAuthenticationService authenticationService;
 	final IPasswordValidationService passwordValidationService;
+	PasswordValidationResult passwordValidationResult;
 
 	public ForgotPasswordController(
 			IUserService user, IEmailService mail, IAuthenticationService auth,
@@ -78,9 +80,17 @@ public class ForgotPasswordController {
 			@RequestParam("password") String password
 	) {
 		boolean isOldPassword = passwordValidationService.isOldPassword(email, password);
-		if (isOldPassword) {
+		passwordValidationResult = passwordValidationService.validatePassword(password);
+		
+		if (isOldPassword && !( passwordValidationResult.isValidated())) {
 			ModelAndView mView = new ModelAndView("redirect:/update-password?email=" + email);
 			mView.addObject("status", false);
+			mView.addObject("minLength",passwordValidationResult.isMinLength());
+			mView.addObject("maxLength",passwordValidationResult.isMaxLength());
+			mView.addObject("minUpper",passwordValidationResult.isMinUpperCase());
+			mView.addObject("minLower",passwordValidationResult.isMinLowerCase());
+			mView.addObject("minSymbol",passwordValidationResult.isMinSymbol());
+			mView.addObject("blockSymbol",passwordValidationResult.isBlockChar());
 			return mView;
 		}
 		authenticationService.changePassword(userService.getUserByEmailId(email), password);

@@ -14,16 +14,17 @@ public class PasswordPolicy {
 	int minUpperCase;
 	int minLowerCase;
 	int minSymbol;
-	Long passwordHistoryCount;
+	int passwordHistoryCount;
 	String blockChar;
 	
 	
 	
 	
 	public Long getPasswordHistoryCount() {
-		return passwordHistoryCount;
+		Long passwordHistoryCountLong = new Long(passwordHistoryCount);
+		return passwordHistoryCountLong;
 	}
-	public void setPasswordHistoryCount(Long passwordHistoryCount) {
+	public void setPasswordHistoryCount(int passwordHistoryCount) {
 		this.passwordHistoryCount = passwordHistoryCount;
 	}
 	public int getMinLength() {
