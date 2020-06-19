@@ -1,9 +1,9 @@
 package csci5408.catme.dao.impl;
 
-import csci5408.catme.dao.EnrollmentDao;
+import csci5408.catme.dao.IEnrollmentDao;
 import csci5408.catme.domain.Enrollment;
 import csci5408.catme.domain.Role;
-import csci5408.catme.sql.ConnectionManager;
+import csci5408.catme.sql.impl.ConnectionManager;
 import csci5408.catme.sql.impl.QueryBuilder;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class EnrollmentDaoImpl implements EnrollmentDao {
+public class EnrollmentDaoImpl implements IEnrollmentDao {
 
 	final ConnectionManager dataSource;
 

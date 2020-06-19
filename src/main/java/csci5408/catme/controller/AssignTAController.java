@@ -7,14 +7,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import csci5408.catme.dao.CourseDao;
-import csci5408.catme.dao.EnrollmentDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.domain.Role;
+import csci5408.catme.domain.Roles;
 import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.EnrollmentService;
-import csci5408.catme.service.UserService;
+import csci5408.catme.service.IEnrollmentService;
+import csci5408.catme.service.IUserService;
 
 /**
  * @author Jay Gajjar (jy386888@dal.ca)
@@ -23,17 +22,12 @@ import csci5408.catme.service.UserService;
 @Controller
 public class AssignTAController {
 
-	final UserService user;
-	final EnrollmentDao enrollmentDao;
-	final EnrollmentService enrollmentService;
-	final CourseDao courseDao;
+	final IUserService user;
+	final IEnrollmentService enrollmentService;
 
-	public AssignTAController(UserService user, EnrollmentDao enrollmentDao, EnrollmentService enrollmentService,
-			CourseDao courseDao) {
+	public AssignTAController(IUserService user, IEnrollmentService enrollmentService) {
 		this.user = user;
-		this.enrollmentDao = enrollmentDao;
 		this.enrollmentService = enrollmentService;
-		this.courseDao = courseDao;
 	}
 
 	@PostMapping("/assign-ta")
@@ -47,7 +41,7 @@ public class AssignTAController {
 			model.addAttribute("status", false);
 			return "assign-ta-details";
 		}
-		Optional<Course> course = courseDao.findById(courseId);
+		Optional<Course> course = enrollmentService.getCourseById(courseId);
 		if (!course.isPresent()) {
 			model.addAttribute("message", "Course Not found. Please try again");
 			model.addAttribute("status", false);
@@ -55,32 +49,13 @@ public class AssignTAController {
 		}
 		CourseSummary courseSummary = CourseSummary.from(course.get());
 		Role taRole = new Role();
-		taRole.setName("TA");
+		taRole.setName(Roles.TA.name());
 		model.addAttribute("status", true);
 		model.addAttribute("name", userSummary.getFirstName() + " " + userSummary.getLastName());
 		model.addAttribute("studentId", userSummary.getStudentId());
 		model.addAttribute("email", emailId);
 		enrollmentService.enrollUser(courseSummary, userSummary, taRole);
 
-//		if (role.getName().compareToIgnoreCase("Student") != 0) {
-//			model.addAttribute("message", "User is not a student. Please try a student's email address");
-//			model.addAttribute("status", false);
-//			return "assign-ta-details";
-//		}
-//
-//		boolean madeta = enrollmentDao.makeTA(userId);
-//
-//		if (!madeta) {
-//			model.addAttribute("message", "Something went wrong");
-//			model.addAttribute("status", false);
-//			return "assign-ta-details";
-//		}
-//		model.addAttribute("message", "Role Changed to TA Successfully!");
-//		model.addAttribute("status", madeta);
-//		model.addAttribute("name", userSummary.getFirstName() + " " + userSummary.getLastName());
-//		model.addAttribute("studentId", userSummary.getStudentId());
-//		model.addAttribute("email", emailId);
-//
 		return "assign-ta-details";
 	}
 

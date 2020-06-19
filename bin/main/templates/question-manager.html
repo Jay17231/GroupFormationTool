@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+	    <meta charset="UTF-8">
+	    <title>Course Page</title>
+	    <link rel="stylesheet" type="text/css" href="/css/login.css">
+	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
+	</head>
+	<body>
+		<nav class="navbar navbar-inverse">
+		    <div class="container-fluid">
+		        <div class="navbar-header">
+		            <a class="navbar-brand" href="/">CSCI 5408 CATEME</a>
+		        </div>
+		        <ul class="nav navbar-nav navbar-right">
+		            <li><a href="/signout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+		        </ul>
+		    </div>
+		</nav>
+		
+		<div class="wrapper">
+		    <div class="container mb-3">
+		        <h1>Welcome to the Questions Manager</h1>
+		        <small class="text-muted mb-3">Create, Update, and Delete your Questions Here</small>
+		        <hr class="mt-3 mb-3">
+		        <div class="row">
+					<div class="col-md-6 text-center">
+						<h3 class="display-5 mb-3">Create Question</h3>
+						<a th:href="@{/create-question}" class="btn btn-md btn-primary"><i class="fa fa-plus"></i> Create a new question</a>
+						<p th:text="${success}">Success!</p>
+					</div>
+					<div class="col-md-6 text-center">
+						<h3 class="display-5 text-center mb-3">Your Questions</h3>
+						<a class="btn btn-sm btn-primary text-white mb-3" th:href="@{/questions}">
+							<i class="fa fa-filter"></i> Sort Questions
+						</a>
+						<div class="card mb-3" th:each="q : ${allquestions}">
+							<div class="card-header" th:text="${q.getQuestionTitle()}"></div>
+							<div class="card-body">
+								<p th:text="${q.getQuestionText()}"></p>
+								<span class="text-muted d-block">Creation Date:</span>
+								<small class="text-muted" th:text="${q.getCreationDate()}"></small>
+							</div>
+							<div class="card-footer">
+								<a class="float-right btn btn-md btn-danger text-white"
+								   th:href="@{/deleteQuestion/{id}(id = ${q.getId()})}"><i class="fa fa-trash"></i>
+									Delete Question</a>
+								<a class="float-left btn btn-md btn-info text-white"
+								   th:href="@{/deleteQuestion/{id}(id = ${q.getId()})}"><i class="fa fa-eye"></i> View
+									Question</a>
+					  		</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

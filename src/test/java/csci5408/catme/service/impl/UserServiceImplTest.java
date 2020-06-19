@@ -1,6 +1,6 @@
 package csci5408.catme.service.impl;
 
-import csci5408.catme.dao.UserDao;
+import csci5408.catme.dao.IUserDao;
 import csci5408.catme.domain.User;
 import csci5408.catme.dto.UserSummary;
 import org.junit.jupiter.api.Test;
@@ -14,11 +14,11 @@ import static org.mockito.Mockito.when;
 
 public class UserServiceImplTest {
 
-    private final UserDao userDao;
+    private final IUserDao userDao;
     private final UserServiceImpl userService;
 
     public UserServiceImplTest() {
-        userDao = mock(UserDao.class);
+        userDao = mock(IUserDao.class);
         userService = new UserServiceImpl(userDao);
     }
 

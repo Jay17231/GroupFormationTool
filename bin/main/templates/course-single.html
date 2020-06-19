@@ -5,6 +5,7 @@
     <title>Course Page</title>
     <link rel="stylesheet" type="text/css" href="/css/login.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
 </head>
 <body>
 <nav class="navbar navbar-inverse">
@@ -27,30 +28,34 @@
             <h3 th:text="${'You are the course ' + (role.roleName != null ? role.roleName : 'Guest')}"></h3>
             <hr class="mt-3 mb-3 my-4">
             <div class="row">
-	           	<div class="col-md-6">
+	            <div th:if="${addTa}" class="col-md-4 border-right border-dark text-center">
+	            	<h3 class="mb-3">Question Manager</h3>
+	            	<a href="/question-manager" class="btn btn-md btn-success"><i class="fa fa-cogs" aria-hidden="true"></i> Manage Questions</a>
+	            </div>
+	           	<div class="col-md-4 border-right border-dark text-center">
 	   				<form th:if="${addStudents}" method="POST" th:action="@{/upload-csv-file}" enctype="multipart/form-data">
 					    <div class="form-group mt-3 pull-left">
 					        <label for="file">Select a CSV file:</label>
 					        <input type="file" name="file" class="form-control-file" id="file" accept=".csv">
 					        <input type="text" name="courseid" class="form-control-file" id="courseid" th:value="${courseOp.get().getId()}" hidden>
 					    </div>
-					    <button type="submit" class="btn btn-primary">Import Students</button>
+					    <button type="submit" class="btn btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> Import Students</button>
 					</form>
 	   			</div>
-            	<div class="col-md-6">
+            	<div class="col-md-4 text-center">
 		            <form th:if="${addTa}" method="POST" th:action="@{/assign-ta}">
 		                <div class="form-group mt-3 pull-left">
 		                    <label>Enter the email ID of the student to assign as TA:</label>
 		                    <input type="email" name="emailta" class="form-control" id="emailta" placeholder="Enter the email of the student">
 		                    <input type="text" name="courseid" class="form-control-file" id="courseid" th:value="${role.courseId}" hidden>
 		                </div>
-		                <button type="submit" class="btn btn-success">Assign TA</button>
+		                <button type="submit" class="btn btn-success"><i class="fa fa-user-cog" aria-hidden="true"></i> Assign TA</button>
 		            </form>
             	</div>
             </div>
 
         </div>
+	</div>
 </div>
-
 </body>
 </html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Question</title>
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css" integrity="sha256-46r060N2LrChLLb5zowXQ72/iKKNiw/lAmygmHExk/o=" crossorigin="anonymous" />
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">CSCI 5408 CATEME</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/signout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+  <h2>Create Question</h2>
+  <div class="row">
+  	<div class="col-md-4 border border-dark p-4" th:if="${step1}">
+		<form th:action="@{/createQuestion}" th:object="${createQuestion}" method="post">
+    
+		    <div class="form-group">
+                <h3 class="display-4">Step 1</h3>
+                <label>Question Title:</label>
+                <input type="text" class="form-control mb-3" th:field="*{questionTitle}"
+                       placeholder="Enter Question Title" required/>
+                <input type="text" class="form-control mb-3" th:field="*{questionText}"
+                       placeholder="Enter Question Text" required/>
+                <select class="form-control" th:name="questionType" required>
+                    <option disabled>Please select the type</option>
+                    <option th:each="type: ${qtypes}" th:value="${type}" th:text="${type.label}"></option>
+                </select>
+            </div>
+    		
+   		 	<button type="submit" class="btn btn-md btn-info">Submit</button>
+  		</form>
+  	</div>
+  </div>
+</div>
+​
+
+​
+
+</body>
+</html>

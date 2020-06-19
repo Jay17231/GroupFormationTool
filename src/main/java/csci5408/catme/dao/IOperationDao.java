@@ -4,6 +4,6 @@ import csci5408.catme.domain.Operation;
 
 import java.util.List;
 
-public interface OperationDao extends Dao<Operation, Long> {
+public interface IOperationDao extends IDao<Operation, Long> {
     List<Operation> findAllByRoleId(Long id);
 }

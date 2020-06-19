@@ -1,6 +1,6 @@
 package csci5408.catme.authentication;
 
-import csci5408.catme.dao.UserDao;
+import csci5408.catme.dao.IUserDao;
 import csci5408.catme.domain.User;
 import csci5408.catme.dto.UserSummary;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -16,10 +16,10 @@ import java.util.ArrayList;
 @Component
 public class CatmeAuthenticationProvider implements AuthenticationProvider {
 
-    private final UserDao userDao;
+    private final IUserDao userDao;
     final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public CatmeAuthenticationProvider(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public CatmeAuthenticationProvider(IUserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 

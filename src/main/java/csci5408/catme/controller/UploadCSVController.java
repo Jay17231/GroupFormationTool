@@ -16,12 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
-import csci5408.catme.dao.EnrollmentDao;
-import csci5408.catme.domain.Enrollment;
+import csci5408.catme.domain.Role;
+import csci5408.catme.domain.Roles;
+import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.AuthenticationService;
-import csci5408.catme.service.EmailService;
-import csci5408.catme.service.UserService;
+import csci5408.catme.service.IAuthenticationService;
+import csci5408.catme.service.IEmailService;
+import csci5408.catme.service.IEnrollmentService;
+import csci5408.catme.service.IUserService;
 
 /**
  * @author Jay Gajjar (jy386888@dal.ca)
@@ -33,19 +35,19 @@ public class UploadCSVController {
 	private List<String[]> addedRecords;
 	private List<String[]> discardRecords;
 
-	final UserService user;
+	final IUserService user;
 	final UserSummary userSummary;
-	final AuthenticationService auth;
-	final EnrollmentDao enrollmentDao;
+	final IAuthenticationService auth;
+	final IEnrollmentService enrollmentService;
 
-	final EmailService mail;
+	final IEmailService mail;
 
-	public UploadCSVController(UserService user, AuthenticationService auth, EnrollmentDao enrollmentDao,
-			EmailService mail) {
+	public UploadCSVController(IUserService user, IAuthenticationService auth, IEnrollmentService enrollmentService,
+			IEmailService mail) {
 		this.auth = auth;
 		this.user = user;
 		this.mail = mail;
-		this.enrollmentDao = enrollmentDao;
+		this.enrollmentService = enrollmentService;
 		addedRecords = new ArrayList<String[]>();
 		discardRecords = new ArrayList<String[]>();
 		userSummary = new UserSummary();
@@ -64,7 +66,7 @@ public class UploadCSVController {
 			try {
 
 				Reader reader = new InputStreamReader(file.getInputStream());
-				Long userLong = null;
+
 				CSVReader csvReader = new CSVReaderBuilder(reader).build();
 				List<String[]> studentRecords = csvReader.readAll();
 				Iterator<String[]> recIter = studentRecords.iterator();
@@ -109,7 +111,7 @@ public class UploadCSVController {
 			return;
 		}
 
-		String password = auth.resetPassword(8);
+		String password = auth.resetPassword();
 		userSummary.setEmailId(emailId);
 		userSummary.setLastName(lastName);
 		userSummary.setFirstName(firstName);
@@ -120,14 +122,11 @@ public class UploadCSVController {
 
 		UserSummary newUser = user.getUserByEmailId(emailId);
 
-		Long roleId = (long) 402; // Role ID for student;
-		Enrollment enrollment = new Enrollment();
-		enrollment.setCourseId(courseid);
-		enrollment.setUserId(newUser.getId());
-		enrollment.setRoleId(roleId);
-		enrollment.setCourseId(courseid);
+		Role role = enrollmentService.getRoleByName(Roles.STUDENT.name());
 
-		enrollmentDao.save(enrollment); // Enrolling into course
+		CourseSummary courseSummary = CourseSummary.from(enrollmentService.getCourseById(courseid).get());
+
+		enrollmentService.enrollUser(courseSummary, newUser, role);
 
 		mail.sendMail(newUser, "New Student Account - Credentials", "Hello " + firstName + " " + lastName
 				+ ". Your login email is: " + emailId + " and your password is " + password);

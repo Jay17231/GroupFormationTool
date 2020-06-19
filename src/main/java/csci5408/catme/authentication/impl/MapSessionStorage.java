@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class MapISessionStorage implements ISessionStore {
+public class MapSessionStorage implements ISessionStore {
 
     Map<String, UserSummary> map;
 
-    public MapISessionStorage() {
+    public MapSessionStorage() {
         map = new HashMap<>();
     }
 

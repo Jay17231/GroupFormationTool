@@ -1,6 +1,16 @@
 package csci5408.catme.service.impl;
 
-import csci5408.catme.dao.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import csci5408.catme.dao.ICourseDao;
+import csci5408.catme.dao.IEnrollmentDao;
+import csci5408.catme.dao.IOperationDao;
+import csci5408.catme.dao.IRoleDao;
+import csci5408.catme.dao.IUserDao;
 import csci5408.catme.domain.Course;
 import csci5408.catme.domain.Enrollment;
 import csci5408.catme.domain.Operation;
@@ -8,27 +18,23 @@ import csci5408.catme.domain.Role;
 import csci5408.catme.dto.CourseRole;
 import csci5408.catme.dto.CourseSummary;
 import csci5408.catme.dto.UserSummary;
-import csci5408.catme.service.EnrollmentService;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
+import csci5408.catme.service.IEnrollmentService;
 
 @Service
-public class EnrollmentServiceImpl implements EnrollmentService {
+public class EnrollmentServiceImpl implements IEnrollmentService {
 
-	final UserDao userDao;
+	final IUserDao userDao;
 
-	final CourseDao courseDao;
+	final ICourseDao courseDao;
 
-	final EnrollmentDao enrollmentDao;
+	final IEnrollmentDao enrollmentDao;
 
-	final RoleDao roleDao;
+	final IRoleDao roleDao;
 
-	final OperationDao operationDao;
+	final IOperationDao operationDao;
 
-	public EnrollmentServiceImpl(UserDao dao, CourseDao courseDao, EnrollmentDao enrollmentDao, RoleDao roleDao,
-								 OperationDao operationDao) {
+	public EnrollmentServiceImpl(IUserDao dao, ICourseDao courseDao, IEnrollmentDao enrollmentDao, IRoleDao roleDao,
+			IOperationDao operationDao) {
 		this.userDao = dao;
 		this.courseDao = courseDao;
 		this.enrollmentDao = enrollmentDao;
@@ -40,8 +46,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	public boolean enrollUser(CourseSummary c, UserSummary u, Role role) {
 		try {
 			Role r = enrollmentDao.findRole(u.getId(), c.getId());
-			Long taRoleId = roleDao.getRoleIdByName("TA");
-			if(r != null) {
+			Long taRoleId = roleDao.getRoleIdByName(role.getName());
+			if (r != null) {
 				Enrollment e = enrollmentDao.findEnrollment(u.getId(), c.getId());
 				e.setRoleId(taRoleId);
 				enrollmentDao.update(e);
@@ -69,8 +75,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	public List<CourseRole> getUserCoursesAndRoles(UserSummary userSummary) {
 		List<CourseSummary> summaries = this.getEnrolledCourses(userSummary);
 		List<CourseRole> courseRoles = new ArrayList<>();
-		for (CourseSummary summary:
-			 summaries) {
+		for (CourseSummary summary : summaries) {
 			courseRoles.add(getCourseRole(userSummary, summary, false));
 		}
 		return courseRoles;
@@ -78,14 +83,14 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
 	@Override
 	public List<CourseSummary> getEnrolledCourses(UserSummary userSummary) {
-		List<Course> enrolledCourses =  courseDao.findCoursesByUserId(userSummary.getId());
+		List<Course> enrolledCourses = courseDao.findCoursesByUserId(userSummary.getId());
 		return CourseSummary.from(enrolledCourses);
 	}
 
 	@Override
 	public CourseRole getCourseRole(UserSummary userSummary, CourseSummary summary, boolean fetchPermissions) {
 		Role role = enrollmentDao.findRole(userSummary.getId(), summary.getId());
-		if(role == null) {
+		if (role == null) {
 			role = new Role();
 		}
 		CourseRole cr = new CourseRole();
@@ -93,10 +98,26 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		cr.setRoleId(role.getId());
 		cr.setCourseName(summary.getCourseName());
 		cr.setRoleName(role.getName());
-		if(fetchPermissions) {
+		if (fetchPermissions) {
 			List<Operation> op = operationDao.findAllByRoleId(role.getId());
 			cr.setPermissions(op);
 		}
 		return cr;
 	}
+
+	@Override
+	public Optional<Course> getCourseById(Long courseId) {
+		Optional<Course> courseOptional = courseDao.findById(courseId);
+		return courseOptional;
+	}
+
+	@Override
+	public Role getRoleByName(String roleName) {
+		Long roleId = roleDao.getRoleIdByName(roleName);
+		Role role = new Role();
+		role.setId(roleId);
+		role.setName(roleName);
+		return role;
+	}
+
 }
