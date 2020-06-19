@@ -22,7 +22,6 @@ public class ForgotPasswordController {
 	final IEmailService emailService;
 	final IAuthenticationService authenticationService;
 	final IPasswordValidationService passwordValidationService;
-	PasswordValidationResult passwordValidationResult;
 
 	public ForgotPasswordController(
 			IUserService user, IEmailService mail, IAuthenticationService auth,
@@ -59,15 +58,25 @@ public class ForgotPasswordController {
 	}
 
 	@GetMapping("/update-password")
-	public ModelAndView updatePassword(@RequestParam("email") String useremail,
-									   @RequestParam(value = "status", defaultValue = "true") Boolean status) {
+	public ModelAndView updatePassword(
+			@RequestParam("email") String useremail,
+			@RequestParam(value = "status", defaultValue = "true") Boolean status,
+			@RequestParam(value = "minLength", defaultValue = "true") Boolean minLength,
+			@RequestParam(value = "minUpper", defaultValue = "true") Boolean minUpper,
+			@RequestParam(value = "minLower", defaultValue = "true") Boolean minLower,
+			@RequestParam(value = "minSymbol", defaultValue = "true") Boolean minSymbol
+	) {
 
 		if (userService.getUserByEmailId(useremail) != null) {
 			ModelAndView mView = new ModelAndView("update-password");
 			mView.addObject("status", status);
 			mView.addObject("email", useremail);
 			mView.addObject("password", "");
-
+			addValidationResults(mView, new PasswordValidationResult());
+			mView.addObject("minLength", minLength);
+			mView.addObject("minUpper", minUpper);
+			mView.addObject("minLower", minLower);
+			mView.addObject("minSymbol", minSymbol);
 			return mView;
 		} else {
 			return null;
@@ -79,24 +88,29 @@ public class ForgotPasswordController {
 			@RequestParam("email") String email,
 			@RequestParam("password") String password
 	) {
+		PasswordValidationResult passwordValidationResult;
 		boolean isOldPassword = passwordValidationService.isOldPassword(email, password);
 		passwordValidationResult = passwordValidationService.validatePassword(password);
-		
-		if (isOldPassword && !( passwordValidationResult.isValidated())) {
+
+		if (isOldPassword || !(passwordValidationResult.isValidated())) {
 			ModelAndView mView = new ModelAndView("redirect:/update-password?email=" + email);
-			mView.addObject("status", false);
-			mView.addObject("minLength",passwordValidationResult.isMinLength());
-			mView.addObject("maxLength",passwordValidationResult.isMaxLength());
-			mView.addObject("minUpper",passwordValidationResult.isMinUpperCase());
-			mView.addObject("minLower",passwordValidationResult.isMinLowerCase());
-			mView.addObject("minSymbol",passwordValidationResult.isMinSymbol());
-			mView.addObject("blockSymbol",passwordValidationResult.isBlockChar());
+			addValidationResults(mView, passwordValidationResult);
 			return mView;
 		}
 		authenticationService.changePassword(userService.getUserByEmailId(email), password);
 		ModelAndView mView = new ModelAndView("login");
 		mView.addObject("status", true);
 		return mView;
+	}
+
+	private void addValidationResults(ModelAndView mView, PasswordValidationResult passwordValidationResult) {
+		mView.addObject("status", false);
+		mView.addObject("minLength", passwordValidationResult.isMinLength());
+		mView.addObject("maxLength", passwordValidationResult.isMaxLength());
+		mView.addObject("minUpper", passwordValidationResult.isMinUpperCase());
+		mView.addObject("minLower", passwordValidationResult.isMinLowerCase());
+		mView.addObject("minSymbol", passwordValidationResult.isMinSymbol());
+		mView.addObject("blockSymbol", passwordValidationResult.isBlockChar());
 	}
 
 
