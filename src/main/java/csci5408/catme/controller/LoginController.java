@@ -43,23 +43,7 @@ public class LoginController {
 		this.sessionStore = sessionStore;
 	}
 
-	@GetMapping("/signup")
-	public String signUp(Model model) {
-		model.addAttribute("signup", new UserSummary());
-		return "signup"; // extension depends on view resolver.
-	}
-
-	@PostMapping("/signup")
-	public String signupPost(@ModelAttribute UserSummary signup, HttpServletRequest request) {
-		UserSummary userSummary = authenticationService.signUp(signup, request.getParameter("password").toString());
-		return "redirect:login"; // extension depends on view resolver.
-	}
-
-	@GetMapping("/forgotpassword")
-	public String forgotpassword() {
-		return "forgot-password.html"; // extension depends on view resolver.
-	}
-
+	
 	@GetMapping("/login")
 	public String login() {
 		if (authenticationService.isAuthenticated()) {

@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ConfigProperties {
+    @Value("${catme.hostname}")
+    private String hostname;
 
     @Value("${spring.mail.username}")
     private String fromEmail;
@@ -48,5 +50,13 @@ public class ConfigProperties {
 
     public void setDbPassword(String dbPassword) {
         this.dbPassword = dbPassword;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 }

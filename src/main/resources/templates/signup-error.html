@@ -6,26 +6,32 @@
     <title>Sign up</title>
     <link rel="stylesheet" type="text/css" href="/css/login.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
+    
 </head>
 <body>
 <div class="wrapper">
-    <form class="form-signin" action="#" th:action="@{/signup}" th:object="${signup}" method="post">
+    <form class="form-signin" action="#" th:action="@{/signup}" th:object="${signup}" method="post">       
       <h2 class="form-signin-heading">Please Signup</h2>
-
+      
       <input type="text" class="form-control" th:field="*{firstName}"  placeholder="First Name" required="" autofocus=""/> <br>
       <input type="text" class="form-control" th:field="*{lastName}"  placeholder="Last Name" required=""/> <br>
       <input type="text" class="form-control" th:field="*{emailId}"  placeholder="Email Address" required=""  /><br>
       <input class="form-control" name="password" placeholder="Password" required="" type="passwordL"/>
-
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Signup</button> <br>
+      <label>This rules are violated</label><br>
+      <label th:if=${!minLength}>Minimum Length<br> </label>
+      <label th:if=${!maxLength}>Maximum Length <br></label>
+      <label th:if=${!minUpper}>Minimum no of Upper case character <br> </label>
+      <label th:if=${!minLower}>Minimum no of Lower case character<br> </label>
+      <label th:if=${!minSymbol}>Minimum no of symbol <br> </label>
+      <label th:if=${!blockSymbol}>Block symbols are present! </label>      
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Signup</button> <br>  
       <a href = "/login"><P> Already have account? Login Here!</p> </a>
     </form>
-
+    
   </div>
 
-
-
+             
+   
 
 </body>
 </html>
