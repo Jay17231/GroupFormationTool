@@ -143,7 +143,7 @@ public class PasswordValidationServiceImplTest {
 		ArrayList<PasswordHistory> histories = new ArrayList<>();
 		histories.add(passwordHistory);
 		PasswordPolicy policy = new PasswordPolicy();
-		policy.setPasswordHistoryCount(1L);
+		policy.setPasswordHistoryCount(1);
 
 		when(userService.getUserByEmailId(email)).thenReturn(summary);
 		when(passwordHistoryDao.getPasswordsByUserId(userId, 1L)).thenReturn(histories);
@@ -164,7 +164,7 @@ public class PasswordValidationServiceImplTest {
 		ArrayList<PasswordHistory> histories = new ArrayList<>();
 		histories.add(passwordHistory);
 		PasswordPolicy policy = new PasswordPolicy();
-		policy.setPasswordHistoryCount(1L);
+		policy.setPasswordHistoryCount(1);
 
 
 		when(userService.getUserByEmailId(email)).thenReturn(summary);
@@ -181,7 +181,7 @@ public class PasswordValidationServiceImplTest {
 		String password = "123";
 
 		PasswordPolicy policy = new PasswordPolicy();
-		policy.setPasswordHistoryCount(0L);
+		policy.setPasswordHistoryCount(0);
 
 		when(passwordPolicyDao.find()).thenReturn(policy);
 		assertFalse(passwordValidationService.isOldPassword(email, password));
